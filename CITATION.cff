@@ -23,6 +23,11 @@ authors:
     email: "astroobserver88@gmail.com"
     orcid: "https://orcid.org/0009-0001-0282-6098"
 version: "1.2.0"
+doi: "10.5281/zenodo.21763301"          # concept DOI: always the newest version
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.21763344"
+    description: "Version DOI for v1.2.0 specifically"
 license: MIT
 license-url: "https://github.com/Astroobserver11/MWVO_FITA/blob/main/LICENSE"
 repository-code: "https://github.com/Astroobserver11/MWVO_FITA"

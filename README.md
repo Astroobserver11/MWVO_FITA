@@ -1,5 +1,8 @@
 # FITA — Flexible Image Transfer Alpha
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21763301.svg)](https://doi.org/10.5281/zenodo.21763301)
+[![tests](https://github.com/Astroobserver11/MWVO_FITA/actions/workflows/ci.yml/badge.svg)](https://github.com/Astroobserver11/MWVO_FITA/actions/workflows/ci.yml)
+
 **A FITS convention for multi-layer astronomical images with a display channel
 that cannot touch the science.**
 
@@ -259,7 +262,15 @@ pip install "fita[psd]"          # + Photoshop import
 
 ## Citing
 
-See [`CITATION.cff`](CITATION.cff).
+    Cisneros, I. A. (2026). FITA — Flexible Image Transfer Alpha: a FITS
+    convention for multi-layer astronomical images (v1.2.0).
+    Zenodo. https://doi.org/10.5281/zenodo.21763344
+
+Cite the **concept DOI** `10.5281/zenodo.21763301` for the software in general — it always
+resolves to the newest version. Cite the **version DOI** `10.5281/zenodo.21763344` when
+reproducibility matters and you mean v1.2.0 exactly.
+
+Machine-readable metadata is in [`CITATION.cff`](CITATION.cff).
 
 ## Licence
 
