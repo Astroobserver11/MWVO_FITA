@@ -7,6 +7,11 @@ from pathlib import Path
 
 from fita.layer import FITALayer
 from fita.cube  import FITACube
+# fita.calibration / .photometry / .sed_analysis are thin re-export shims
+# over the URANODYNE science stack, which is a separate distribution. Skip
+# rather than fail so the format kernel stays independently testable.
+pytest.importorskip("uranodyne")
+
 from fita.calibration import (
     InstrumentDB, FluxCalibrator,
     erg_per_cm2_s_A_to_jy, mjy_sr_to_jy_pixel,
