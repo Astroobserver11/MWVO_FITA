@@ -24,8 +24,8 @@ authors:
     # orcid: "https://orcid.org/0000-0000-0000-0000"   # TODO: add before release
 version: "1.2.0"
 license: MIT
-license-url: "https://github.com/astroobserver11/MWVO_FITA/blob/main/LICENSE"
-repository-code: "https://github.com/astroobserver11/MWVO_FITA"
+license-url: "https://github.com/Astroobserver11/MWVO_FITA/blob/main/LICENSE"
+repository-code: "https://github.com/Astroobserver11/MWVO_FITA"
 keywords:
   - astronomy
   - FITS
