@@ -61,7 +61,7 @@ class Result:
 # Import integrity -- the IrenBLink checks
 # --------------------------------------------------------------------------
 
-def _check_package_is_real(modname):
+def _check_package_is_real(modname, required=True):
     """A namespace package has __file__ = None and executes no __init__.
 
     This is the exact IrenBLink failure: when the current directory contains a
@@ -72,6 +72,15 @@ def _check_package_is_real(modname):
     try:
         mod = importlib.import_module(modname)
     except Exception as exc:
+        if not required:
+            # An optional companion that is simply absent is information, not
+            # a fault. Reporting it as a failure told users a healthy
+            # format-kernel install was unsafe to rely on, and broke CI on a
+            # correct configuration.
+            return Result(INFO, "import %s" % modname,
+                          "not installed (optional)",
+                          "pip install %s -- needed only for the science "
+                          "pipeline, not for the format kernel" % modname)
         return Result(FAIL, "import %s" % modname,
                       "%s: %s" % (type(exc).__name__, exc),
                       "the package is not installed for this interpreter "
@@ -435,7 +444,7 @@ def run_checks():
         _check_dep("psd_tools", "optional: PSD import", False,
                    "pip install 'fita[psd]'"),
         _check_data_files(),
-        _check_package_is_real("uranodyne"),
+        _check_package_is_real("uranodyne", required=False),
         _check_roundtrip(),
         _check_provenance_path(),
         _check_adjustment_path(),

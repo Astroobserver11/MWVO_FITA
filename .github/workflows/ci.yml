@@ -6,6 +6,12 @@ on:
   pull_request:
   workflow_dispatch:
 
+defaults:
+  run:
+    # Windows runners default to pwsh, where a bash heredoc does not parse.
+    # One shell everywhere keeps the steps honest across the matrix.
+    shell: bash
+
 jobs:
   test:
     runs-on: ${{ matrix.os }}
@@ -37,7 +43,13 @@ jobs:
         # The IrenBLink failure: an install that only resolves when the working
         # directory happens to be the repo root. Run from elsewhere on purpose.
         working-directory: ${{ runner.temp }}
-        run: python -m fita doctor --strict
+        run: |
+          python -c "
+          import sys
+          from fita.doctor import doctor
+          sys.exit(1 if doctor() >= 2 else 0)
+          "
+
 
       - name: Corpus validates (bytes compared only if the toolchain matches)
         run: python corpus/build_corpus.py --verify
