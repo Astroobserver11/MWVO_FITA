@@ -69,7 +69,8 @@ Every other feature is subordinate to that.
 - **Not a rendering engine.** It stores compositing *metadata*; producing
   pixels on a screen is the renderer's job.
 - **Not a calibration pipeline.** It stores calibrated flux and its provenance,
-  not how the calibration was obtained. That is URANODYNE's job.
+  not how the calibration was obtained. That is
+  [URANODYNE](https://github.com/Astroobserver11/uranodyne)'s job.
 
 ---
 
@@ -270,8 +271,12 @@ pip install git+https://github.com/Astroobserver11/MWVO_FITA.git@v1.2.0
 > so `pip install fita` does **not** install this software. A distribution name
 > is being sorted out; until then, install from the repository above.
 
-The science pipeline, URANODYNE, is a separate distribution and is not required
-by the format kernel.
+The science pipeline, [URANODYNE](https://github.com/Astroobserver11/uranodyne),
+is a separate distribution and is not required by the format kernel:
+
+```bash
+pip install git+https://github.com/Astroobserver11/uranodyne.git
+```
 
 ## Citing
 
