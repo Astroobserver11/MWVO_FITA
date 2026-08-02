@@ -19,7 +19,8 @@ Adds only OPTIONAL structure, so v1.1 files remain readable.
   offset convention `dx = ±(ZSC/2)(ZDP − ZRF)` (D-6).
 - `CHECKSUM` / `DATASUM` on every HDU, plus `DATE` / `CREATOR` / `ORIGIN`.
   Written deterministically so generated artifacts stay reproducible.
-- A conformance corpus of 18 labelled files, byte-reproducible, with a
+- A conformance corpus of 18 labelled files -- byte-reproducible within a
+  recorded toolchain, semantically stable across astropy versions -- with a
   published `survival_spec` for scoring format bridges.
 - `fita doctor` — diagnoses whether an *installation* works from where you
   are standing.

@@ -9,6 +9,11 @@ from pathlib import Path
 
 from fita.layer import FITALayer
 from fita.cube  import FITACube
+# These exercise the URANODYNE science stack, which is a separate distribution.
+# They belong in that repository; until they move, skip rather than fail so the
+# format kernel stays independently testable.
+pytest.importorskip("uranodyne")
+
 from fita.pipeline.surveys import ALL_SURVEYS, IRENB_PRESETS, DSS2_RED, TWOMASS_J
 from fita.pipeline.blink import (
     difference_image, significance_map, detect_proper_motion,

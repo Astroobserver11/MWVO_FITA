@@ -1,10 +1,15 @@
 {
   "corpus": "FITA conformance corpus",
   "format_version": "1.2",
+  "toolchain": {
+    "python": "3.12.10",
+    "numpy": "2.4.6",
+    "astropy": "7.2.0"
+  },
   "generator": "corpus/build_corpus.py",
   "regenerate": "python corpus/build_corpus.py",
   "verify": "python corpus/build_corpus.py --verify",
-  "note": "Files are generated deterministically -- regenerating must produce byte-identical output. Each entry records the level a conformant validator MUST report.",
+  "note": "Files are generated deterministically: regenerating with the recorded toolchain produces byte-identical output. A different astropy version may serialise the same content to different bytes, which is why the toolchain is recorded -- the SEMANTIC checks (conformance level and failing clauses) hold across versions and are always enforced. Each entry records the level a conformant validator MUST report.",
   "tiers": {
     "conformance": "positive/negative pairs, one per enforced clause",
     "legacy": "v1.0 files as actually written; grandfathered under D-1",

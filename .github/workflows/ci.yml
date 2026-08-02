@@ -39,7 +39,7 @@ jobs:
         working-directory: ${{ runner.temp }}
         run: python -m fita doctor --strict
 
-      - name: Corpus is byte-reproducible and validates
+      - name: Corpus validates (bytes compared only if the toolchain matches)
         run: python corpus/build_corpus.py --verify
 
       - name: Corpus survives checkout intact

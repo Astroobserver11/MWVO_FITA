@@ -4,6 +4,11 @@ import pytest
 
 from fita.layer import FITALayer
 from fita import io as fio
+# These exercise the URANODYNE science stack, which is a separate distribution.
+# They belong in that repository; until they move, skip rather than fail so the
+# format kernel stays independently testable.
+pytest.importorskip("uranodyne")
+
 from uranodyne.pipeline import paci, edenhofer as ed
 from uranodyne.pipeline import xray_absorption as xa
 

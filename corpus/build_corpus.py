@@ -427,15 +427,37 @@ def build_roundtrip(out: Path):
 
 # ── manifest ────────────────────────────────────────────────────────────────
 
+def _toolchain():
+    """The libraries whose byte-level output the corpus depends on.
+
+    FITS serialisation is stable in MEANING across astropy versions but not in
+    BYTES: card formatting and padding shift between releases. Recording the
+    toolchain is what lets `--verify` tell "the corpus changed" apart from
+    "astropy changed".
+    """
+    import platform
+    import astropy
+    return {
+        "python": platform.python_version(),
+        "numpy": np.__version__,
+        "astropy": astropy.__version__,
+    }
+
+
 def write_manifest(out: Path):
     manifest = {
         "corpus": "FITA conformance corpus",
         "format_version": FITA_VERSION,
+        "toolchain": _toolchain(),
         "generator": "corpus/build_corpus.py",
         "regenerate": "python corpus/build_corpus.py",
         "verify": "python corpus/build_corpus.py --verify",
-        "note": ("Files are generated deterministically -- regenerating must "
-                 "produce byte-identical output. Each entry records the level "
+        "note": ("Files are generated deterministically: regenerating with the "
+                 "recorded toolchain produces byte-identical output. A different "
+                 "astropy version may serialise the same content to different "
+                 "bytes, which is why the toolchain is recorded -- the SEMANTIC "
+                 "checks (conformance level and failing clauses) hold across "
+                 "versions and are always enforced. Each entry records the level "
                  "a conformant validator MUST report."),
         "tiers": {
             "conformance": "positive/negative pairs, one per enforced clause",
@@ -483,17 +505,33 @@ def verify(root: Path) -> int:
         old = {e["file"]: e for e in committed["files"]}
         new = {e["file"]: e for e in fresh["files"]}
 
+        recorded = committed.get("toolchain") or {}
+        current = fresh.get("toolchain") or {}
+        same_toolchain = recorded == current
+        if not same_toolchain:
+            print("toolchain differs from the one that generated this corpus:")
+            for k in sorted(set(recorded) | set(current)):
+                if recorded.get(k) != current.get(k):
+                    print("  %-8s recorded %s, running %s"
+                          % (k, recorded.get(k, "?"), current.get(k, "?")))
+            print("byte comparison skipped; semantic checks still enforced.")
+            print()
+
         for name in sorted(set(old) | set(new)):
             if name not in old:
                 problems.append("%s: present in fresh build, not committed" % name)
             elif name not in new:
                 problems.append("%s: committed but no longer generated" % name)
-            elif old[name]["sha256"] != new[name]["sha256"]:
+            elif same_toolchain and old[name]["sha256"] != new[name]["sha256"]:
                 problems.append("%s: NOT reproducible (sha256 differs)" % name)
             elif old[name]["actual_level"] != new[name]["actual_level"]:
                 problems.append("%s: level changed %s -> %s"
                                 % (name, old[name]["actual_level"],
                                    new[name]["actual_level"]))
+            elif old[name]["failing_clauses"] != new[name]["failing_clauses"]:
+                problems.append("%s: failing clauses changed %s -> %s"
+                                % (name, old[name]["failing_clauses"],
+                                   new[name]["failing_clauses"]))
 
         for name, e in sorted(new.items()):
             if e["actual_level"] != e["expected_level"]:
@@ -505,8 +543,10 @@ def verify(root: Path) -> int:
             for p in problems:
                 print("  -", p)
             return 1
-        print("Corpus verified: %d files, byte-reproducible, all levels as "
-              "recorded." % len(new))
+        print("Corpus verified: %d files, all levels and failing clauses as "
+              "recorded%s." % (len(new),
+                               ", byte-reproducible" if same_toolchain
+                               else " (bytes not compared: toolchain differs)"))
         return 0
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
