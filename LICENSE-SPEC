@@ -1,0 +1,34 @@
+FITA FORMAT SPECIFICATION — PUBLIC DOMAIN DEDICATION (CC0 1.0)
+===============================================================
+
+Scope
+-----
+This dedication covers the FITA *format specification* documents only:
+
+    FITA_FORMAT_STANDARD.md            (and its versioned / transport copies)
+    FITA_AMENDMENT__*.md
+    FITA_v*_RATIFICATION__*.md
+    FITR_SPEC.md
+
+The software in this repository is licensed separately under the MIT License
+(see LICENSE). Where a file could be read as either, the MIT License governs
+the code and this dedication governs the specification text.
+
+Dedication
+----------
+To the extent possible under law, Ignacio A. Cisneros has waived all copyright
+and related or neighbouring rights to the FITA format specification. The work
+is published from the United States of America.
+
+    https://creativecommons.org/publicdomain/zero/1.0/
+
+Why
+---
+A file format is only useful if anyone may implement it without permission,
+including in proprietary software, and without the specification's licence
+becoming a term of that implementation. A specification that cannot be freely
+re-implemented is not a standard; it is a product.
+
+This dedication is therefore deliberate and is not expected to change. It does
+not extend to the reference implementation, whose MIT licence already permits
+commercial use, modification and redistribution.

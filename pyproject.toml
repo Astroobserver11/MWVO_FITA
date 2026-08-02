@@ -1,0 +1,68 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fita"
+version = "1.0.0"
+description = "Flexible Image Transfer Alpha — multi-wavelength FITS cube with per-layer alpha, blend modes, and IrenBLink pipeline"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+authors = [
+    { name = "FITA / URANODYNE Project" },
+]
+keywords = ["astronomy", "fits", "imaging", "multi-wavelength", "compositing"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Topic :: Multimedia :: Graphics",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+]
+
+# Core runtime dependencies — always installed
+dependencies = [
+    "numpy>=1.22",
+    "astropy>=5.0",
+]
+
+[project.optional-dependencies]
+# Photoshop PSD import (format-kernel feature — no uranodyne needed)
+psd = [
+    "psd-tools>=1.9",
+    "Pillow>=9.0",
+]
+# Pull in the full URANODYNE science stack via the uranodyne package
+science = [
+    "uranodyne[all]",
+]
+# Development / testing (includes uranodyne so pipeline tests can run)
+dev = [
+    "pytest>=7",
+    "pytest-cov",
+    "uranodyne[dev]",
+    "scipy>=1.8",
+    "astroquery>=0.4.7",
+    "reproject>=0.9",
+    "photutils>=1.5",
+    "matplotlib>=3.5",
+    "openpyxl>=3.0",
+]
+
+[project.scripts]
+fita = "fita.cli:main"
+
+[tool.setuptools.packages.find]
+# Restrict discovery to the fita package.  Without `include`, a bare
+# where=["."] scan of the repo root also picks up demo_output, m27_products,
+# skyview_cache, tests AND the sibling uranodyne package, shipping all of them
+# inside the fita wheel as importable top-level names.
+where = ["."]
+include = ["fita*"]
+
+[tool.setuptools.package-data]
+fita = [
+    "instrument_db/*.json",   # instrument calibration database
+    "ai/*.json",              # FITA_FORMAT_CARD.json — the AI format card
+]

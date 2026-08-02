@@ -1,0 +1,135 @@
+{
+  "_comment": "FITA instrument calibration database. Add entries from peer-reviewed commissioning papers.",
+  "_schema": {
+    "pivot_wavelength_m": "pivot wavelength in metres (Koornneef 1986 definition)",
+    "bandwidth_m": "effective bandwidth (RSR-weighted) in metres",
+    "photflam": "inverse sensitivity erg/s/cm^2/Angstrom per e-/s (HST convention) — null if not applicable",
+    "photzpt": "STMAG photometric zero point",
+    "vegamag_zpt": "Vega-system AB mag at which 1 e-/s is recorded",
+    "abmag_zpt": "AB mag zero point (AB: 0 mag = 3631 Jy)",
+    "pixel_scale_arcsec": "plate scale arcsec/pixel",
+    "psf_fwhm_arcsec": "PSF FWHM in arcsec (on-axis, nominal conditions)",
+    "bunit_raw": "BUNIT of raw pipeline-reduced image",
+    "bunit_calibrated": "BUNIT after applying PHOTFLAM or equivalent",
+    "jy_per_dn": "Jy per data number (pre-computed for convenience); null if unknown",
+    "reference": "ADS bibcode or DOI of commissioning / calibration paper"
+  },
+
+  "HST/WFC3/F160W": {
+    "telescope": "HST", "instrument": "WFC3", "detector": "IR", "filter": "F160W",
+    "pivot_wavelength_m": 1.5369e-6, "bandwidth_m": 2.683e-7,
+    "photflam": 1.9275e-20, "photzpt": -21.1, "vegamag_zpt": 25.946, "abmag_zpt": 25.946,
+    "pixel_scale_arcsec": 0.13, "psf_fwhm_arcsec": 0.18,
+    "bunit_raw": "electron/s", "bunit_calibrated": "erg/s/cm2/Angstrom",
+    "jy_per_dn": null,
+    "reference": "Dressel 2022 WFC3 IHB; 2022wfc..rept...11D"
+  },
+  "HST/WFC3/F606W": {
+    "telescope": "HST", "instrument": "WFC3", "detector": "UVIS", "filter": "F606W",
+    "pivot_wavelength_m": 5.889e-7, "bandwidth_m": 2.186e-7,
+    "photflam": 7.7e-20, "photzpt": -21.1, "vegamag_zpt": 26.079, "abmag_zpt": 26.079,
+    "pixel_scale_arcsec": 0.04, "psf_fwhm_arcsec": 0.074,
+    "bunit_raw": "electron/s", "bunit_calibrated": "erg/s/cm2/Angstrom",
+    "jy_per_dn": null,
+    "reference": "Dressel 2022 WFC3 IHB"
+  },
+  "HST/ACS/F814W": {
+    "telescope": "HST", "instrument": "ACS", "detector": "WFC", "filter": "F814W",
+    "pivot_wavelength_m": 8.333e-7, "bandwidth_m": 2.511e-7,
+    "photflam": 6.9188e-20, "photzpt": -21.1, "vegamag_zpt": 25.520, "abmag_zpt": 25.520,
+    "pixel_scale_arcsec": 0.05, "psf_fwhm_arcsec": 0.10,
+    "bunit_raw": "electron/s", "bunit_calibrated": "erg/s/cm2/Angstrom",
+    "jy_per_dn": null,
+    "reference": "Bohlin 2016; 10.3847/0004-6256/152/3/60"
+  },
+  "Spitzer/IRAC/3.6um": {
+    "telescope": "Spitzer", "instrument": "IRAC", "detector": "InSb", "filter": "3.6um",
+    "pivot_wavelength_m": 3.550e-6, "bandwidth_m": 6.8e-7,
+    "photflam": null, "photzpt": null, "vegamag_zpt": 17.926, "abmag_zpt": 19.670,
+    "pixel_scale_arcsec": 1.22, "psf_fwhm_arcsec": 1.66,
+    "bunit_raw": "MJy/sr", "bunit_calibrated": "MJy/sr",
+    "jy_per_dn": null,
+    "reference": "Reach et al. 2005; 10.1086/430886"
+  },
+  "Spitzer/IRAC/4.5um": {
+    "telescope": "Spitzer", "instrument": "IRAC", "detector": "InSb", "filter": "4.5um",
+    "pivot_wavelength_m": 4.493e-6, "bandwidth_m": 1.015e-6,
+    "photflam": null, "photzpt": null, "vegamag_zpt": 17.538, "abmag_zpt": 18.928,
+    "pixel_scale_arcsec": 1.22, "psf_fwhm_arcsec": 1.72,
+    "bunit_raw": "MJy/sr", "bunit_calibrated": "MJy/sr",
+    "jy_per_dn": null,
+    "reference": "Reach et al. 2005; 10.1086/430886"
+  },
+  "Spitzer/MIPS/24um": {
+    "telescope": "Spitzer", "instrument": "MIPS", "detector": "Si:As", "filter": "24um",
+    "pivot_wavelength_m": 2.369e-5, "bandwidth_m": 5.3e-6,
+    "photflam": null, "photzpt": null, "vegamag_zpt": null, "abmag_zpt": 15.94,
+    "pixel_scale_arcsec": 2.45, "psf_fwhm_arcsec": 5.9,
+    "bunit_raw": "MJy/sr", "bunit_calibrated": "MJy/sr",
+    "jy_per_dn": null,
+    "reference": "Engelbracht et al. 2007; 10.1086/512155"
+  },
+  "JWST/NIRCam/F200W": {
+    "telescope": "JWST", "instrument": "NIRCam", "detector": "SW", "filter": "F200W",
+    "pivot_wavelength_m": 1.989e-6, "bandwidth_m": 4.57e-7,
+    "photflam": null, "photzpt": null, "vegamag_zpt": 26.046, "abmag_zpt": 26.046,
+    "pixel_scale_arcsec": 0.031, "psf_fwhm_arcsec": 0.066,
+    "bunit_raw": "MJy/sr", "bunit_calibrated": "MJy/sr",
+    "jy_per_dn": null,
+    "reference": "Gordon et al. 2022; 10.3847/1538-3881/ac7b77"
+  },
+  "JWST/MIRI/F770W": {
+    "telescope": "JWST", "instrument": "MIRI", "detector": "Si:As", "filter": "F770W",
+    "pivot_wavelength_m": 7.639e-6, "bandwidth_m": 1.93e-6,
+    "photflam": null, "photzpt": null, "vegamag_zpt": null, "abmag_zpt": 20.52,
+    "pixel_scale_arcsec": 0.11, "psf_fwhm_arcsec": 0.269,
+    "bunit_raw": "MJy/sr", "bunit_calibrated": "MJy/sr",
+    "jy_per_dn": null,
+    "reference": "Gordon et al. 2022; 10.3847/1538-3881/ac7b77"
+  },
+  "Herschel/PACS/70um": {
+    "telescope": "Herschel", "instrument": "PACS", "detector": "Ge:Ga", "filter": "70um",
+    "pivot_wavelength_m": 7.002e-5, "bandwidth_m": 2.1e-5,
+    "photflam": null, "photzpt": null, "vegamag_zpt": null, "abmag_zpt": null,
+    "pixel_scale_arcsec": 3.2, "psf_fwhm_arcsec": 5.76,
+    "bunit_raw": "Jy/pixel", "bunit_calibrated": "Jy/pixel",
+    "jy_per_dn": 1.0,
+    "reference": "Poglitsch et al. 2010; 10.1051/0004-6361/200913577"
+  },
+  "Herschel/PACS/160um": {
+    "telescope": "Herschel", "instrument": "PACS", "detector": "Ge:Ga", "filter": "160um",
+    "pivot_wavelength_m": 1.567e-4, "bandwidth_m": 6.7e-5,
+    "photflam": null, "photzpt": null, "vegamag_zpt": null, "abmag_zpt": null,
+    "pixel_scale_arcsec": 6.4, "psf_fwhm_arcsec": 11.64,
+    "bunit_raw": "Jy/pixel", "bunit_calibrated": "Jy/pixel",
+    "jy_per_dn": 1.0,
+    "reference": "Poglitsch et al. 2010; 10.1051/0004-6361/200913577"
+  },
+  "VLT/HAWKI/Ks": {
+    "telescope": "VLT", "instrument": "HAWK-I", "detector": "HAWAII-2RG", "filter": "Ks",
+    "pivot_wavelength_m": 2.146e-6, "bandwidth_m": 3.2e-7,
+    "photflam": null, "photzpt": null, "vegamag_zpt": 23.5, "abmag_zpt": 23.5,
+    "pixel_scale_arcsec": 0.106, "psf_fwhm_arcsec": 0.4,
+    "bunit_raw": "ADU", "bunit_calibrated": "erg/s/cm2/Angstrom",
+    "jy_per_dn": null,
+    "reference": "Pirard et al. 2004; 10.1117/12.552030"
+  },
+  "2MASS/J": {
+    "telescope": "2MASS", "instrument": "Camera", "detector": "HgCdTe", "filter": "J",
+    "pivot_wavelength_m": 1.235e-6, "bandwidth_m": 1.62e-7,
+    "photflam": null, "photzpt": null, "vegamag_zpt": 23.0, "abmag_zpt": 23.0,
+    "pixel_scale_arcsec": 1.0, "psf_fwhm_arcsec": 2.8,
+    "bunit_raw": "DN", "bunit_calibrated": "erg/s/cm2/Angstrom",
+    "jy_per_dn": null,
+    "reference": "Cohen et al. 2003; 10.1086/376474"
+  },
+  "WISE/W3": {
+    "telescope": "WISE", "instrument": "WISE", "detector": "Si:As", "filter": "W3",
+    "pivot_wavelength_m": 1.157e-5, "bandwidth_m": 5.51e-6,
+    "photflam": null, "photzpt": null, "vegamag_zpt": null, "abmag_zpt": 15.0,
+    "pixel_scale_arcsec": 2.75, "psf_fwhm_arcsec": 6.5,
+    "bunit_raw": "DN", "bunit_calibrated": "Jy",
+    "jy_per_dn": null,
+    "reference": "Wright et al. 2010; 10.1088/0004-6256/140/6/1868"
+  }
+}

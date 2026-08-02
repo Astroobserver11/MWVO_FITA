@@ -1,0 +1,438 @@
+{
+  "$schema": "https://fits-alpha.org/schema/format-card-0.2.json",
+  "card_version": "0.7",
+  "generated": "2026-08-02",
+  "conformed_to": "FITA_FORMAT_STANDARD.md v1.1 RATIFIED + FITA_AMENDMENT__2026-08-02.md (proposed v1.2). Where this card and the standard disagree, the standard governs.",
+  "purpose": "Self-description of the FITA format for AI agents. Read this first: it tells you what a .fita file is, what is trustworthy inside it, WHICH KNOWN DEFECTS affect files you will encounter, and which operations are safe to perform unattended. Generated from the same Op/spec metadata that drives the CLI and MCP server, so it does not drift from the tools.",
+  "format": {
+    "name": "FITA",
+    "long_name": "Flexible Image Transfer Alpha",
+    "extension": ".fita",
+    "mime": "application/fits",
+    "mime_note": "Standard §3 [CORRECTION]: 'application/fits+alpha' is NOT registered with IANA and MUST NOT be emitted into provenance metadata. Conformant files declare access_format = 'application/fits'. Do not repeat the +alpha type as though it were registered.",
+    "based_on": "FITS (FITS Standard v4.0)",
+    "magic": "SIMPLE = T (every .fita is a valid FITS MEF; measured: 18/18 files pass verify('exception') with 0 warnings)",
+    "version_keyword": "FITAVER",
+    "current_spec": "1.2 — amendment PROPOSED 2026-08-02, not yet folded into the canonical standard on ATOP. v1.1 was ratified the same day; 1.2 adds only OPTIONAL structure (FITA_ADJ schema, FITA_ZRF/FITA_ZAN).",
+    "as_built_files": "Files before 2026-08-02 declare 1.0 and carry the legacy defects (GRANDFATHERED under D-1). Files written today may declare 1.1 or 1.2; both are readable, the added structure is OPTIONAL throughout.",
+    "siblings": {
+      "FITR": {
+        "ext": ".fitr",
+        "role": "radio/interferometry, HDF5-native, complex64 visibilities",
+        "status": "v0.1 DRAFT, no implementation"
+      },
+      "FITO": {
+        "ext": ".fito",
+        "role": "ISM energy-budget calculation object; CONSUMES FITA/FITR",
+        "status": "DESIGN-ONLY, no code"
+      },
+      "FITSA": {
+        "note": "DIFFERENT older format (annotated event cutouts). One-letter name hazard — never abbreviate either as 'the FITS-A format'."
+      }
+    }
+  },
+  "core_invariant": {
+    "statement": "FLUX is sacred; ALPHA is display. FLUX_* holds calibrated physical flux — it IS the science. ALPHA_* is display-only transparency derived from a selected flux range. Deriving, recomputing or overriding alpha MUST NOT modify FLUX_* by any amount, including round-off.",
+    "why_it_matters_to_you": "Any answer about physical brightness, SED, or photometry must come from FLUX_*, never from ALPHA_* or a composited display raster. Re-deriving alpha is always safe and reversible.",
+    "measured_status": "HOLDS EXACTLY in the default FLOAT32 mode — round-trip returns numpy.array_equal == True, 0 of 4096 pixels altered. The format's central promise is kept.",
+    "exception": "Was violated catastrophically under FITAPACK='SPLIT16'. D-2 ruled DELETE: the writer now raises on both write and read, so no conformant path can produce or consume it. See known_defects.R5."
+  },
+  "hdu_layout": [
+    {
+      "index": 0,
+      "name": "PRIMARY",
+      "role": "no data; global keywords FITAVER, FITAPACK, FITANL (MUST); FITACW/FITACH, BUNIT (SHOULD)"
+    },
+    {
+      "index": 1,
+      "name": "FITA_LAYERS",
+      "role": "BINTABLE layer index — NON-AUTHORITATIVE (see authority rule)"
+    },
+    {
+      "index": "per layer, ascending, contiguous",
+      "name": "FLUX_nnnn",
+      "role": "IMAGE, calibrated flux, BITPIX=-32 under FLOAT32. REQUIRED. Header is AUTHORITATIVE."
+    },
+    {
+      "index": "per layer",
+      "name": "ALPHA_nnnn",
+      "role": "IMAGE, uint16 0..65535 transparency. REQUIRED."
+    },
+    {
+      "index": "per layer",
+      "name": "UNCERT_nnnn",
+      "role": "IMAGE, BITPIX=-32, 1-sigma, same units as its FLUX_*. OPTIONAL."
+    },
+    {
+      "index": "per layer",
+      "name": "MASK_nnnn",
+      "role": "IMAGE, BITPIX=8 bitmask: bit0 bad, bit1 saturated, bit2 cosmic ray, bit3 gap. OPTIONAL."
+    },
+    {
+      "index": "N-1",
+      "name": "FITA_ADJ",
+      "role": "BINTABLE adjustment stack -- non-destructive display state. OPTIONAL at every level. IMPLEMENTED 2026-08-02 (D-3): columns ORDER, ADJ_TYPE, ENABLED, NAME, LAYER_ID, PARAMS(JSON). Write via io.write(adjustments=...), read via io.read_adjustments(path). Written at HDU N-1, before FITA_META. Satisfies FITR_SPEC S8's dependency."
+    },
+    {
+      "index": "N",
+      "name": "FITA_META",
+      "role": "BINTABLE provenance, ObsCore DM v1.2. OPTIONAL at FITA-CORE, REQUIRED at FITA-FULL. Reachable via io.write(provenance=...) since 2026-08-02. Written LAST per S4.1."
+    }
+  ],
+  "authority_rule": {
+    "statement": "The FLUX_* extension header is NORMATIVE. FITA_LAYERS is a non-authoritative index (standard §4.3).",
+    "for_agents": "Read layer metadata from the FLUX_* header. Use FITA_LAYERS only to enumerate layers without touching image data. Where they disagree, the header wins and a validator should report the discrepancy.",
+    "also": "Never re-apply BSCALE/BZERO to data a FITS library has already scaled (standard §2.2)."
+  },
+  "layer_keywords": {
+    "MUST": {
+      "FITA_LID": "layer index, 1-based, equals nnnn",
+      "FITA_LNM": "human label, <=68 chars",
+      "FITA_BLD": "blend-mode code — unknown codes MUST raise, never fall back to NORMAL",
+      "FITA_OPC": "opacity [0,1]",
+      "FITA_ALS": "alpha source: LUM | USER | NONE",
+      "FITA_VIS": "layer visibility — NEW in v1.1; absent from all v1.0 files, see known_defects.R3"
+    },
+    "SHOULD": {
+      "FITA_XOF": "canvas x-offset px",
+      "FITA_YOF": "canvas y-offset px",
+      "FITA_FMN": "flux floor used for alpha",
+      "FITA_FMX": "flux ceiling",
+      "FITA_WCV": "central wavelength in METRES"
+    },
+    "MAY": {
+      "FITA_WBW": "bandpass FWHM, metres",
+      "FITA_ZDP": "stereo depth [0,1]",
+      "FITA_UNC": "EXTNAME of uncertainty plane",
+      "FITA_MSK": "EXTNAME of mask plane"
+    }
+  },
+  "zdp_stereo_depth": {
+    "meaning": "FITA_ZDP encodes PHYSICAL ISM penetration depth, not arbitrary stacking order. 0.0 = deepest/background, 1.0 = foreground.",
+    "examples": {
+      "21cm HI": 0.0,
+      "H-alpha ionised gas": 0.5,
+      "X-ray hot plasma": 1.0
+    },
+    "renderer_note": "A renderer SHOULD apply a differential x-offset proportional to ZDP for binocular parallax. The standard deliberately does NOT specify the parallax scaling — that is a property of a rendering job, not a file.",
+    "absence": "Absence MUST be encoded by omitting the keyword, not by a negative sentinel."
+  },
+  "blend_modes": {
+    "arithmetic": [
+      "NORMAL",
+      "ADD",
+      "SCREEN",
+      "MULTIPLY",
+      "DIFF"
+    ],
+    "contrast": [
+      "OVERLAY",
+      "SOFTLGT",
+      "HARDLGT"
+    ],
+    "exposure": [
+      "CDODGE",
+      "CBURN"
+    ],
+    "hsl": [
+      "LUM",
+      "COLOR",
+      "HUE",
+      "SAT"
+    ],
+    "rules": "All operate on float32 normalised to [0,1] and are DISPLAY operations — they MUST NOT be applied to FLUX_*. An unknown code MUST raise.",
+    "gotcha_for_agents": "The four HSL modes need 3-channel input. On single-channel data the implementation promotes to greyscale, which makes LUM mathematically IDENTICAL to NORMAL — so LUM, though advertised as the canonical multi-band mode, is a no-op on a single layer.",
+    "practice": "ADD/SCREEN for emission-line compositing; LUM for false-colour where brightness comes from the science layer and hue from a reference layer."
+  },
+  "provenance_paci": {
+    "status": "NOT a standard §6.2 keyword set — a uranodyne convention written into layer extra_header by uranodyne.pipeline.paci. Its place in the format is an OPEN QUESTION (design D-8): standard §10.3 assigns 'epistemic status' to the sibling format FITO, and ANCHORCL is epistemic status.",
+    "keywords": {
+      "CITATION": "where the bytes came from",
+      "UNCERTVL": "uncertainty value",
+      "UNCKIND": "ABS | REL | MAP | UNKNOWN",
+      "ANCHORCL": "MEASURED | SCOUTED | ANCHORED"
+    },
+    "anchor_class_meaning": {
+      "MEASURED": "directly measured native-resolution quantity — highest trust",
+      "SCOUTED": "coarse prior from a low-resolution wide-field product, not yet point-confirmed",
+      "ANCHORED": "a SCOUTED value reconciled against >=1 MEASURED point and promoted"
+    },
+    "rule_for_agents": "When you report a value, report its ANCHORCL if present. Never treat SCOUTED as MEASURED. Operations combining layers must DEMOTE to the least-trusted input. Do not assume PACI is present — it is not part of FITA-CORE."
+  },
+  "conformance_levels": {
+    "note": "The standard defines EXACTLY TWO levels (§2.1). Earlier drafts of the Foundry design invented a four-level L0..L3 scheme — that scheme is withdrawn; do not use it.",
+    "FITA-CORE": "every MUST in standard §§3-7 satisfied. Minimum for a file to be called .fita; what any reader may assume.",
+    "FITA-FULL": "FITA-CORE + every SHOULD in S3-9 + a conformant ObsCore v1.2 FITA_META HDU. REACHABLE as of 2026-08-02 -- pass provenance= to io.write()/FITACube.save().",
+    "recorded_in_file": false,
+    "validator": "fita.validate(path) -> ConformanceReport — BUILT. Exposed as the CLI command `fita conform` (--quiet, --strict; exit 0/1/2). Report carries Finding(clause, severity) plus .is_core/.is_full/.level. flux_roundtrip_ok() implements the standard S5.4 bit-exactness check.",
+    "nan_gotcha": "S5.4 bit-exactness MUST be NaN-aware: np.array_equal is False whenever NaN is present (NaN != NaN) and real astro images are full of blanked pixels. Compare NaN masks and non-NaN pixels separately."
+  },
+  "known_defects": {
+    "preamble": "STATUS 2026-08-02: ALL SIX defects are now FIXED in the writer. The distinction that matters to you is TEMPORAL: files written before 2026-08-02 still carry the legacy defects (wrapped alpha, invalid BUNIT, no FITA_META); files written after do not. Always run validate() rather than assuming.",
+    "R1_alpha_wrap": {
+      "what": "Alpha written as signed int16 with NO BZERO=32768, so every value above 32767 (more than half-opaque) is stored NEGATIVE.",
+      "scope": "ALL 18 archived files. In one file every alpha plane is uniformly -1, which is 65535 (fully opaque) wrapped.",
+      "why_invisible": "The library's read path casts straight back to uint16, so the wrap is undone by a matching bug INSIDE FITA.",
+      "consequence_for_you": "DS9, QFitsView and Aladin have no compensating bug — they read alpha as -32768..32767. This is the precise sense in which FITA v1.0 is structurally legal FITS but semantically wrong. No FLUX is affected.",
+      "correct_encoding": "BITPIX=16 with BZERO=32768 and BSCALE=1",
+      "note": "The Zarr backend already writes alpha correctly as uint16 — the FITS writer is the outlier.",
+      "status_2026_08_02": "FIXED 2026-08-02 — io.py writes uint16, astropy emits BZERO=32768; verified range 0..65535. LEGACY FILES STILL AFFECTED."
+    },
+    "R2_meta_unreachable": {
+      "what": "fita.ivoa.make_meta_hdu() works, but fita.io.write() has no parameter to pass it and never appends it.",
+      "consequence_for_you": "FITA_META is absent from all 18 files and FITA-FULL is unreachable through the documented API. Do not assume provenance exists.",
+      "status_2026_08_02": "FIXED 2026-08-02 -- io.write(..., provenance=dict|BinTableHDU) appends FITA_META; FITACube.save() passes it through. FITA-FULL is now reachable through the documented API (verified: a written file validates FITA-FULL)."
+    },
+    "R3_visible_lost": {
+      "what": "Layer visibility is stored only in the FITA_LAYERS table; readers take everything from the header, so it is silently lost.",
+      "scope": "Every round trip, in BOTH the FITS and Zarr backends. A layer written visible=False reads back visible=True.",
+      "fix": "FITA_VIS keyword, new and required in v1.1.",
+      "status_2026_08_02": "FIXED — FITA_VIS required and emitted; visible round-trips [T,F,T]."
+    },
+    "R4_invalid_bunit": {
+      "what": "Two BUNIT values fail astropy unit parsing: 'alpha16' on every ALPHA_* header, and 'same as FLUX' on every UNCERT_* header.",
+      "consequence_for_you": "A pipeline trusting BUNIT on an uncertainty plane gets a parse error instead of an error bar. ALPHA_* should omit BUNIT or use ''; UNCERT_* must carry the parent FLUX_*'s actual unit string.",
+      "status_2026_08_02": "FIXED — 'alpha16' omitted; UNCERT carries the parent flux unit."
+    },
+    "R5_split16_destructive": {
+      "what": "FITAPACK='SPLIT16' is not lossy — it is DESTRUCTIVE, and the file does not contain the information needed to recover flux at all. Three faults compound: int16 wrap, astropy discarding BSCALE/BZERO on integer data (written file has BSCALE=None, BZERO=None), and a read fallback to BSCALE=1/BZERO=0.",
+      "measured": "Truth 10..1000 Jy read back as -32760..32759; max relative error 3.5e6; 4096 of 4096 pixels altered; brightest pixel read back as -1.",
+      "status": "DEPRECATED in v1.1. A conformant writer MUST NOT emit it; a reader encountering it MUST RAISE rather than return flux values.",
+      "scope": "0 of 18 archived files use it — no archived science is harmed.",
+      "do_not_repeat": "The widely-quoted '~1.5e-5 relative error' describes only the encoder function in isolation and has NEVER described the file format. Even repaired, the quantum is a constant ABSOLUTE step of (FMAX-FMIN)/65535, so relative error approaches 100% for faint pixels; and default percentile auto-ranging clips away the brightest and faintest 0.5% of pixels outright.",
+      "status_2026_08_02": "FIXED — D-2 ruled DELETE; io.py raises on BOTH write and read. 0 of 18 archived files ever used it."
+    },
+    "R6_obscore_overclaim": {
+      "what": "'ObsCore DM v1.1 compliant' is an OVERCLAIM and is withdrawn. Mandatory columns are missing (obs_publisher_did, s_region, access_estsize, o_ucd, s_xel1, s_xel2, t_xel, em_xel) and per-column UCDs are never written to the file — no TUCDn keywords are emitted.",
+      "correct_wording": "ObsCore DM v1.2 (full mandatory column set, TUCDn annotated)",
+      "open": "FITA declares ObsCore v1.1, FITR declares v1.2 — one version must be chosen for the family (standard D-4).",
+      "status_2026_08_02": "FIXED 2026-08-02 -- D-4 implemented: all 26 ObsCore v1.2 mandatory columns present (32 total), every column carries a TUCDn, access_format = \"application/fits\". The honest wording is now \"ObsCore DM v1.2\" -- no longer a subset."
+    }
+  },
+  "backends": {
+    "FITS-MEF": {
+      "module": "fita.io",
+      "status": "default; verified; but is the outlier on alpha encoding (R1)"
+    },
+    "Zarr": {
+      "module": "fita.backends.zarr",
+      "status": "VERIFIED — flux bit-identical vs FITS; uncert, mask, WCS, zdepth, opacity, blend, name preserved; alpha correct as uint16"
+    },
+    "HDF5": {
+      "module": "fita.backends.hdf5",
+      "status": "UNVERIFIED — h5py not installed on ATOP, could not be exercised. The claim 'survives round-trip through all three backends' is confirmed for TWO of three."
+    },
+    "data_model_rule": "The data model is container-independent and MUST be preserved identically across all three. 'visible' is lost by both testable backends — a data-model defect, not a container one.",
+    "family_contract": "Interconversion: FITS folder <=> FITS-MEF (FITA) <=> HDF5 (FITO/FITR), round-trip, with any lossy step LOGGED. A conversion that silently loses a property is non-conformant."
+  },
+  "operations": {
+    "note": "Verbs of the FITA Foundry I/P/E bus (DESIGN, PARKed — see FITA_FOUNDRY_DESIGN.md v0.3). NOT YET BUILT. The only shipped CLI verbs are listed under interfaces.cli_today.",
+    "side_effect_legend": {
+      "pure": "in-memory only; always safe",
+      "writes_file": "creates/overwrites a file; safe with a named output path",
+      "network": "fetches remote data; rate-limited; confirm if quota matters",
+      "external_app": "drives another running application (DS9, Photoshop); confirm before use",
+      "irreversible": "cannot be undone from the manifest; requires explicit human confirmation"
+    },
+    "ingest": [
+      {
+        "name": "from-fits",
+        "accepts": "FITS image/cube",
+        "side_effect": "pure"
+      },
+      {
+        "name": "from-psd",
+        "accepts": "Adobe .psd",
+        "side_effect": "pure"
+      },
+      {
+        "name": "from-hdf5",
+        "accepts": "HDF5 FITA-family",
+        "side_effect": "pure",
+        "caveat": "backend unverified"
+      },
+      {
+        "name": "from-zarr",
+        "accepts": "Zarr store",
+        "side_effect": "pure"
+      },
+      {
+        "name": "from-survey",
+        "accepts": "DSS/2MASS/WISE by position",
+        "side_effect": "network"
+      },
+      {
+        "name": "from-hips",
+        "accepts": "HiPS survey by (l,b,fov)",
+        "side_effect": "network"
+      }
+    ],
+    "process": [
+      {
+        "name": "reselect",
+        "does": "re-derive alpha from new flux range/stretch",
+        "side_effect": "pure",
+        "reversible": true
+      },
+      {
+        "name": "composite",
+        "does": "blend visible layers to a display raster",
+        "side_effect": "pure",
+        "reversible": true
+      },
+      {
+        "name": "adjust",
+        "does": "push a LEVELS/CURVES/... adjustment layer",
+        "side_effect": "pure",
+        "caveat": "IN MEMORY ONLY — nothing serialises the adjustment stack; it vanishes on save (FITA_ADJ is never written)"
+      },
+      {
+        "name": "reproject",
+        "does": "regrid a layer to target WCS",
+        "side_effect": "pure",
+        "reversible": false
+      },
+      {
+        "name": "register",
+        "does": "align layers",
+        "side_effect": "pure",
+        "reversible": false
+      },
+      {
+        "name": "sed",
+        "does": "extract SED at pixel/aperture from FLUX",
+        "side_effect": "pure"
+      },
+      {
+        "name": "photometry",
+        "does": "aperture/stack photometry from FLUX",
+        "side_effect": "pure"
+      },
+      {
+        "name": "pack",
+        "does": "VESTIGIAL — SPLIT16 is deleted (D-2); no reachable input, no legal output. Recommend dropping.",
+        "side_effect": "pure"
+      },
+      {
+        "name": "promote",
+        "does": "reconcile SCOUTED against MEASURED -> ANCHORED",
+        "side_effect": "pure"
+      }
+    ],
+    "emit": [
+      {
+        "name": "to-ds9",
+        "target": "SAO DS9 live via SAMP/XPA",
+        "fidelity": "app-native",
+        "side_effect": "external_app",
+        "caveat": "R1 fixed for new files; WARN the user when emitting a pre-2026-08-02 file to this target"
+      },
+      {
+        "name": "to-rgb",
+        "target": "qFITSView RGB FITS",
+        "fidelity": "app-native",
+        "side_effect": "writes_file",
+        "caveat": "R1 fixed for new files; WARN the user when emitting a pre-2026-08-02 file to this target"
+      },
+      {
+        "name": "liberator",
+        "target": "FITS Liberator sidecar JSON",
+        "fidelity": "sidecar",
+        "side_effect": "writes_file"
+      },
+      {
+        "name": "to-hdf5",
+        "target": "HDF5",
+        "fidelity": "lossless (UNVERIFIED)",
+        "side_effect": "writes_file"
+      },
+      {
+        "name": "to-zarr",
+        "target": "Zarr",
+        "fidelity": "lossless (verified)",
+        "side_effect": "writes_file",
+        "caveat": "none — Zarr wrote alpha correctly all along"
+      },
+      {
+        "name": "to-hips",
+        "target": "HiPS tiles + MOC for Aladin",
+        "fidelity": "display-lossy",
+        "side_effect": "writes_file",
+        "caveat": "R1 fixed for new files; WARN the user when emitting a pre-2026-08-02 file to this target"
+      },
+      {
+        "name": "to-votable",
+        "target": "VOTable catalog/SED",
+        "fidelity": "lossless-table",
+        "side_effect": "writes_file"
+      }
+    ]
+  },
+  "sibling_boundary": {
+    "rule": "FITA MUST NOT acquire paradigm tags, [ESTABLISHED]/[PROPOSED — MWVO] fences, or (input, core, paradigm) stamps. A physics claim has no business in an image container.",
+    "FITA_holds": "calibrated images + display metadata — 'what did the instrument record?'",
+    "FITO_holds": "derived physical quantities + their epistemic status — 'what does that imply, under which paradigm?'",
+    "uncertainty": "OPTIONAL in FITA (UNCERT_*), MANDATORY in FITO",
+    "direction": "FITA is an INPUT to FITO; FITO consumes FITA and FITR and MUST NOT redefine flux storage."
+  },
+  "agent_guidance": {
+    "reading": "To answer 'what is this file', report: FITAVER, conformance level from validate(), layer count and bands from the FLUX_* headers (not FITA_LAYERS), and the ANCHORCL distribution if PACI is present. Physical questions read FLUX_*; appearance questions read ALPHA_*/composite.",
+    "always_state_defects": "Run validate() first. Files written before 2026-08-02 (FITAVER 1.0) have wrapped alpha and invalid BUNIT -- warn before handing them to DS9/Aladin/QFitsView. Files written after are clean.",
+    "safe_unattended": "Any op with side_effect=pure, and writes_file ops when the user gave an output path.",
+    "requires_confirmation": "network (quota), external_app (drives another program), irreversible (no undo).",
+    "never_do": [
+      "Do not treat a display raster or ALPHA as physical flux.",
+      "Do not upgrade an anchor class without a MEASURED reconciliation.",
+      "Do not emit FITAPACK='SPLIT16', and do not trust flux read from a SPLIT16 file — raise instead.",
+      "Do not emit 'application/fits+alpha' as a registered MIME type.",
+      "Do not claim ObsCore compliance; say 'ObsCore-derived subset'.",
+      "Do not repeat the '~1.5e-5 relative error' figure for SPLIT16.",
+      "Do not write paradigm or epistemic stamps into a .fita.",
+      "Do not overwrite the input .fita in place unless explicitly told to."
+    ],
+    "extensibility": "New Ops register via entry-point groups fita.ingest / fita.process / fita.emit and appear here automatically.",
+    "reaching_full": "To produce a VO-registerable file, pass provenance to the writer, e.g. write(path, layers, provenance={'obs_id': ..., 'facility': ..., 'ra': ..., 'dec': ..., 'extra': {'obs_publisher_did': 'ivo://...', 'obs_collection': ..., 's_region': 'POLYGON ICRS ...'}}). Spatial/spectral extents and axis counts are derived from the layers automatically."
+  },
+  "interfaces": {
+    "cli_today": "fita conform | doctor | from-fits | from-psd | reselect | info | rgb | ds9-plugin | liberator. `fita` is on PATH as of 2026-08-02 (user PATH); `python -m fita` also works.",
+    "cli_planned": "fita <ingest|process|emit> <op> [args]  +  fita validate  +  fita doctor",
+    "service_planned": "fitad serve (HTTP/JSON) | fitad --mcp (agent tools)",
+    "python": "from fita import FITACube, FITALayer; FITACube(layers=..., adjustments=AdjustmentStack([...])).save(path, provenance={...})",
+    "docs": {
+      "normative": "FITA_FORMAT_STANDARD.RATIFIED-2026-08-02.md (v1.1 RATIFIED) — governs everything",
+      "design": "FITA_FOUNDRY_DESIGN.md (v0.3) — the Foundry is PARKed pending the FITA paper",
+      "tutorial": "FITA_Format_Guide.ipynb — NON-NORMATIVE; still repeats the withdrawn SPLIT16 and ObsCore claims",
+      "readme": "README.md — NON-NORMATIVE; predates the standard",
+      "ratification": "FITA_v1.1_RATIFICATION__2026-08-02.md — the D-1..D-7 rulings",
+      "amendment": "FITA_AMENDMENT__2026-08-02.md — the v1.1 -> v1.2 clause text awaiting application"
+    }
+  },
+  "adjustments": {
+    "what": "Non-destructive display transforms applied in sequence at composite time. They NEVER modify FLUX_* (standard S5.2).",
+    "types": {
+      "LEVELS": "input black/white/gamma + output remap",
+      "CURVES": "piecewise-linear tone curve (variable-length control points)",
+      "BRIGHTNESS": "brightness + contrast",
+      "FXSTRETCH": "astrophysical stretch: linear|log|sqrt|asinh|power",
+      "BANDMAP": "assign a layer to an R/G/B display channel (false colour)",
+      "FXNORM": "divide by an instrument response curve"
+    },
+    "serialisation": "Common parameters are REAL TYPED COLUMNS (author ruling Q1, 2026-08-02): ORDER, ADJ_TYPE, ENABLED, NAME, LAYER_ID + IN_BLACK/IN_WHITE/GAMMA/OUT_BLACK/OUT_WHITE, BRIGHT/CONTRAST, STRETCH/ASINH_A/POWER_EXP, CHANNEL, WAVE_CVAL. A JSON PARAMS column is reserved for the genuinely variable-length fields only (control_points, response_curve, wavelengths) and is auto-sized to the longest row. Inapplicable columns use the D-5 absence convention: NaN for floats, empty for text.",
+    "rule_for_agents": "An unknown ADJ_TYPE MUST raise, never be silently dropped -- the same rule S8.1 sets for unknown blend modes. A display stack that quietly loses a step is worse than one that refuses to load.",
+    "gotcha": "Before 2026-08-02 nothing serialised the stack: adjustments existed in memory and vanished on save, and the old to_records() emitted an empty parameter dict, so a 'round trip' silently restored DEFAULT adjustments. When checking a round trip, compare parameter VALUES, not just that an adjustment came back.",
+    "why_typed": "A reader that can open the file but cannot see that GAMMA = 2.2 has not really been given the data. FITA's premise is that any FITS reader can open it, so the parameters must be legible in the table.",
+    "status": "IMPLEMENTED 2026-08-02 and specified in FITA_AMENDMENT__2026-08-02.md S3.5 (new S8.3) — PROPOSED, not yet in the canonical standard."
+  },
+  "stereo_geometry": {
+    "keywords": {
+      "FITA_ZSC": "total horizontal parallax in PIXELS across the full ZDP range (OPTIONAL, renderer-written)",
+      "FITA_ZRF": "the ZDP value placed at ZERO parallax (the screen plane). Default 0.0 when omitted.",
+      "FITA_ZAN": "angular measure of the full-range parallax, arcsec on sky (OPTIONAL)"
+    },
+    "convention": "dx = +/- (FITA_ZSC / 2) * (FITA_ZDP - FITA_ZRF);  left eye -, right eye +",
+    "reference_plane": "With ZRF=0.0 the background sits at the screen and everything is pushed forward. With ZRF=0.5 the mid-depth layer sits at the screen, so HI recedes BEHIND it and X-ray plasma comes forward -- the depth budget is spent in both directions about a chosen plane.",
+    "angular_rule": "Author ruling Q2: a bare pixel count satisfies the real->model metric chain ONLY when a complete model is missing. Otherwise an angular measure is required UNLESS deducible from context -- a celestial WCS is that context (pixel scale x FITA_ZSC). fita.stereo.angular_parallax() performs the deduction; the validator raises a SHOULD when the angle is neither recorded nor deducible.",
+    "rule_for_agents": "Report which it is: recorded, deduced from WCS, or pixel-only. Never fabricate a pixel scale to manufacture an angle -- angular_parallax() returns None rather than guessing. Also note None != 0.0 for FITA_ZSC: None means no renderer recorded a geometry, 0.0 means one did and it was flat.",
+    "status": "IMPLEMENTED 2026-08-02 and specified in FITA_AMENDMENT__2026-08-02.md S3.4 — PROPOSED, not yet in the canonical standard. FITA_ZAN sky-vs-viewing-angle semantics remain OPEN."
+  }
+}
