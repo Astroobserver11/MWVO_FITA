@@ -14,6 +14,33 @@ that cannot touch the science.**
 
 ---
 
+## Purpose
+
+The human mind and perceptual system are astonishing. Evolved through biology
+into consciousness, they are complex, agile, and able to resolve pattern and
+create understanding. The advancement of technology, remote sensing, and the
+exploitation of the electromagnetic spectrum to discover nature is a fact of
+our civilisation. Digital darkroom technology has evolved from desktop
+publishing to astronomical use, and perhaps toward the exploitation of human
+*and machine* vision throughout the sciences.
+
+FITA is a format that enables its user to balance data in a way that
+**re-naturalises sliced and measured phenomena lying beyond the reach of human
+senses, while maintaining the scientific integrity of the measurements**. It
+was designed to satisfy multi-wavelength astronomy and the integration of
+multispectral measurements into physical models and astrophysical inference.
+FITA is therefore intended to be **multi-wavelength and multidisciplinary**.
+
+FITA is at the heart of the **MWVO — the Multi-Wave Virtual Observatory** —
+which exists to facilitate the astronomer's vision of phenomena beyond natural
+sensory capacity. The human mind can inhabit the entire phenomenological
+electromagnetic space. FITA serves science by systematically maintaining the
+integrity of measurement and flux accumulation, while allowing the flexibility
+and agility to manipulate presentation and provide sentient access to visual
+representations of data.
+
+---
+
 ## What it is
 
 A `.fita` file carries several co-registered science images in one FITS
