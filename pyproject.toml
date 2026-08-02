@@ -66,3 +66,8 @@ fita = [
     "instrument_db/*.json",   # instrument calibration database
     "ai/*.json",              # FITA_FORMAT_CARD.json — the AI format card
 ]
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: regenerates the whole corpus; deselect with -m 'not slow'",
+]

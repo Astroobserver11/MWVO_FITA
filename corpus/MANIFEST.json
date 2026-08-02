@@ -1,0 +1,268 @@
+{
+  "corpus": "FITA conformance corpus",
+  "format_version": "1.2",
+  "generator": "corpus/build_corpus.py",
+  "regenerate": "python corpus/build_corpus.py",
+  "verify": "python corpus/build_corpus.py --verify",
+  "note": "Files are generated deterministically -- regenerating must produce byte-identical output. Each entry records the level a conformant validator MUST report.",
+  "tiers": {
+    "conformance": "positive/negative pairs, one per enforced clause",
+    "legacy": "v1.0 files as actually written; grandfathered under D-1",
+    "science": "small multi-band exemplar -- what the format is for",
+    "roundtrip": "every attribute a format bridge could silently drop"
+  },
+  "survival_spec": [
+    "flux bit-exact (NaN-aware: compare NaN masks and finite pixels separately)",
+    "alpha values in 0..65535 with BZERO=32768 -- not signed and wrapped",
+    "per-layer visible flag, including False",
+    "per-layer blend_mode and opacity",
+    "per-layer zdepth, including ABSENT (must not become 0.0)",
+    "companion UNCERT_* and MASK_* planes",
+    "FITA_ADJ order, enabled flags, and typed parameter values",
+    "FITA_ADJ variable-length parameters (curve points, response arrays)",
+    "stereo FITA_ZSC / FITA_ZRF / FITA_ZAN",
+    "ObsCore provenance columns and their TUCDn annotations"
+  ],
+  "counts": {
+    "conformance": 15,
+    "legacy": 1,
+    "science": 1,
+    "roundtrip": 1
+  },
+  "files": [
+    {
+      "file": "conformance/core_minimal.fita",
+      "tier": "conformance",
+      "purpose": "Smallest file that satisfies every MUST",
+      "clause": "S3-S7",
+      "expected_level": "FITA-CORE",
+      "actual_level": "FITA-CORE",
+      "failing_clauses": [
+        "S9"
+      ],
+      "bytes": 25920,
+      "sha256": "7c7b15b549dc5bb8d328a6c5f584859ad7e22178185d8d9586695e993e05fa22"
+    },
+    {
+      "file": "conformance/full_provenanced.fita",
+      "tier": "conformance",
+      "purpose": "FITA-FULL: ObsCore v1.2 provenance present",
+      "clause": "S9",
+      "expected_level": "FITA-FULL",
+      "actual_level": "FITA-FULL",
+      "failing_clauses": [],
+      "bytes": 54720,
+      "sha256": "da0ae93be64cf7fa0f2657625b62a87eef552cd59458b599d1a77b14143e35e0"
+    },
+    {
+      "file": "conformance/full_with_adjustments.fita",
+      "tier": "conformance",
+      "purpose": "FITA_ADJ display stack, typed columns",
+      "clause": "S8.3",
+      "expected_level": "FITA-FULL",
+      "actual_level": "FITA-FULL",
+      "failing_clauses": [],
+      "bytes": 63360,
+      "sha256": "7251d94f8d3593a367aa93c534efaa515879fbae99fee99b5a0f4f439ba0db45"
+    },
+    {
+      "file": "conformance/full_with_stereo.fita",
+      "tier": "conformance",
+      "purpose": "Stereo geometry: ZSC + ZRF + ZAN",
+      "clause": "S8.2",
+      "expected_level": "FITA-FULL",
+      "actual_level": "FITA-FULL",
+      "failing_clauses": [],
+      "bytes": 54720,
+      "sha256": "3b04f4bb363c8196cc04ebccdf0794284b2f84d4ec7b0d8c45a7e3e6603a0994"
+    },
+    {
+      "file": "conformance/full_with_uncert_mask.fita",
+      "tier": "conformance",
+      "purpose": "Companion UNCERT_* and MASK_* planes",
+      "clause": "S6.5",
+      "expected_level": "FITA-FULL",
+      "actual_level": "FITA-FULL",
+      "failing_clauses": [],
+      "bytes": 89280,
+      "sha256": "9062b67d36983d2e470bfcb694db54e1f3fdc511335522e8a4a166c07ac09b3b"
+    },
+    {
+      "file": "conformance/neg_access_format_overclaim.fita",
+      "tier": "conformance",
+      "purpose": "access_format claims the unregistered '+alpha' MIME type",
+      "clause": "S3",
+      "expected_level": "NON-CONFORMANT",
+      "actual_level": "NON-CONFORMANT",
+      "failing_clauses": [
+        "S3"
+      ],
+      "bytes": 40320,
+      "sha256": "c987fd44b6100226322ecb68bf67ce9a1ad553624add46201312b799b86685bb"
+    },
+    {
+      "file": "conformance/neg_adj_bad_json.fita",
+      "tier": "conformance",
+      "purpose": "FITA_ADJ PARAMS cell is not parseable JSON",
+      "clause": "S8",
+      "expected_level": "NON-CONFORMANT",
+      "actual_level": "NON-CONFORMANT",
+      "failing_clauses": [
+        "S8",
+        "S9"
+      ],
+      "bytes": 34560,
+      "sha256": "35ce2dc4131a0b50c6b55d90f5b5286dc0eec0329a3911d9918587acba1362c3"
+    },
+    {
+      "file": "conformance/neg_adj_unknown_type.fita",
+      "tier": "conformance",
+      "purpose": "FITA_ADJ carries an unknown ADJ_TYPE",
+      "clause": "S8",
+      "expected_level": "NON-CONFORMANT",
+      "actual_level": "NON-CONFORMANT",
+      "failing_clauses": [
+        "S8",
+        "S9"
+      ],
+      "bytes": 34560,
+      "sha256": "a265236cffee867dc49e09a1ab3c670d1c6884bc2c875d975696fe264a735d67"
+    },
+    {
+      "file": "conformance/neg_alpha_bunit_alpha16.fita",
+      "tier": "conformance",
+      "purpose": "ALPHA declares the invalid unit 'alpha16'",
+      "clause": "S7",
+      "expected_level": "NON-CONFORMANT",
+      "actual_level": "NON-CONFORMANT",
+      "failing_clauses": [
+        "S6.3/S7",
+        "S9"
+      ],
+      "bytes": 25920,
+      "sha256": "e03475d8f051ac86b74b1a42de748c64a4e9f8fb12f887c7973f55e6f3a85d67"
+    },
+    {
+      "file": "conformance/neg_alpha_no_bzero.fita",
+      "tier": "conformance",
+      "purpose": "ALPHA written without BZERO=32768 -- the v1.0 wrapped-alpha defect",
+      "clause": "S6.3",
+      "expected_level": "NON-CONFORMANT",
+      "actual_level": "NON-CONFORMANT",
+      "failing_clauses": [
+        "S6.3",
+        "S9"
+      ],
+      "bytes": 25920,
+      "sha256": "a2b341d1d56589bbaae221b9111621b89956638bec22ad2c1f0742a18c43234f"
+    },
+    {
+      "file": "conformance/neg_bad_blend_code.fita",
+      "tier": "conformance",
+      "purpose": "Unknown FITA_BLD blend code",
+      "clause": "S8",
+      "expected_level": "NON-CONFORMANT",
+      "actual_level": "NON-CONFORMANT",
+      "failing_clauses": [
+        "S8.1",
+        "S9"
+      ],
+      "bytes": 25920,
+      "sha256": "09212a919c85c10e4e8ac0b0f466c2a390a08bd6bedcb9a533146e4530f83462"
+    },
+    {
+      "file": "conformance/neg_missing_fita_vis.fita",
+      "tier": "conformance",
+      "purpose": "Layer keyword FITA_VIS removed",
+      "clause": "S6.2",
+      "expected_level": "NON-CONFORMANT",
+      "actual_level": "NON-CONFORMANT",
+      "failing_clauses": [
+        "S6.2",
+        "S9"
+      ],
+      "bytes": 25920,
+      "sha256": "ef0dcdca657c72de1f10a1521ddbc96e3c75828db1f9f5d59af9defd17c20a06"
+    },
+    {
+      "file": "conformance/neg_nlayers_mismatch.fita",
+      "tier": "conformance",
+      "purpose": "FITANL disagrees with the number of FLUX extensions",
+      "clause": "S4.2",
+      "expected_level": "NON-CONFORMANT",
+      "actual_level": "NON-CONFORMANT",
+      "failing_clauses": [
+        "S4.2",
+        "S9"
+      ],
+      "bytes": 25920,
+      "sha256": "10b5b082e16fa315388c295f4e66e17e52b175e5279a128d4b9f28523b8f94dc"
+    },
+    {
+      "file": "conformance/neg_split16_declared.fita",
+      "tier": "conformance",
+      "purpose": "FITAPACK declares the deleted SPLIT16 mode",
+      "clause": "S6.4",
+      "expected_level": "NON-CONFORMANT",
+      "actual_level": "NON-CONFORMANT",
+      "failing_clauses": [
+        "S6.4",
+        "S9"
+      ],
+      "bytes": 25920,
+      "sha256": "7109c2922e75a27226903abc12381cedba60b6d6a35e3b30924fa2e12a5ac51b"
+    },
+    {
+      "file": "conformance/neg_zsc_not_finite.fita",
+      "tier": "conformance",
+      "purpose": "FITA_ZSC is not a number",
+      "clause": "S8.2",
+      "expected_level": "NON-CONFORMANT",
+      "actual_level": "NON-CONFORMANT",
+      "failing_clauses": [
+        "S8.2",
+        "S9"
+      ],
+      "bytes": 25920,
+      "sha256": "ab38fceee6fad619b5cef58c39a61393def3d15ac6189371b8f72219ddccb88f"
+    },
+    {
+      "file": "legacy/v10_as_built.fita",
+      "tier": "legacy",
+      "purpose": "A v1.0 file as actually written: wrapped alpha, invalid BUNIT, no FITA_VIS. Opens cleanly; must NOT certify.",
+      "clause": "D-1",
+      "expected_level": "NON-CONFORMANT",
+      "actual_level": "NON-CONFORMANT",
+      "failing_clauses": [
+        "S6.2",
+        "S6.3",
+        "S6.3/S7",
+        "S9"
+      ],
+      "bytes": 40320,
+      "sha256": "dfa2a24ad88e057bd5eb37d2c7c2778b35d70f0fa6c0b0365dcaf378c881fc2e"
+    },
+    {
+      "file": "roundtrip/transfusion_reference.fita",
+      "tier": "roundtrip",
+      "purpose": "Carries every attribute a transfusion could silently drop; see survival_spec in the manifest",
+      "clause": "roundtrip",
+      "expected_level": "FITA-FULL",
+      "actual_level": "FITA-FULL",
+      "failing_clauses": [],
+      "bytes": 135360,
+      "sha256": "75d55c96c5688e068c611f4374dc813959bfdd6f112e8129e862047e0f8b4658"
+    },
+    {
+      "file": "science/three_band_field.fita",
+      "tier": "science",
+      "purpose": "Three-band field with depth, blend modes, uncertainty, false-colour band mapping and stereo geometry",
+      "clause": "showcase",
+      "expected_level": "FITA-FULL",
+      "actual_level": "FITA-FULL",
+      "failing_clauses": [],
+      "bytes": 198720,
+      "sha256": "fea5fd1e8a31db544ee7bd6e63700fac6a9266525fea2f5ea782a6b10dfee049"
+    }
+  ]
+}

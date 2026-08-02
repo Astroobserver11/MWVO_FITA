@@ -1,0 +1,34 @@
+# ── binary science data — MUST NOT be line-ending converted ─────────────────
+#
+# A .fita file is a FITS MEF: 80-character ASCII header cards followed by
+# binary data, padded to 2880-byte blocks.  Git's binary heuristic samples the
+# first 8000 bytes, sees only ASCII header, and classifies the file as TEXT.
+# With core.autocrlf=true on Windows that inserts CR bytes into the data
+# sections and shifts every block boundary — silently destroying the file.
+#
+# This was observed on this repository: `git diff --numstat` reported line
+# counts for corpus/*.fita instead of "-".  Marking them binary is not a
+# preference, it is required for the corpus to survive a clone.
+*.fita   binary
+*.fits   binary
+*.fit    binary
+*.h5     binary
+*.hdf5   binary
+*.psd    binary
+*.npy    binary
+
+# ── text, normalised ────────────────────────────────────────────────────────
+*.py     text diff=python
+*.md     text
+*.json   text
+*.toml   text
+*.txt    text
+*.cfg    text
+*.ipynb  text
+
+# Notebooks diff badly by default; keep them whole in review.
+*.ipynb  -diff
+
+# Windows-only helpers keep CRLF.
+*.ps1    text eol=crlf
+*.bat    text eol=crlf

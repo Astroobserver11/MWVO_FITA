@@ -1,0 +1,134 @@
+"""The conformance corpus must agree with its own manifest.
+
+The corpus is the artifact a third-party implementation is scored against and
+part of what the Zenodo record will contain. Two properties have to hold or it
+is not usable as evidence:
+
+  * every file still validates to the level recorded for it, and
+  * regenerating produces byte-identical output.
+
+Both are checked here, so the corpus cannot drift from its labels the way the
+guide notebook drifted from the standard.
+"""
+
+import json
+from pathlib import Path
+
+import pytest
+
+pytest.importorskip("astropy")
+
+from fita.validate import validate
+
+CORPUS = Path(__file__).resolve().parent.parent / "corpus"
+MANIFEST = CORPUS / "MANIFEST.json"
+
+pytestmark = pytest.mark.skipif(
+    not MANIFEST.exists(),
+    reason="corpus not built; run python corpus/build_corpus.py")
+
+
+def _manifest():
+    return json.loads(MANIFEST.read_text(encoding="utf-8"))
+
+
+def _entries():
+    return _manifest()["files"]
+
+
+def test_manifest_lists_every_tier():
+    counts = _manifest()["counts"]
+    for tier in ("conformance", "legacy", "science", "roundtrip"):
+        assert counts.get(tier, 0) > 0, "tier %r is empty" % tier
+
+
+@pytest.mark.parametrize("entry", _entries(), ids=lambda e: e["file"])
+def test_file_validates_to_its_recorded_level(entry):
+    path = CORPUS / entry["file"]
+    assert path.exists(), "corpus file missing: %s" % entry["file"]
+    report = validate(str(path))
+    assert report.level == entry["expected_level"], (
+        "%s: manifest says %s, validator says %s"
+        % (entry["file"], entry["expected_level"], report.level))
+
+
+@pytest.mark.parametrize("entry", _entries(), ids=lambda e: e["file"])
+def test_failing_clauses_match_the_manifest(entry):
+    """A negative fixture must break the clause it claims to break."""
+    report = validate(str(CORPUS / entry["file"]))
+    actual = sorted({f.clause for f in report.findings if not f.ok})
+    assert actual == entry["failing_clauses"], (
+        "%s: clause set drifted\n  manifest: %s\n  actual:   %s"
+        % (entry["file"], entry["failing_clauses"], actual))
+
+
+def test_nothing_in_the_corpus_crashes_the_reader():
+    """Including the legacy tier -- a v1.0 file must OPEN, just not certify."""
+    from astropy.io import fits
+    for entry in _entries():
+        with fits.open(str(CORPUS / entry["file"])) as hdul:
+            assert len(hdul) >= 3           # PRIMARY + registry + >=1 layer
+
+
+def test_legacy_tier_shows_the_v10_defects():
+    """D-1 grandfathering has to be demonstrable, not asserted."""
+    legacy = [e for e in _entries() if e["tier"] == "legacy"]
+    assert legacy, "no legacy fixture"
+    for entry in legacy:
+        assert entry["expected_level"] == "NON-CONFORMANT"
+        clauses = set(entry["failing_clauses"])
+        assert "S6.2" in clauses, "should show the missing FITA_VIS"
+        assert "S6.3" in clauses, "should show the wrapped-alpha defect"
+
+
+def test_roundtrip_fixture_carries_the_droppable_attributes():
+    """The transfusion reference is only useful if it actually holds the
+    things a bridge loses -- a hidden layer, an absent depth, a disabled
+    adjustment, NaN pixels."""
+    import numpy as np
+    from fita.io import read, read_adjustments, read_stereo_geometry
+
+    entry = next(e for e in _entries() if e["tier"] == "roundtrip")
+    path = str(CORPUS / entry["file"])
+
+    layers = read(path)
+    assert any(l.visible is False for l in layers), "no hidden layer"
+    assert any(l.zdepth is None for l in layers), "no layer with absent depth"
+    assert any(np.isnan(l.flux_data).any() for l in layers), "no NaN pixels"
+    assert all(l.uncert_data is not None for l in layers)
+    assert all(l.mask_data is not None for l in layers)
+    assert len({l.blend_mode for l in layers}) > 1, "blend modes not varied"
+
+    adjustments = read_adjustments(path).adjustments
+    assert len(adjustments) == 6
+    assert any(a.enabled is False for a in adjustments), "no disabled step"
+    assert any(getattr(a, "response_curve", None) is not None
+               for a in adjustments), "no variable-length parameter"
+
+    geom = read_stereo_geometry(path)
+    assert geom["zdp_scale"] is not None
+    assert geom["zdp_ref_explicit"] is True
+    assert geom["zdp_angular"] is not None
+
+
+def test_survival_spec_is_published():
+    spec = _manifest()["survival_spec"]
+    assert len(spec) >= 8
+    joined = " ".join(spec).lower()
+    for expected in ("nan", "visible", "zdepth", "bzero", "tucd"):
+        assert expected in joined, "survival spec omits %r" % expected
+
+
+@pytest.mark.slow
+def test_corpus_is_byte_reproducible():
+    """Regenerate into a temp tree and compare hashes.
+
+    A citable artifact whose bytes change on every rebuild cannot be cited.
+    """
+    import sys
+    sys.path.insert(0, str(CORPUS))
+    try:
+        import build_corpus
+    finally:
+        sys.path.pop(0)
+    assert build_corpus.verify(CORPUS) == 0
