@@ -1,0 +1,26 @@
+{
+  "upload_type": "software",
+  "title": "FITA \u2014 Flexible Image Transfer Alpha: a FITS convention for multi-layer astronomical images",
+  "description": "<p>FITA is a FITS convention for multi-layer astronomical images in which the display channel cannot alter the science. Calibrated flux lives in <code>FLUX_*</code> extensions and display transparency in paired <code>ALPHA_*</code> extensions, so re-selecting a display range changes only what the eye sees and never the measured flux &mdash; verified bit-for-bit.</p><p>It adds per-layer blend modes, non-destructive adjustment layers, stereo depth encoding physical ISM penetration, and IVOA ObsCore v1.2 provenance, while remaining a valid FITS multi-extension file readable by any FITS reader.</p><p>This record contains the format specification, the reference implementation, the <code>fita conform</code> conformance checker, and a labelled conformance corpus of 18 byte-reproducible files against which an independent implementation can be scored.</p>",
+  "creators": [
+    {
+      "name": "Cisneros, Ignacio A."
+    }
+  ],
+  "license": "MIT",
+  "access_right": "open",
+  "version": "1.2.0",
+  "language": "eng",
+  "keywords": [
+    "astronomy",
+    "FITS",
+    "file format",
+    "multi-wavelength",
+    "image compositing",
+    "virtual observatory",
+    "ObsCore",
+    "interstellar medium",
+    "stereoscopy"
+  ],
+  "notes": "The software is MIT licensed. The format specification is dedicated to the public domain under CC0 (see LICENSE-SPEC): a specification that cannot be freely re-implemented is not a standard."
+}
