@@ -254,6 +254,10 @@ def write(
     zdp_scale: Optional[float] = None,
     zdp_ref: Optional[float] = None,
     zdp_angular: Optional[float] = None,
+    checksum: bool = True,
+    date: Optional[str] = None,
+    origin: Optional[str] = None,
+    creator: Optional[str] = None,
 ) -> None:
     """Write a list of FITALayer objects to a .fita file.
 
@@ -326,6 +330,17 @@ def write(
         phdr[KW_ZREF] = (float(zdp_ref), "ZDP placed at zero parallax")
     if zdp_angular is not None:
         phdr[KW_ZANG] = (float(zdp_angular), "arcsec parallax, full ZDP range")
+    # FITS-standard provenance. DATE is deliberately overridable: it is the
+    # only non-deterministic value the writer would otherwise introduce.
+    if date is None:
+        from datetime import datetime, timezone
+        date = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+    phdr["DATE"] = (date, "UTC date this file was written")
+    phdr["CREATOR"] = (creator or ("fita %s" % FITA_VERSION),
+                       "software that created this file")
+    if origin:
+        phdr["ORIGIN"] = (origin, "organisation responsible for this file")
+
     if global_header:
         for k, v in global_header.items():
             phdr[k] = v
@@ -444,6 +459,17 @@ def write(
 
     if provenance is not None:
         hdul.append(_build_meta_hdu(provenance, layers))
+
+    if checksum:
+        # NOT writeto(checksum=True): astropy stamps a wall-clock time into the
+        # CHECKSUM/DATASUM card comments, which makes an otherwise
+        # deterministic file irreproducible byte-for-byte. add_checksum(when=)
+        # lets the comment be pinned, so a generated artifact -- the
+        # conformance corpus above all -- can carry real integrity keywords
+        # AND regenerate identically. The checksum VALUE still covers the
+        # whole HDU including its own card, so this weakens nothing.
+        for _hdu in hdul:
+            _hdu.add_checksum(when="updated %s" % date)
 
     hdul.writeto(str(path), overwrite=overwrite)
     hdul.close()

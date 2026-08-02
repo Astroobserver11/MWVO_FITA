@@ -40,8 +40,8 @@
       "failing_clauses": [
         "S9"
       ],
-      "bytes": 25920,
-      "sha256": "7c7b15b549dc5bb8d328a6c5f584859ad7e22178185d8d9586695e993e05fa22"
+      "bytes": 28800,
+      "sha256": "e6c5289638c1b07d52b6116a1d7ee95252cc1f2c4ef1145ab5da798584a42fc8"
     },
     {
       "file": "conformance/full_provenanced.fita",
@@ -51,8 +51,8 @@
       "expected_level": "FITA-FULL",
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
-      "bytes": 54720,
-      "sha256": "da0ae93be64cf7fa0f2657625b62a87eef552cd59458b599d1a77b14143e35e0"
+      "bytes": 60480,
+      "sha256": "bc20df69b0aa653c4fb79f2736028c771a33a4cd0116ab584f315114a993e300"
     },
     {
       "file": "conformance/full_with_adjustments.fita",
@@ -62,8 +62,8 @@
       "expected_level": "FITA-FULL",
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
-      "bytes": 63360,
-      "sha256": "7251d94f8d3593a367aa93c534efaa515879fbae99fee99b5a0f4f439ba0db45"
+      "bytes": 69120,
+      "sha256": "082c0259d4079baf3eadb2bcf9c37de334b39d4c31dbfb28706e518d75da9bcb"
     },
     {
       "file": "conformance/full_with_stereo.fita",
@@ -73,8 +73,8 @@
       "expected_level": "FITA-FULL",
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
-      "bytes": 54720,
-      "sha256": "3b04f4bb363c8196cc04ebccdf0794284b2f84d4ec7b0d8c45a7e3e6603a0994"
+      "bytes": 60480,
+      "sha256": "a567794f8a1ebe480019acda1770c8166a0d77e83a5d1b5164bd5ec7497d9d3a"
     },
     {
       "file": "conformance/full_with_uncert_mask.fita",
@@ -85,7 +85,7 @@
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 89280,
-      "sha256": "9062b67d36983d2e470bfcb694db54e1f3fdc511335522e8a4a166c07ac09b3b"
+      "sha256": "66d975b1d87c8df61348b721a11d7bde38dcae63de0f0eda703252f8c21a3870"
     },
     {
       "file": "conformance/neg_access_format_overclaim.fita",
@@ -97,8 +97,8 @@
       "failing_clauses": [
         "S3"
       ],
-      "bytes": 40320,
-      "sha256": "c987fd44b6100226322ecb68bf67ce9a1ad553624add46201312b799b86685bb"
+      "bytes": 43200,
+      "sha256": "7ac0032254700dc1070d6e11026d5a39f39870fefc772d9c8d70ca89a806fbea"
     },
     {
       "file": "conformance/neg_adj_bad_json.fita",
@@ -111,8 +111,8 @@
         "S8",
         "S9"
       ],
-      "bytes": 34560,
-      "sha256": "35ce2dc4131a0b50c6b55d90f5b5286dc0eec0329a3911d9918587acba1362c3"
+      "bytes": 37440,
+      "sha256": "055aa49dfc7cce3984a23f289c760c1c96defdc8188d7b2736cfc5e8b9324eef"
     },
     {
       "file": "conformance/neg_adj_unknown_type.fita",
@@ -125,8 +125,8 @@
         "S8",
         "S9"
       ],
-      "bytes": 34560,
-      "sha256": "a265236cffee867dc49e09a1ab3c670d1c6884bc2c875d975696fe264a735d67"
+      "bytes": 37440,
+      "sha256": "06cd4052d17adf2cf47584e9e31408f6c846b162d6cb79792a784d416573c9bb"
     },
     {
       "file": "conformance/neg_alpha_bunit_alpha16.fita",
@@ -139,13 +139,13 @@
         "S6.3/S7",
         "S9"
       ],
-      "bytes": 25920,
-      "sha256": "e03475d8f051ac86b74b1a42de748c64a4e9f8fb12f887c7973f55e6f3a85d67"
+      "bytes": 28800,
+      "sha256": "67d7b97740389b6305a16c0e9a459403e1d549c01378bc9251f133346a55b8df"
     },
     {
       "file": "conformance/neg_alpha_no_bzero.fita",
       "tier": "conformance",
-      "purpose": "ALPHA written without BZERO=32768 -- the v1.0 wrapped-alpha defect",
+      "purpose": "ALPHA carries genuine v1.0 wrapped int16 data and no BZERO",
       "clause": "S6.3",
       "expected_level": "NON-CONFORMANT",
       "actual_level": "NON-CONFORMANT",
@@ -153,8 +153,8 @@
         "S6.3",
         "S9"
       ],
-      "bytes": 25920,
-      "sha256": "a2b341d1d56589bbaae221b9111621b89956638bec22ad2c1f0742a18c43234f"
+      "bytes": 28800,
+      "sha256": "d45b4eac7261e8e22a8237f57902ff191e9b20ad3e8a38c667cdebc540570b35"
     },
     {
       "file": "conformance/neg_bad_blend_code.fita",
@@ -167,8 +167,8 @@
         "S8.1",
         "S9"
       ],
-      "bytes": 25920,
-      "sha256": "09212a919c85c10e4e8ac0b0f466c2a390a08bd6bedcb9a533146e4530f83462"
+      "bytes": 28800,
+      "sha256": "cc45c482ac4c1431a7bd52ebe8062e147583f548508ff5669d54f84505bd2b52"
     },
     {
       "file": "conformance/neg_missing_fita_vis.fita",
@@ -182,7 +182,7 @@
         "S9"
       ],
       "bytes": 25920,
-      "sha256": "ef0dcdca657c72de1f10a1521ddbc96e3c75828db1f9f5d59af9defd17c20a06"
+      "sha256": "5501da723b6907dd069baa323da2de942380790aa39941e40cb151e040bca955"
     },
     {
       "file": "conformance/neg_nlayers_mismatch.fita",
@@ -195,8 +195,8 @@
         "S4.2",
         "S9"
       ],
-      "bytes": 25920,
-      "sha256": "10b5b082e16fa315388c295f4e66e17e52b175e5279a128d4b9f28523b8f94dc"
+      "bytes": 28800,
+      "sha256": "641a0c5dfdd8209776b1efa0a80db57ec211ca3867aa673942420fd79a1f9b91"
     },
     {
       "file": "conformance/neg_split16_declared.fita",
@@ -209,8 +209,8 @@
         "S6.4",
         "S9"
       ],
-      "bytes": 25920,
-      "sha256": "7109c2922e75a27226903abc12381cedba60b6d6a35e3b30924fa2e12a5ac51b"
+      "bytes": 28800,
+      "sha256": "0cb778d17e4a0a1d6a436c40b533350a71c04d7da6c5acb77bbd9b2c9c2af52e"
     },
     {
       "file": "conformance/neg_zsc_not_finite.fita",
@@ -223,8 +223,8 @@
         "S8.2",
         "S9"
       ],
-      "bytes": 25920,
-      "sha256": "ab38fceee6fad619b5cef58c39a61393def3d15ac6189371b8f72219ddccb88f"
+      "bytes": 28800,
+      "sha256": "2ad1e92d8add0df8d59b8e6119a501ce97b1f61c18ac54e6128cba3df921a028"
     },
     {
       "file": "legacy/v10_as_built.fita",
@@ -240,7 +240,7 @@
         "S9"
       ],
       "bytes": 40320,
-      "sha256": "dfa2a24ad88e057bd5eb37d2c7c2778b35d70f0fa6c0b0365dcaf378c881fc2e"
+      "sha256": "401c0668c1d3d17f082a1c32ca06335aba8347158c4fe43f570fbc24ffb0e01c"
     },
     {
       "file": "roundtrip/transfusion_reference.fita",
@@ -251,7 +251,7 @@
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 135360,
-      "sha256": "75d55c96c5688e068c611f4374dc813959bfdd6f112e8129e862047e0f8b4658"
+      "sha256": "4582b2a4de9d383516b4ee1e78dbfe9b02ae44eb639db665a40dd08d84457bfa"
     },
     {
       "file": "science/three_band_field.fita",
@@ -262,7 +262,7 @@
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 198720,
-      "sha256": "fea5fd1e8a31db544ee7bd6e63700fac6a9266525fea2f5ea782a6b10dfee049"
+      "sha256": "ba026b6debfbd038e993cf24130f0ff22c3276cfea0262f1048d6afb5b0b1522"
     }
   ]
 }

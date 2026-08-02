@@ -132,3 +132,36 @@ def test_corpus_is_byte_reproducible():
     finally:
         sys.path.pop(0)
     assert build_corpus.verify(CORPUS) == 0
+
+
+def test_every_corpus_file_carries_a_verifying_checksum():
+    """FITS integrity keywords are what the wider community -- and
+    fitsverify -- expect on a delivered file. astropy raises on a bad
+    checksum when opened with checksum=True, so this also proves the values
+    are correct and not merely present."""
+    import warnings
+    from astropy.io import fits
+
+    for entry in _entries():
+        path = CORPUS / entry["file"]
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            with fits.open(str(path), checksum=True) as hdul:
+                for hdu in hdul:
+                    assert "CHECKSUM" in hdu.header, \
+                        "%s: %s has no CHECKSUM" % (entry["file"], hdu.name)
+                    assert "DATASUM" in hdu.header
+
+
+def test_legacy_alpha_is_genuinely_wrapped():
+    """The v1.0 defect must be reproduced in the DATA, not just asserted in a
+    header. astropy regenerates BZERO from a uint16 dtype, so a header-only
+    fixture would silently heal itself and test nothing."""
+    from astropy.io import fits
+
+    path = CORPUS / "legacy" / "v10_as_built.fita"
+    with fits.open(str(path), do_not_scale_image_data=True) as hdul:
+        alpha = hdul["ALPHA_0001"]
+        assert "BZERO" not in alpha.header, "fixture healed itself"
+        assert alpha.data.min() < 0, \
+            "alpha should carry negative (wrapped) values as v1.0 wrote them"

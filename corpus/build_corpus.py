@@ -52,12 +52,25 @@ from fita.adjustment import (
     AdjustmentStack, LevelsAdjustment, CurvesAdjustment, BrightnessAdjustment,
     FluxStretchAdjustment, BandMapAdjustment, FluxNormAdjustment,
 )
-from fita.io import write
+from fita.io import write as _fita_write
 from fita.layer import FITALayer
 from fita.spec import FITA_VERSION, KW_ZSCALE, KW_ZREF
 from fita.validate import validate
 
 ROOT = Path(__file__).resolve().parent
+
+# Fixed on purpose. io.write() defaults DATE to "now", which is the one value
+# that would stop this corpus regenerating byte-identically -- and a citable
+# artifact whose bytes change on every rebuild cannot be cited.
+CORPUS_DATE = "2026-08-02T00:00:00"
+
+
+def write(*args, **kw):
+    """io.write() with the corpus's deterministic provenance pinned."""
+    kw.setdefault("date", CORPUS_DATE)
+    kw.setdefault("creator", "fita-corpus %s" % FITA_VERSION)
+    kw.setdefault("origin", "MWVO / UranoDyne")
+    return _fita_write(*args, **kw)
 TIERS = ("conformance", "legacy", "science", "roundtrip")
 
 # Records what each file is FOR, so the manifest explains itself.
@@ -138,8 +151,45 @@ def _corrupt(path: Path, fn):
     Negative fixtures are built by writing a *conformant* file and then
     breaking one thing, so each isolates exactly one clause.
     """
-    with fits.open(str(path), mode="update") as hdul:
-        fn(hdul)
+    with fits.open(str(path), memmap=False) as opened:
+        hdul = fits.HDUList([h.copy() for h in opened])
+    fn(hdul)
+    # Pass 1: materialise the edit. An in-place change to a table's .data does
+    # not update the HDU's cached datasum, so checksumming here would certify
+    # the PRE-corruption bytes -- observed, and exactly the kind of silent
+    # disagreement this corpus exists to catch.
+    hdul.writeto(str(path), overwrite=True)
+
+    # Pass 2: checksum what is actually on disk, with the comment pinned so the
+    # fixture stays byte-reproducible (astropy would otherwise stamp a
+    # wall-clock time into the card).
+    with fits.open(str(path), memmap=False) as opened:
+        final = fits.HDUList([h.copy() for h in opened])
+    for h in final:
+        h.add_checksum(when="updated %s" % CORPUS_DATE)
+    final.writeto(str(path), overwrite=True)
+
+
+
+def _wrap_alpha_as_v10(hdul, idx=1):
+    """Replace an ALPHA plane with a genuine v1.0 wrapped-int16 plane.
+
+    Popping BZERO from the header is not enough: astropy regenerates it from
+    the uint16 dtype on write, so the defect would silently heal. v1.0 cast
+    alpha to int16 WITHOUT BZERO, so everything above 32767 -- i.e. more than
+    half-opaque -- stored negative. This reproduces that array, which is what
+    a third-party viewer would actually have been handed.
+    """
+    name = "ALPHA_%04d" % idx
+    old = hdul[name]
+    vals = np.asarray(old.data).astype(np.int32)
+    wrapped = np.where(vals > 32767, vals - 65536, vals).astype(np.int16)
+    hdr = old.header.copy()
+    for kw in ("BZERO", "BSCALE"):
+        hdr.pop(kw, None)
+    new = fits.ImageHDU(data=wrapped, header=hdr)
+    new.name = name
+    hdul[hdul.index_of(name)] = new
 
 
 # ── tier 1: conformance fixtures ────────────────────────────────────────────
@@ -201,8 +251,8 @@ def build_conformance(out: Path):
          "Layer keyword FITA_VIS removed",
          lambda h: h["FLUX_0001"].header.pop("FITA_VIS", None)),
         ("neg_alpha_no_bzero.fita", "S6.3",
-         "ALPHA written without BZERO=32768 -- the v1.0 wrapped-alpha defect",
-         lambda h: h["ALPHA_0001"].header.pop("BZERO", None)),
+         "ALPHA carries genuine v1.0 wrapped int16 data and no BZERO",
+         _wrap_alpha_as_v10),
         ("neg_alpha_bunit_alpha16.fita", "S7",
          "ALPHA declares the invalid unit 'alpha16'",
          lambda h: h["ALPHA_0001"].header.__setitem__("BUNIT", "alpha16")),
@@ -269,9 +319,8 @@ def build_legacy(out: Path):
         hdul[0].header["FITAVER"] = "1.0"
         for i in (1, 2):
             hdul["FLUX_%04d" % i].header.pop("FITA_VIS", None)   # R3
-            a = hdul["ALPHA_%04d" % i].header
-            a.pop("BZERO", None)                                  # R1
-            a["BUNIT"] = "alpha16"                                # R4
+            _wrap_alpha_as_v10(hdul, i)                           # R1
+            hdul["ALPHA_%04d" % i].header["BUNIT"] = "alpha16"    # R4
     _corrupt(p, as_v10)
     _record(p, "A v1.0 file as actually written: wrapped alpha, invalid BUNIT, "
                "no FITA_VIS. Opens cleanly; must NOT certify.",
