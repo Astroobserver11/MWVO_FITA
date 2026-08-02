@@ -21,7 +21,7 @@ authors:
   - given-names: "Ignacio A."
     family-names: "Cisneros"
     email: "astroobserver88@gmail.com"
-    # orcid: "https://orcid.org/0000-0000-0000-0000"   # TODO: add before release
+    orcid: "https://orcid.org/0009-0001-0282-6098"
 version: "1.2.0"
 license: MIT
 license-url: "https://github.com/Astroobserver11/MWVO_FITA/blob/main/LICENSE"
