@@ -12,7 +12,7 @@ that cannot touch the science.**
 | **Format version** | 1.2 |
 | **MIME type** | `application/fits` |
 | **Based on** | FITS Standard v4.0 — every `.fita` file is a valid FITS MEF |
-| **Normative spec** | [`FITA_FORMAT_STANDARD`](FITA_FORMAT_STANDARD.RATIFIED-2026-08-02.md) |
+| **Normative spec** | [`FITA_FORMAT_STANDARD`](FITA_FORMAT_STANDARD.RATIFIED-v1.2.md) |
 | **Licence** | MIT (software) · CC0 (specification) |
 
 ---
@@ -229,8 +229,8 @@ type `application/fits+alpha` is no longer emitted. See
 
 | File | Standing |
 |---|---|
-| [`FITA_FORMAT_STANDARD`](FITA_FORMAT_STANDARD.RATIFIED-2026-08-02.md) | **Normative.** Governs everything. |
-| [`FITA_AMENDMENT__2026-08-02.md`](FITA_AMENDMENT__2026-08-02.md) | v1.1 → v1.2 clause text |
+| [`FITA_FORMAT_STANDARD`](FITA_FORMAT_STANDARD.RATIFIED-v1.2.md) | **Normative.** Governs everything. |
+| [`FITA_AMENDMENT__2026-08-02.md`](FITA_AMENDMENT__2026-08-02.md) | v1.1 → v1.2 clause text — **APPLIED** to the standard above; retained as the record of what changed and why |
 | [`FITA_v1.1_RATIFICATION__2026-08-02.md`](FITA_v1.1_RATIFICATION__2026-08-02.md) | decision log |
 | [`corpus/README.md`](corpus/README.md) | the conformance corpus |
 | [`FITA_Format_Guide.ipynb`](FITA_Format_Guide.ipynb) | tutorial — **non-normative** |

@@ -7,7 +7,7 @@ applied standard ever differ, **the standard governs**.
 
 | Field | Value |
 |---|---|
-| **Status** | **PROPOSED** — normative text awaiting application to the canonical standard |
+| **Status** | **APPLIED** to `FITA_FORMAT_STANDARD.RATIFIED-v1.2.md` (this repository, 2026-08-02). **Still pending on ATOP's canonical original** — see §6. |
 | **Amends** | `FITA_FORMAT_STANDARD.md` v1.1 (RATIFIED 2026-08-02) |
 | **New format version** | `FITAVER = 1.2` (author ruling, 2026-08-02) |
 | **Arising from** | Author rulings **Q1** and **Q2**, 2026-08-02, plus the implementation of the ratified D-1…D-7 slate |
