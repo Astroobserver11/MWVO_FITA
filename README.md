@@ -105,7 +105,8 @@ Two levels, and a checker that reports them:
 | **FITA-FULL** | FITA-CORE + every SHOULD + a conformant ObsCore v1.1 `FITA_META`. The bar for publication, archiving or VO registration. |
 
 ```bash
-fita conform yourfile.fita          # --quiet, --strict; exit 0/1/2
+fita conform yourfile.fita   # exit 2 = non-conformant, ALWAYS
+                             # --strict also exits 1 for CORE-but-not-FULL
 fita doctor                         # is this INSTALL correct, from here?
 ```
 
@@ -206,7 +207,7 @@ what is not:
 **Established.** The flux/alpha invariant holds bit-for-bit in the default
 `FLOAT32` mode — measured, zero pixels altered. Files are valid FITS with
 verifying checksums. The FITS ⇄ Zarr data model is verified equivalent.
-241 tests pass.
+**193 tests** pass in the kernel-only configuration; **241** with the optional URANODYNE stack installed, which gates three test modules. Quoting one number without its configuration is how the two counts came to disagree between machines.
 
 **Not established.** The HDF5 backend round-trip is **untested**, so the
 "all three backends" claim is confirmed for two of three. No `.fita` file has
