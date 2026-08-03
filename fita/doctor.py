@@ -353,7 +353,7 @@ def _check_provenance_path():
                       "; ".join(failed[:2]) or "run 'fita conform' for detail")
 
     return Result(OK, "provenance path",
-                  "ObsCore v1.2 FITA_META written; reaches FITA-FULL")
+                  "ObsCore v1.1 FITA_META written; reaches FITA-FULL")
 
 
 def _check_adjustment_path():

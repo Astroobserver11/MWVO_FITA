@@ -43,7 +43,7 @@ installed.
    **Do not retype or fork it** — sync the bytes over the Tailscale bridge.
 1b. **Then apply `FITA_AMENDMENT__2026-08-02.md` §3.1–§3.8** and set the status line to
    **v1.2 (RATIFIED)**. That amendment carries the clause text for everything built after
-   ratification — the `FITA_ADJ` schema (§8.3, new), the stereo geometry (§8.2), ObsCore v1.2
+   ratification — the `FITA_ADJ` schema (§8.3, new), the stereo geometry (§8.2), ObsCore v1.1
    (§9), and the conformance checker (§2.1). Until it is applied, those structures exist only
    in `spec.py`, which is the de-facto-spec condition D-7 just corrected elsewhere.
 2. Confirm the ratification record `FITA_v1.1_RATIFICATION__2026-08-02.md` is present and that
@@ -66,7 +66,7 @@ to be accepted.
 | C3 | **`BUNIT` valid** — `'alpha16'` omitted; `UNCERT_*` carries the parent flux unit. |
 | C4 | **`FITA_VIS` required and emitted** — `visible` survives a round trip. |
 | C5 | **`fita.validate()` / `fita conform`** — CORE/FULL levels, §5.4 bit-exact flux test, exit 0/1/2. |
-| C6 | **D-4 ObsCore v1.2** — all mandatory columns, `TUCDn` on every column, `access_format='application/fits'`. |
+| C6 | **D-4 ObsCore v1.1** — its column set, `TUCDn` on every column, `access_format='application/fits'`. |
 | C7 | **R2 closed** — `io.write(provenance=...)` appends `FITA_META`; a written file validates **FITA-FULL**. |
 | C8 | **D-3 `FITA_ADJ`** — adjustment stack serialised with **typed columns** (ruling Q1) and read back with parameters intact. |
 | C9 | **D-6 stereo geometry** — `FITA_ZSC` + `FITA_ZRF` reference plane + `FITA_ZAN` angular measure (author rulings Q1/Q2, 2026-08-02) + `fita.stereo`. |
@@ -169,9 +169,9 @@ Stated plainly so the audit is aimed where it will pay.
    is measuring the wrong quantity and a second keyword is needed. **Please rule on this
    explicitly.**
 
-3. **The ObsCore v1.2 mandatory column list was taken from the validator, not from the IVOA
+3. **The ObsCore v1.1 mandatory column list was taken from the validator, not from the IVOA
    document.** BTOP did not consult the primary source in this session. **Check the 26 columns
-   against the actual IVOA ObsCore DM v1.2 REC** and report any that are wrong, missing, or
+   against the actual IVOA ObsCore DM v1.1 REC** and report any that are wrong, missing, or
    not in fact mandatory. The whole VO-registerability claim rests on this list being right.
 
 4. **No `.fita` has actually been submitted to a VO service.** "VO-registerable" is inferred

@@ -2,7 +2,7 @@
 > ratification rulings (§12) to the byte-exact 2026-07-29 v1.1 DRAFT. The normative body (§§1–11)
 > is unchanged from that DRAFT except where v1.2 amends it. `FITA_AMENDMENT__2026-08-02.md`
 > §3.1–§3.8 has been **APPLIED**: §2.1 (checker), §4.2 (stereo + FITS provenance keywords),
-> §8.2 (stereo convention), §8.3 (FITA_ADJ schema, new), §9 (ObsCore v1.2), §13. v1.2 adds only
+> §8.2 (stereo convention), §8.3 (FITA_ADJ schema, new), §9 (ObsCore v1.1), §13. v1.2 adds only
 > OPTIONAL structure, so files conformant at v1.1 remain conformant.
 > **This file supersedes the DRAFT and is destined to replace `FITA_FORMAT_STANDARD.md` on ATOP**
 > (deliver over the Tailscale bridge; do not maintain two canonicals). Ruling record of provenance:
@@ -519,12 +519,13 @@ ObsCore mandatory fields including `obs_publisher_did`, `s_region`, `access_ests
 are **never written to the file** — no `TUCDn` keywords are emitted — so the semantic annotation
 that would make the table VO-interpretable is discarded at write time.
 
-`[AS-BUILT v1.2]` **D-4 is implemented.** `FITA_META` carries a full IVOA **ObsCore DM v1.2**
-mandatory column set; every column's UCD is written as `TUCDn`; and `access_format` is
+`[AS-BUILT v1.2]` **D-4 is implemented.** `FITA_META` carries an IVOA **ObsCore DM v1.1**
+column set; every column's UCD is written as `TUCDn`; and `access_format` is
 `application/fits`. Provenance is reachable through the documented API via
 `io.write(path, layers, provenance=...)`, closing the v1.0 condition in which the provenance
-model was documented but unreachable. The wording *"ObsCore DM v1.2"* is now accurate and may
-be used without qualification. (Superseded interim wording, retained for the record: *"an
+model was documented but unreachable. The wording *"an ObsCore v1.1 provenance table"* is accurate. **Completeness against Table 1
+of the Recommendation is NOT yet verified** — see `ERRATUM__ObsCore_version__2026-08-02.md`
+§5. Until it is, the phrase "full mandatory set" MUST NOT be used. (Superseded interim wording, retained for the record: *"an
 ObsCore-derived provenance subset"*.) Whether to
 close it fully is D-4.
 
@@ -580,7 +581,7 @@ therefore delegates a responsibility to a FITA feature that does not exist in an
 sharpest single instance of the drift the concordance sequence was called to find: two sibling specs
 that are individually coherent and jointly broken.
 
-`[CORRECTION]` FITR declares ObsCore DM **v1.2**; FITA declares **v1.1**. Two members of one family
+`[CORRECTION]` FITR declares ObsCore DM **v1.1**; FITA declares **v1.1**. Two members of one family
 targeting two versions of the same data model, with FITR claiming its provenance is readable by any
 FITA reader "with zero modification". One version **MUST** be chosen for the family — D-4.
 
@@ -666,7 +667,7 @@ record*; the binding outcomes are:
 | **D-1** | **v1.1, grandfather the 18 existing files** (documented reader rule for `1.0` wrapped alpha / invalid `BUNIT`; alpha regenerable from flux). |
 | **D-2** | **DELETE `SPLIT16`.** A conformant writer MUST NOT emit `FITAPACK='SPLIT16'`; a reader encountering it MUST raise. |
 | **D-3** | **IMPLEMENT `FITA_ADJ`** — serialise the adjustment-layer stack (unblocks `FITR_SPEC.md` §8). |
-| **D-4** | **ObsCore v1.2, FULL conformance** — add the missing mandatory columns and write per-column UCDs as `TUCDn`; wire `FITA_META` reachable from `io.write()`. |
+| **D-4** | **ObsCore v1.1, FULL conformance** — add the missing mandatory columns and write per-column UCDs as `TUCDn`; wire `FITA_META` reachable from `io.write()`. |
 | **D-5** | **Omission is absence everywhere; table columns use `TNULL`.** Retire the `ZDEPTH = -1.0` sentinel. |
 | **D-6** | **Add `FITA_ZSC`, OPTIONAL**, written by the renderer (not the compositor). |
 | **D-7** | **Demote `FITA_Format_Guide.ipynb` to "tutorial"** and correct its two false claims in place. |
@@ -702,7 +703,7 @@ your standing position that hand-set display state *is* a work product argues fo
 
 **D-4 · ObsCore version and completeness.**
 FITA says v1.1, FITR says v1.2, and neither writes `TUCDn`. Decide (i) one version for the family —
-**recommend v1.2**, since FITR is the newer draft and ObsCore 1.2 is current; and (ii) whether to
+**recommend v1.2** *(historical record: **this premise was false** — there is no ObsCore v1.2; v1.1 of 2017-05-09 is the only Recommendation. See `ERRATUM__ObsCore_version__2026-08-02.md`)*; and (ii) whether to
 add the missing mandatory columns to reach real conformance, or to publish honestly as an
 "ObsCore-derived subset". **Recommend full conformance** if `.fita` files are ever to be registered
 in a VO service or shown to Alfredo Mejía-Narvaez as an LVM differentiator — the provenance claim is
@@ -736,9 +737,9 @@ best-effort basis.
 | 1.0 | 2026-05-18 | as-built | Initial: layers, alpha, blend modes, FITS/HDF5/Zarr |
 | 1.0 | 2026-05-25 | as-built | Added `FITA_ZDP`, `UNCERT_*`, `MASK_*`, HDF5 + Zarr backends, `FITR_SPEC` — **no version bump was made for a format change** |
 | 1.1 | 2026-07-29 | drafted | Alpha `BZERO` correction; `BUNIT` correction; `FITA_VIS`; `SPLIT16` deprecated; registry authority fixed; ObsCore overclaim withdrawn; conformance levels; FITO boundary |
-| 1.1 | 2026-08-02 | **RATIFIED** | §12 decisions ruled (full slate): D-2 delete SPLIT16 · D-3 implement `FITA_ADJ` · D-4 full ObsCore v1.2 · D-1/5/6/7 per §12.0. Body unchanged. |
+| 1.1 | 2026-08-02 | **RATIFIED** | §12 decisions ruled (full slate): D-2 delete SPLIT16 · D-3 implement `FITA_ADJ` · D-4 full ObsCore v1.1 · D-1/5/6/7 per §12.0. Body unchanged. |
 
-| 1.2 | 2026-08-02 | **RATIFIED** | `FITA_ADJ` schema normative (§8.3); stereo geometry `FITA_ZSC`/`FITA_ZRF`/`FITA_ZAN` (§8.2); ObsCore v1.2 achieved and reachable (§9); conformance checker shipped (§2.1); `CHECKSUM`/`DATASUM` and FITS provenance keywords (§4.2). Adds only OPTIONAL structure. |
+| 1.2 | 2026-08-02 | **RATIFIED** | `FITA_ADJ` schema normative (§8.3); stereo geometry `FITA_ZSC`/`FITA_ZRF`/`FITA_ZAN` (§8.2); ObsCore v1.1 achieved and reachable (§9); conformance checker shipped (§2.1); `CHECKSUM`/`DATASUM` and FITS provenance keywords (§4.2). Adds only OPTIONAL structure. |
 
 `[CORRECTION v1.2]` The same omission recurred on 2026-08-02: optional structure (`FITA_ZRF`,
 `FITA_ZAN`, the `FITA_ADJ` columns) was added after v1.1 was ratified while the writer still

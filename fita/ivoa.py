@@ -75,9 +75,13 @@ def validate_spectral_ctype(ctype: str) -> bool:
 
 # ── ObsCore provenance HDU ────────────────────────────────────────────────────
 
-# ObsCore DM v1.2 mandatory columns, plus a few FITA-specific extras.
+# ObsCore DM v1.1 mandatory columns, plus a few FITA-specific extras.
 #
-# D-4 (ratified 2026-08-02) took this to FULL v1.2 conformance.  The v1.1
+# D-4 (ratified 2026-08-02) expanded this table.  NOTE: the ruling named
+# ObsCore 'v1.2', which DOES NOT EXIST -- v1.1 (2017-05-09) is the only
+# Recommendation. Corrected in v1.2.1; see ERRATUM__ObsCore_version__2026-08-02.md.
+# Whether this list is the COMPLETE v1.1 mandatory set is NOT yet verified
+# against Table 1 of the REC.  The earlier
 # table shipped 22 columns and omitted nine that ObsCore makes mandatory
 # (obs_publisher_did, s_region, s_xel1, s_xel2, t_xel, em_xel, o_ucd,
 # pol_states, access_estsize), which is why the "ObsCore compliant" claim was
@@ -154,11 +158,15 @@ def make_meta_hdu(
     access_url: str = "",
     extra: Optional[Dict[str, Any]] = None,
 ):
-    """Build an ObsCore DM v1.2 FITA_META BINTABLE HDU.
+    """Build an ObsCore DM v1.1 FITA_META BINTABLE HDU.
 
-    Every mandatory ObsCore v1.2 column is present, and each carries its UCD
-    as a ``TUCDn`` keyword so the table is semantically interpretable by VO
-    tooling rather than merely structurally present.
+    Targets IVOA ObsCore DM v1.1 -- the current Recommendation; there is no
+    v1.2, despite what earlier versions of this project claimed.  Each column
+    carries its UCD as a ``TUCDn`` keyword so the table is semantically
+    interpretable by VO tooling rather than merely structurally present.
+
+    NOT YET VERIFIED: that this is the complete v1.1 mandatory column set.
+    See ERRATUM__ObsCore_version__2026-08-02.md S5 before restating it.
 
     `extra` sets any column directly by name -- that is how the fields with no
     dedicated argument (obs_publisher_did, s_region, s_xel1/2, t_xel, em_xel,
@@ -221,7 +229,7 @@ def make_meta_hdu(
         if ucd:
             hdu.header["TUCD%d" % idx] = (ucd, desc[:40])
 
-    hdu.header.add_comment("IVOA ObsCore DM v1.2 provenance")
+    hdu.header.add_comment("IVOA ObsCore DM v1.1 provenance")
     hdu.header.add_comment("https://ivoa.net/documents/ObsCore/")
     return hdu
 

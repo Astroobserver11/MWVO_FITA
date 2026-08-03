@@ -49,7 +49,7 @@ IVOA notes
 # repeated verbatim the [CORRECTION] the standard levels at the 2026-05-25
 # delivery — three keywords added with no version bump, so files written
 # before and after claimed one version while differing in structure.
-FITA_VERSION = "1.2"   # see FITA_AMENDMENT__2026-08-02.md
+FITA_VERSION = "1.2.1"   # erratum: ObsCore version claim corrected v1.1
 
 # ── Primary HDU mandatory keywords (all ≤8 chars, standard FITS) ────────────
 KW_VERSION   = "FITAVER"    # str  format version

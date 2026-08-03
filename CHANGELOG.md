@@ -5,6 +5,25 @@ implements. Per §13 of the standard, **any change to required or optional
 structure requires a version increment** — a rule this project has broken
 twice and now enforces in code.
 
+## [1.2.1] — 2026-08-02
+
+### Fixed
+- **A conformance claim to a standard version that does not exist.** v1.2.0
+  asserted IVOA **ObsCore DM v1.2** in the normative standard, the reference
+  implementation, the README, the citation metadata, and inside every
+  `FITA_META` HDU of the published corpus. **There is no ObsCore v1.2** —
+  v1.1 (2017-05-09) is the only Recommendation, confirmed against two IVOA
+  sources. The standard had also explicitly authorised the claim's
+  "unqualified use"; that sentence is withdrawn.
+
+  Raised by ATOP's audit, which was written 14 hours before publication and
+  never arrived — the bridge delivered it outside the inbox and failed
+  silently.
+
+  **Completeness against Table 1 of the v1.1 REC remains UNVERIFIED** and is
+  now labelled as such everywhere. See
+  [`ERRATUM__ObsCore_version__2026-08-02.md`](ERRATUM__ObsCore_version__2026-08-02.md).
+
 ## [1.2.0] — 2026-08-02
 
 Adds only OPTIONAL structure, so v1.1 files remain readable.
@@ -26,7 +45,7 @@ Adds only OPTIONAL structure, so v1.1 files remain readable.
   are standing.
 
 ### Changed
-- `FITA_META` is now full IVOA ObsCore **v1.2**: all mandatory columns, and
+- `FITA_META` targets IVOA ObsCore **v1.1** (the current Recommendation): its column set, and
   per-column UCDs written as `TUCDn`. Previously nine columns were missing and
   the UCDs were defined in source but never written to the file.
 - `io.write()` accepts `provenance=`, making FITA-FULL reachable through the

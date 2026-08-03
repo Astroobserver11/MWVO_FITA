@@ -214,7 +214,7 @@ def build_conformance(out: Path):
     p = out / "full_provenanced.fita"
     write(str(p), base_layers(2), overwrite=True,
           provenance=_provenance("CORPUS-FULL"))
-    _record(p, "FITA-FULL: ObsCore v1.2 provenance present", "S9", "FITA-FULL")
+    _record(p, "FITA-FULL: ObsCore v1.1 provenance present", "S9", "FITA-FULL")
 
     p = out / "full_with_adjustments.fita"
     stack = AdjustmentStack([

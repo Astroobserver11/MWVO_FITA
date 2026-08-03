@@ -19,7 +19,7 @@ FITR is designed to be:
 - **Provenance-compatible with FITA**.  The FITR provenance schema is a
   strict superset of the FITA provenance model so a pipeline can trace
   a FITA layer back to its FITR visibility source.
-- **IVOA-aligned**.  Dataset attributes follow ObsCore DM v1.2 and
+- **IVOA-aligned**.  Dataset attributes follow ObsCore DM v1.1 and
   RadioVis DM v0.3 vocabularies.
 
 ---
@@ -94,7 +94,7 @@ FITR is designed to be:
     bandpass    Dataset       complex64, shape (Nant, Nspw, Nchan, Npol)
     gain        Dataset       complex64, shape (Ntime, Nant, Npol)
   /provenance/                FITA-compatible provenance group
-    .attrs                    IVOA ObsCore DM v1.2 columns as attributes
+    .attrs                    IVOA ObsCore DM v1.1 columns as attributes
     history     Dataset       str array — pipeline processing log
 ```
 

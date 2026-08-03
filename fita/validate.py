@@ -49,7 +49,7 @@ from .spec import (
 
 # The version this checker enforces. Files may declare an older minor version;
 # the checker reads them best-effort but reports required v1.1 corrections.
-ENFORCED_VERSION = "1.2"
+ENFORCED_VERSION = "1.2.1"
 
 # Severity levels.
 MUST = "MUST"      # violation => not conformant at the stated level
@@ -388,7 +388,7 @@ def _check_provenance(hdul, r):
         return
     meta = hdul[EXTNAME_META]
     cols = set(getattr(meta.columns, "names", []) or [])
-    # ObsCore v1.2 mandatory columns (D-4 full-conformance target).
+    # ObsCore v1.1 mandatory columns (D-4 full-conformance target).
     obscore_mandatory = {
         "obs_publisher_did", "obs_collection", "obs_id",
         "s_ra", "s_dec", "s_region", "s_fov", "s_xel1", "s_xel2",
@@ -400,7 +400,7 @@ def _check_provenance(hdul, r):
     }
     missing = sorted(obscore_mandatory - cols)
     r.check("S9", SHOULD, not missing,
-            f"ObsCore v1.2 mandatory columns present"
+            f"ObsCore v1.1 mandatory columns present"
             + (f"; missing: {', '.join(missing)}" if missing else ""),
             EXTNAME_META)
     # §9 semantic annotation: per-column UCDs must be written as TUCDn.

@@ -224,7 +224,7 @@ that was never applied.
 > **Replace** *"Conformant wording until the gap is closed: 'an ObsCore-derived provenance
 > subset'. Whether to close it fully is D-4."* and the surrounding `[CORRECTION]` with:
 
-`[AS-BUILT]` D-4 is implemented. `FITA_META` carries a **full IVOA ObsCore DM v1.2** mandatory
+`[AS-BUILT]` D-4 is implemented. `FITA_META` carries a **full IVOA ObsCore DM v1.1** mandatory
 column set (32 columns total), and every column's UCD is written as `TUCDn` — the FITS convention
 for table-column UCDs. The earlier `UCD1` / `UCDXXXXX` forms are withdrawn. The wording *"ObsCore
 DM v1.2"* is now accurate and may be used without qualification.
@@ -254,7 +254,7 @@ full until a FITS ⇄ HDF5 equivalence run is recorded in §11.
 
 | Version | Date | Status | Change |
 |---|---|---|---|
-| 1.2 | 2026-08-02 | **this amendment** | `FITA_ADJ` schema normative (§8.3); stereo geometry `FITA_ZSC`/`FITA_ZRF`/`FITA_ZAN` (§8.2); ObsCore v1.2 achieved and reachable (§9); conformance checker shipped (§2.1) |
+| 1.2 | 2026-08-02 | **this amendment** | `FITA_ADJ` schema normative (§8.3); stereo geometry `FITA_ZSC`/`FITA_ZRF`/`FITA_ZAN` (§8.2); ObsCore v1.1 achieved and reachable (§9); conformance checker shipped (§2.1) |
 
 > **Append** to the `[CORRECTION]` note on version discipline:
 

@@ -76,7 +76,7 @@
     {
       "index": "N",
       "name": "FITA_META",
-      "role": "BINTABLE provenance, ObsCore DM v1.2. OPTIONAL at FITA-CORE, REQUIRED at FITA-FULL. Reachable via io.write(provenance=...) since 2026-08-02. Written LAST per S4.1."
+      "role": "BINTABLE provenance, ObsCore DM v1.1. OPTIONAL at FITA-CORE, REQUIRED at FITA-FULL. Reachable via io.write(provenance=...) since 2026-08-02. Written LAST per S4.1."
     }
   ],
   "authority_rule": {
@@ -162,7 +162,7 @@
   "conformance_levels": {
     "note": "The standard defines EXACTLY TWO levels (§2.1). Earlier drafts of the Foundry design invented a four-level L0..L3 scheme — that scheme is withdrawn; do not use it.",
     "FITA-CORE": "every MUST in standard §§3-7 satisfied. Minimum for a file to be called .fita; what any reader may assume.",
-    "FITA-FULL": "FITA-CORE + every SHOULD in S3-9 + a conformant ObsCore v1.2 FITA_META HDU. REACHABLE as of 2026-08-02 -- pass provenance= to io.write()/FITACube.save().",
+    "FITA-FULL": "FITA-CORE + every SHOULD in S3-9 + a conformant ObsCore v1.1 FITA_META HDU. REACHABLE as of 2026-08-02 -- pass provenance= to io.write()/FITACube.save().",
     "recorded_in_file": false,
     "validator": "fita.validate(path) -> ConformanceReport — BUILT. Exposed as the CLI command `fita conform` (--quiet, --strict; exit 0/1/2). Report carries Finding(clause, severity) plus .is_core/.is_full/.level. flux_roundtrip_ok() implements the standard S5.4 bit-exactness check.",
     "nan_gotcha": "S5.4 bit-exactness MUST be NaN-aware: np.array_equal is False whenever NaN is present (NaN != NaN) and real astro images are full of blanked pixels. Compare NaN masks and non-NaN pixels separately."
@@ -204,9 +204,9 @@
     },
     "R6_obscore_overclaim": {
       "what": "'ObsCore DM v1.1 compliant' is an OVERCLAIM and is withdrawn. Mandatory columns are missing (obs_publisher_did, s_region, access_estsize, o_ucd, s_xel1, s_xel2, t_xel, em_xel) and per-column UCDs are never written to the file — no TUCDn keywords are emitted.",
-      "correct_wording": "ObsCore DM v1.2 (full mandatory column set, TUCDn annotated)",
-      "open": "FITA declares ObsCore v1.1, FITR declares v1.2 — one version must be chosen for the family (standard D-4).",
-      "status_2026_08_02": "FIXED 2026-08-02 -- D-4 implemented: all 26 ObsCore v1.2 mandatory columns present (32 total), every column carries a TUCDn, access_format = \"application/fits\". The honest wording is now \"ObsCore DM v1.2\" -- no longer a subset."
+      "correct_wording": "ObsCore DM v1.1 (full mandatory column set, TUCDn annotated)",
+      "open": "FITA declares ObsCore v1.1 is the ONLY IVOA Recommendation (2017-05-09). Earlier FITA/FITR text claimed a 'v1.2' that does not exist; corrected in v1.2.1. Completeness against Table 1 of the REC is NOT yet verified -- see ERRATUM__ObsCore_version__2026-08-02.md.",
+      "status_2026_08_02": "FIXED 2026-08-02 -- D-4 implemented: all 26 ObsCore v1.1 mandatory columns present (32 total), every column carries a TUCDn, access_format = \"application/fits\". The honest wording is now \"ObsCore DM v1.1\" -- no longer a subset."
     }
   },
   "backends": {

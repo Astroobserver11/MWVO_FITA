@@ -149,7 +149,7 @@ Verified live on BTOP 2026-08-02 (`python -m fita conform`, `io.py`, `spec.py`):
 | R3 | `FITA_VIS`; `visible` lost every round trip (§6.2) | **FIXED** — `to_header_dict()` already emitted it; verified `visible` round-trips `[T,F,T]` | Ring B `Job` round-trips no longer drop visibility. |
 | R4 | Invalid `BUNIT`: `'alpha16'`, `'same as FLUX'` (§7) | **FIXED** — `alpha16` omitted; `UNCERT` now carries the parent flux unit | Emitted files parse downstream. |
 | R5 | `SPLIT16` destructive (§6.4) | **FIXED** — raises on **both** write and read (D-2 ruled DELETE) | The `pack` Op (§5) loses its reason to exist; see §5. |
-| R6 | ObsCore overclaim; `TUCDn` never written (§9) | **FIXED 2026-08-02** — D-4 implemented: all 26 ObsCore v1.2 mandatory columns (32 total), every column carries a `TUCDn`, `access_format = "application/fits"` | The wording is now simply **"ObsCore DM v1.2"** — the claim is earned rather than withdrawn. This is the LVM/VO provenance differentiator made real. |
+| R6 | ObsCore overclaim; `TUCDn` never written (§9) | **FIXED 2026-08-02** — D-4 implemented: 32 ObsCore v1.1 columns (32 total), every column carries a `TUCDn`, `access_format = "application/fits"` | The wording is now simply **"ObsCore DM v1.1"** — the claim is earned rather than withdrawn. This is the LVM/VO provenance differentiator made real. |
 
 Also shipped: `fita/validate.py` → `validate(path) -> ConformanceReport` with `.is_core`/`.is_full`/
 `.level`, `flux_roundtrip_ok()` for §5.4, exported as `fita.validate` and exposed as **`fita conform`**
@@ -459,7 +459,7 @@ world.
 directions (R5) · ✅ `ZDEPTH` sentinel → NaN (D-5) · ✅ `FITAVER` → 1.1 · ✅ `fita.validate()` +
 `fita conform` per §2.1 · ✅ §5.4 bit-exact flux test + CORE-conformance test (**the two tests
 §11.5 said were missing**) · 135 passed / 0 failed.
-**Remaining:** R2 + R6 — D-4 ObsCore v1.2 (8 mandatory columns, `TUCDn`, and a provenance parameter
+**Remaining:** R2 + R6 — D-4 ObsCore v1.1 (8 mandatory columns, `TUCDn`, and a provenance parameter
 on `io.write()`), which together are the only thing standing between the writer and **FITA-FULL**.
 Then D-3 `FITA_ADJ`, D-6 `FITA_ZSC`, D-7 guide demotion.
 
@@ -502,7 +502,7 @@ imports `uranodyne`; science Ops register from the `uranodyne` side (already tru
 |---|-----------|--------|--------------|-----------|
 | **C2** | Repairs + `fita.validate()` + flux bit-exactness test | **DONE** except R2/R6 | Every conformance and adoption claim was false until these landed. `validate()` is the standard's own answer to §11.5. | D-1, D-2 ✅ |
 | **C1** | Wheels + console scripts + `fita doctor` | **DONE 2026-08-02** | No robust install, no `.exe` domain, and no reachable validator. Diagnosis found 5 defects, not 1; wheels verified in a clean venv from the shadowing directory. | — |
-| **C2b** | D-4: ObsCore v1.2 + provenance parameter on `io.write()` | **DONE 2026-08-02** | Closed the last gap to **FITA-FULL**; the VO/LVM provenance claim is now earned. | C2 |
+| **C2b** | D-4: ObsCore v1.1 + provenance parameter on `io.write()` | **DONE 2026-08-02** | Closed the last gap to **FITA-FULL**; the VO/LVM provenance claim is now earned. | C2 |
 | **C3** | Ring B: `Op`/`Job`/`Manifest` + 3 registries | PARKed | The one new abstraction; makes the format discoverable, testable, agent-drivable. | C1 |
 | **C4** | Ingest + emit contracts (provenance in, fidelity logged out) | PARKed | Makes standard §10.3's interconversion contract executable. | C2b, C3 |
 | **C5** | Registry-generated CLI | PARKed | Proves "one description, many surfaces" before more surfaces are built. | C3 |
@@ -529,7 +529,7 @@ implementation debt:
 | **D-1** version strategy | v1.1 + **grandfather** the 18 files | ✅ `FITA_VERSION = "1.1"` |
 | **D-2** SPLIT16 | **DELETE** — writer MUST NOT emit, reader MUST raise | ✅ raises both ways; `pack` Op now vestigial (§5) |
 | **D-3** `FITA_ADJ` | **IMPLEMENT** the BINTABLE (serialise `AdjustmentStack`) | ✅ **done 2026-08-02** — FITR §8 unblocked; §6.1 op-log leg now real |
-| **D-4** ObsCore | **FULL v1.2** — mandatory cols + `TUCDn` + reachable `FITA_META` | ✅ **done 2026-08-02** — FITA-FULL reachable |
+| **D-4** ObsCore | ruled "FULL v1.2" — **but no ObsCore v1.2 exists**; corrected to v1.1 in v1.2.1 (see the erratum) | ✅ implemented; version claim corrected; **completeness unverified** |
 | **D-5** absence convention | omission + `TNULL` | ✅ `ZDEPTH` sentinel → NaN |
 | **D-6** `FITA_ZSC` | OPTIONAL, renderer-written | ⬜ open, not a blocker |
 | **D-7** guide notebook | demote to tutorial + fix 2 false claims | ⬜ open |

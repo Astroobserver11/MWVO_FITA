@@ -1,4 +1,4 @@
-"""Tests for ObsCore v1.2 provenance -- decision D-4, defect R2.
+"""Tests for ObsCore v1.1 provenance -- decision D-4, defect R2.
 
 Two things are being guarded here:
 
@@ -7,7 +7,7 @@ Two things are being guarded here:
     parameter to accept its result, so the provenance model was unreachable
     and FITA_META was absent from every archived file.
 
-  * that the table is ObsCore v1.2 *complete and annotated*, not merely
+  * that the table is ObsCore v1.1 *complete and annotated*, not merely
     present.  The withdrawn "ObsCore compliant" claim was false on both
     counts: nine mandatory columns were missing, and the per-column UCDs were
     defined in the source but never written to the file.
@@ -26,7 +26,7 @@ from fita.validate import validate
 from fita.ivoa import make_meta_hdu, meta_from_layers, ACCESS_FORMAT
 
 
-# ObsCore DM v1.2 mandatory columns -- the same set the validator enforces.
+# ObsCore DM v1.1 mandatory columns -- the same set the validator enforces.
 OBSCORE_MANDATORY = {
     "obs_publisher_did", "obs_collection", "obs_id",
     "s_ra", "s_dec", "s_region", "s_fov", "s_xel1", "s_xel2",
@@ -51,7 +51,7 @@ def _layers(n=3):
 def test_all_obscore_v12_mandatory_columns_present():
     hdu = make_meta_hdu(obs_id="X")
     missing = OBSCORE_MANDATORY - set(hdu.columns.names)
-    assert not missing, "missing ObsCore v1.2 mandatory columns: %s" % sorted(missing)
+    assert not missing, "missing ObsCore v1.1 mandatory columns: %s" % sorted(missing)
 
 
 def test_every_column_carries_a_tucd():

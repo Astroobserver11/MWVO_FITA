@@ -85,7 +85,7 @@ HDU 1    FITA_LAYERS    BINTABLE — layer index (non-authoritative)
          UNCERT_nnnn    IMAGE  1-sigma uncertainty                OPTIONAL
          MASK_nnnn      IMAGE  quality bitmask                    OPTIONAL
 HDU N-1  FITA_ADJ       BINTABLE — non-destructive display stack  OPTIONAL
-HDU N    FITA_META      BINTABLE — IVOA ObsCore v1.2 provenance   OPTIONAL
+HDU N    FITA_META      BINTABLE — IVOA ObsCore v1.1 provenance   OPTIONAL
 ```
 
 **The `FLUX_*` header is normative**; `FITA_LAYERS` is an index only. A header
@@ -102,7 +102,7 @@ Two levels, and a checker that reports them:
 | Level | Meaning |
 |---|---|
 | **FITA-CORE** | every MUST in §§3–7. The minimum for a file to be called `.fita`. |
-| **FITA-FULL** | FITA-CORE + every SHOULD + a conformant ObsCore v1.2 `FITA_META`. The bar for publication, archiving or VO registration. |
+| **FITA-FULL** | FITA-CORE + every SHOULD + a conformant ObsCore v1.1 `FITA_META`. The bar for publication, archiving or VO registration. |
 
 ```bash
 fita conform yourfile.fita          # --quiet, --strict; exit 0/1/2
@@ -153,7 +153,7 @@ waves, fluxes = cube.sed(px=512, py=512)
 | **Phased stereography** | `FITA_ZDP` encodes physical ISM penetration depth; `FITA_ZSC`/`FITA_ZRF`/`FITA_ZAN` record the rendered parallax |
 | **Per-layer WCS** | multi-resolution layers without resampling to a common grid |
 | **Uncertainty & masks** | companion `UNCERT_*` / `MASK_*` planes |
-| **Provenance** | IVOA ObsCore DM v1.2, all mandatory columns, UCDs as `TUCDn` |
+| **Provenance** | IVOA ObsCore DM v1.1, its column set, UCDs as `TUCDn` |
 | **Three backends** | FITS-MEF, HDF5, Zarr — one container-independent data model |
 | **PSD import** | Adobe Photoshop layers, blend modes and masks |
 
