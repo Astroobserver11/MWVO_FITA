@@ -4,7 +4,12 @@
 **Confirmed by:** BTOP, independently, against two IVOA sources, 2026-08-02
 **Affects:** FITA v1.2.0 — repository, ratified standard, reference implementation, conformance
 corpus, and Zenodo record `10.5281/zenodo.21763344`
-**Resolved in:** v1.2.1
+**Resolved in:** v1.2.1 (version claim) and **v1.3** (the missing `pol_xel` column)
+
+**Version note.** v1.2.1 briefly set `FITAVER = "1.2.1"`, which is malformed: §13 defines
+`FITAVER` as `major.minor`. ATOP was right that the label correction alone required no format
+increment. But adding `pol_xel` *is* a change to optional structure, which §13 does require an
+increment for — so the format is **1.3**, not 1.2 and not 1.2.1. The package is 1.3.0.
 
 ---
 
@@ -29,10 +34,23 @@ That sentence is withdrawn in full.
 
 Confirmed independently, twice, before acting:
 
-| Source | Result |
-|---|---|
-| `ivoa.net/documents/ObsCore/` | v1.1, "IVOA Recommendation 09 May 2017". No other version listed. |
-| `ivoa.net/documents/index.html` | ObsCore entry reads `1.1 → Recommendation (20170509)`. **No v1.2 in any status** — not a Working Draft, not a Proposed Recommendation. |
+Six axes across two machines, deliberately not all the same kind of evidence:
+
+| # | Axis | By | Result |
+|---|---|---|---|
+| 1 | `ivoa.net/documents/ObsCore/` | BTOP + ATOP | v1.1, "IVOA Recommendation 09 May 2017". No other version. |
+| 2 | IVOA full document index, all statuses | BTOP + ATOP | `ObsCore → 1.1 → Recommendation (20170509)`. **No v1.2 as REC, PR or WD.** |
+| 3 | **ALMA live TAP capabilities** | ATOP | Declares `ivo://ivoa.net/std/ObsCore#core-1.1`. |
+| 4 | **IVOA errata wiki** | ATOP | No 1.2 in preparation; erratum 4 is a citation pin; **none alter the mandatory set**. |
+
+Axis 3 settles it practically: a working archive in 2026 advertises `#core-1.1`, and there is no
+`#core-1.2` standardID available to declare. Axis 4 was ATOP checking the risk to *its own* claim —
+had an erratum changed the mandatory set, its column list (read from the 2017 PDF) would be stale.
+
+**Residual uncertainty, stated rather than smoothed over:** the errata index does not summarise
+errata 1 and 2, so their non-effect on the mandatory columns is established from the change
+summaries, not from their full text. That is a caveat on the *column list*, not on the version
+finding, which axes 1–3 settle independently.
 
 ATOP asked that the claim be checked a second way before any retraction was issued, on the
 grounds that a retraction which is itself wrong is worse than the original error. That was the
@@ -66,7 +84,7 @@ Contributing cause: the ATOP audit that would have caught this **arrived 14 hour
 publication and never reached BTOP.** The bridge delivered it to `Downloads\` rather than the
 bridge inbox, and the failure was silent. See §6.
 
-## 4. What is corrected in v1.2.1
+## 4. What is corrected (v1.2.1, completed in v1.3)
 
 Every live occurrence of "ObsCore DM v1.2" becomes **"ObsCore DM v1.1"**, and the
 completeness claim is downgraded to what is actually verified.
@@ -76,24 +94,31 @@ and the superseded v1.1 ratified standard record what was believed at the time. 
 falsify the audit trail. They contain the error as a matter of record, and this erratum is how a
 reader learns that.
 
-## 5. What remains UNVERIFIED — read this before citing the provenance claim
+## 5. Completeness — RESOLVED, and it found a second defect
 
-The version is now correct. **Completeness is not established.**
+The first draft of this erratum left completeness open, because BTOP could not extract Table 1
+from the REC PDF and refused to assert a count it had not read. **That hedge was load-bearing.**
 
-BTOP wrote 32 columns and the validator enforces a 26-column "mandatory" set. Whether that set
-matches **Table 1 of the ObsCore v1.1 Recommendation** has *not* been verified. BTOP attempted the
-check and could not extract Table 1 reliably from the REC PDF, and stopped rather than assert a
-count it had not read — which is precisely the error this erratum exists to correct, and
-committing it a second time inside the correction would be indefensible.
+ATOP read Table 1 and asked BTOP to check three specific columns. The result:
 
-Therefore, until ATOP verifies against Table 1:
+| Column | In the written table | Enforced as mandatory |
+|---|---|---|
+| `t_resolution` | present | **was NOT enforced** |
+| `pol_states` | present | enforced |
+| `pol_xel` | **WAS MISSING ENTIRELY** | was not enforced |
 
-- **Verified:** the provenance table targets ObsCore **v1.1**, the current Recommendation.
-- **Unverified:** that it contains the complete v1.1 mandatory column set.
-- **Conformant wording until verified:** *"an ObsCore v1.1 provenance table"* — **not** "full
-  mandatory set", and **not** "may be used without qualification".
+So the corrected wording *would itself have been false* had it claimed completeness — exactly as
+ATOP warned: *"If they're missing, the wording must not be corrected until they're added, or the
+correction is false too."*
 
-ATOP holds the Recommendation and the audit role. **This is the outstanding verification.**
+**Fixed in v1.3:** `pol_xel` added to `FITA_META`; the validator now enforces the **30** mandatory
+columns of ObsCore v1.1 as read from Table 1 by ATOP. A written file now carries 33 columns, all
+30 mandatory ones present, each with a `TUCDn`, and validates FITA-FULL.
+
+**Attribution of the remaining trust:** BTOP has still not read Table 1 itself. The 30-column list
+is ATOP's reading, corroborated by BTOP only in that the count matches and every name appears in
+BTOP's own token extraction from the REC PDF. Stated so no one mistakes corroboration for
+independent verification.
 
 ## 6. The delivery failure is a finding in its own right
 

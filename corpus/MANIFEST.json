@@ -1,6 +1,6 @@
 {
   "corpus": "FITA conformance corpus",
-  "format_version": "1.2.1",
+  "format_version": "1.3",
   "toolchain": {
     "python": "3.12.10",
     "numpy": "2.4.6",
@@ -46,7 +46,7 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "9c3e633c7808828bbc6894159ae0cf57744368e8bee2d2b9d5a5d95a8ffa00a2"
+      "sha256": "989bc98ad7ef9520d2b8e0823fee008d0507f4f7b41f7509ba4539f0fde491ec"
     },
     {
       "file": "conformance/full_provenanced.fita",
@@ -57,7 +57,7 @@
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 60480,
-      "sha256": "40f871accb3e176edec24add25007e04c0ff62b45ccb75c56d7c4742fdd692cc"
+      "sha256": "f564184df03f73158dc1576cc3abcd0a20684869efcd5800e8d541d771c2166a"
     },
     {
       "file": "conformance/full_with_adjustments.fita",
@@ -68,7 +68,7 @@
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 69120,
-      "sha256": "811da9f6a5b16750e9daf6c5f60ce506b454168fcc80b3db1d99c609c699c631"
+      "sha256": "51cfd79cd8b7c217657386e619f408b0330aa0648f98d1a9ee45382129f055bd"
     },
     {
       "file": "conformance/full_with_stereo.fita",
@@ -79,7 +79,7 @@
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 60480,
-      "sha256": "aead66077450f8302a6f96affe3df6b1d59f5260d6ec39de7d929e426a70075b"
+      "sha256": "bc1e7ec3e36da859307c6712db428d9caa2bb9dbce8241a20d8aca7a59d99831"
     },
     {
       "file": "conformance/full_with_uncert_mask.fita",
@@ -90,7 +90,7 @@
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 89280,
-      "sha256": "baa4760bc725144082e805ff05db6c9893ed315f4218465ddc7ebdef8b6693ee"
+      "sha256": "2eacf82138a21e556e617f974d4b189fdb039b195672dd9b6a8b06a4ce0d1de7"
     },
     {
       "file": "conformance/neg_access_format_overclaim.fita",
@@ -103,7 +103,7 @@
         "S3"
       ],
       "bytes": 43200,
-      "sha256": "4e7f15ea7b078b94b3a65b59ccbec4dc96857cd48731697e14e58b9530a712fc"
+      "sha256": "35a58e34add979849735e594c46bc21d36e9f203457ee3f6f09b2fcc64b9f551"
     },
     {
       "file": "conformance/neg_adj_bad_json.fita",
@@ -117,7 +117,7 @@
         "S9"
       ],
       "bytes": 37440,
-      "sha256": "6e9ff22e606e734870ce987532df28937f0f3c4aa1e5b00f8ec5ddc60aea73cf"
+      "sha256": "dd0b0e79ac25c737a727fed660fd67c7b3b08659cf6ecba9d86e6be7abb34635"
     },
     {
       "file": "conformance/neg_adj_unknown_type.fita",
@@ -131,7 +131,7 @@
         "S9"
       ],
       "bytes": 37440,
-      "sha256": "634acb421eeb2d676fd5a15756ef27feeeaa16fc050dd040ce99f0379a8203b3"
+      "sha256": "a512455d245160b658dc3272edbbf2696d0f9d0bf67c5808b597cb35893c7fe2"
     },
     {
       "file": "conformance/neg_alpha_bunit_alpha16.fita",
@@ -145,7 +145,7 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "2426814c100e9e4aee41b816faecd86d2f6bacb5466e7b38fb7c3e91235ef921"
+      "sha256": "8b35e28bf6397e563732d457652a1a667ad2e6fd525181b38b7d31dee0725e79"
     },
     {
       "file": "conformance/neg_alpha_no_bzero.fita",
@@ -159,7 +159,7 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "c1bb59338770c4376f146bdc61296e7a49b7f5f8b0dba21f71fcce6ca639f350"
+      "sha256": "98f9d0458512c641c652e4e1ec809fcb83899fb8119fc0c13302ce92ed2056e0"
     },
     {
       "file": "conformance/neg_bad_blend_code.fita",
@@ -173,7 +173,7 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "62889d68d8d31d5ba4a4a98975a949727c6838a4d213c29320953dd500381457"
+      "sha256": "1cba5f5099d1f476fa2de95e3209f1005e27a02230ff70eeba9050f2f5903a2d"
     },
     {
       "file": "conformance/neg_missing_fita_vis.fita",
@@ -187,7 +187,7 @@
         "S9"
       ],
       "bytes": 25920,
-      "sha256": "5fbc1a1c6d8e3171c2c397bd144ff194722844f885f6d90a5130fdc967ee4139"
+      "sha256": "228c7173299878a646cbe1f9017a8600b7e2d6ebb8e840737c31e513c4265e5a"
     },
     {
       "file": "conformance/neg_nlayers_mismatch.fita",
@@ -201,7 +201,7 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "7935cafa4499cdc93c04a1d89540844ab7abde3e3d729eb56c72a9c13d4a5d35"
+      "sha256": "e2ce6bef9bb6e266a2d5b9b3a189688394acb7812b077cc056977ef895b5d997"
     },
     {
       "file": "conformance/neg_split16_declared.fita",
@@ -215,7 +215,7 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "2ab7da2275310e25bdf529a303031d852c14fbcf7a71f71c2e510e0af0090e8c"
+      "sha256": "2d85e4e9af34d2de5730c7cb9137b4d69b7d3464d1eb5aaad7d84e2b7dd513d7"
     },
     {
       "file": "conformance/neg_zsc_not_finite.fita",
@@ -229,7 +229,7 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "d685d7bcb54e38fcc864102fff7ce0796c15bba81db1b6dfcdcbc42710c4216c"
+      "sha256": "e4d07059c35c4d635489c126e61203beb803cbe3daf9a5546206f8953c8a39d3"
     },
     {
       "file": "legacy/v10_as_built.fita",
@@ -245,7 +245,7 @@
         "S9"
       ],
       "bytes": 40320,
-      "sha256": "ba2a3f7d35676d466db36e7ec8d9fec9dbfda55398b5df89ebb0e7777a35d032"
+      "sha256": "240ad1fcaf700d1b3f4ab0e8942465380dd2adadc24a7609c307ef7c3a895c30"
     },
     {
       "file": "roundtrip/transfusion_reference.fita",
@@ -256,7 +256,7 @@
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 135360,
-      "sha256": "6fadf8799a59f553fc5ef259d958636c10c9175b6096a726563b44c981e42cbf"
+      "sha256": "2cb773e68c3aa0f98610f055960910ea4aa02b8631ace103a6ff19f3c961e4ed"
     },
     {
       "file": "science/three_band_field.fita",
@@ -267,7 +267,7 @@
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 198720,
-      "sha256": "646ffe82dd49ae2a4a2f910934de134e0476bc2a20009cd45dc832acdf892ea8"
+      "sha256": "aa50275230452e3eddbf7f6ec74360bab258625172b1150ab25e3d9f84aec79d"
     }
   ]
 }

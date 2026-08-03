@@ -107,6 +107,7 @@ _OBSCORE_COLS = [
     ("calib_level",       "I",    "meta.code;obs.calib",    "", "Calibration level 0-4"),
     ("o_ucd",             "64A",  "meta.ucd",               "", "UCD of the observable quantity"),
     ("pol_states",        "32A",  "meta.code;phys.polarization", "", "Polarization states present"),
+    ("pol_xel",           "J",    "meta.number",            "", "Number of samples along the polarization axis"),
     # -- spatial ----------------------------------------------------------
     ("s_ra",              "D",    "pos.eq.ra",              "deg",    "Central right ascension"),
     ("s_dec",             "D",    "pos.eq.dec",             "deg",    "Central declination"),

@@ -49,7 +49,7 @@ from .spec import (
 
 # The version this checker enforces. Files may declare an older minor version;
 # the checker reads them best-effort but reports required v1.1 corrections.
-ENFORCED_VERSION = "1.2.1"
+ENFORCED_VERSION = "1.3"
 
 # Severity levels.
 MUST = "MUST"      # violation => not conformant at the stated level
@@ -389,14 +389,19 @@ def _check_provenance(hdul, r):
     meta = hdul[EXTNAME_META]
     cols = set(getattr(meta.columns, "names", []) or [])
     # ObsCore v1.1 mandatory columns (D-4 full-conformance target).
+    # ObsCore DM v1.1 mandatory columns -- 30, as read from Table 1 of the
+    # Recommendation by ATOP (BTOP could not extract the table from the REC
+    # PDF and does not claim to have verified it independently).
+    #
+    # There is NO ObsCore v1.2; see ERRATUM__ObsCore_version__2026-08-02.md.
+    # pol_xel and t_resolution were absent here until ATOP's audit found them.
     obscore_mandatory = {
-        "obs_publisher_did", "obs_collection", "obs_id",
-        "s_ra", "s_dec", "s_region", "s_fov", "s_xel1", "s_xel2",
-        "t_min", "t_max", "t_exptime", "t_xel",
-        "em_min", "em_max", "em_xel", "em_res_power",
-        "o_ucd", "pol_states", "facility_name", "instrument_name",
-        "dataproduct_type", "calib_level", "access_url", "access_format",
-        "access_estsize",
+        "dataproduct_type", "calib_level", "obs_collection", "obs_id",
+        "obs_publisher_did", "access_url", "access_format", "access_estsize",
+        "target_name", "s_ra", "s_dec", "s_fov", "s_region", "s_resolution",
+        "s_xel1", "s_xel2", "t_min", "t_max", "t_exptime", "t_resolution",
+        "t_xel", "em_min", "em_max", "em_res_power", "em_xel", "o_ucd",
+        "pol_states", "pol_xel", "facility_name", "instrument_name",
     }
     missing = sorted(obscore_mandatory - cols)
     r.check("S9", SHOULD, not missing,

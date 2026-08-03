@@ -5,6 +5,22 @@ implements. Per §13 of the standard, **any change to required or optional
 structure requires a version increment** — a rule this project has broken
 twice and now enforces in code.
 
+## [1.3] — 2026-08-02
+
+### Added
+- **`pol_xel`** to `FITA_META`. ATOP's audit asked whether three specific ObsCore v1.1
+  mandatory columns were present; `pol_xel` was **missing entirely** and `t_resolution`
+  was written but not enforced. The v1.2.1 correction would itself have been false had it
+  claimed completeness. A written file now carries 33 columns, all 30 ObsCore v1.1
+  mandatory ones, each with a `TUCDn`.
+
+### Changed
+- Validator enforces the **30** ObsCore v1.1 mandatory columns (was 26).
+- `FITAVER` is **1.3**. v1.2.1 briefly set `"1.2.1"`, which is malformed — §13 defines
+  `FITAVER` as `major.minor`. The label correction alone needed no format increment, but
+  adding `pol_xel` changes optional structure, which §13 does require one for.
+- `FITR_SPEC.md` corrected — it is where the phantom "ObsCore v1.2" entered the family.
+
 ## [1.2.1] — 2026-08-02
 
 ### Fixed
