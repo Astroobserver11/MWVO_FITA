@@ -36,8 +36,28 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -e ".[dev]"
 
+      # A module-level `pytest.importorskip` reports ONE skip per module however
+      # many tests that module holds, so a matrix cell missing an optional
+      # dependency silently collects fewer tests and still reports green. The
+      # passed count moves and nothing says the denominator moved with it.
+      # Asserting a floor makes the denominator visible. Raise KERNEL_FLOOR
+      # deliberately when tests are added; never lower it to make CI pass.
+      - name: Collected-count floor (the denominator must be visible)
+        env:
+          KERNEL_FLOOR: "221"
+        run: |
+          collected=$(python -m pytest tests/ -q --collect-only 2>/dev/null \
+                      | grep -Eo '^[0-9]+ tests collected' | grep -Eo '^[0-9]+')
+          echo "collected=$collected  floor=$KERNEL_FLOOR"
+          if [ -z "$collected" ] || [ "$collected" -lt "$KERNEL_FLOOR" ]; then
+            echo "::error::collected $collected < floor $KERNEL_FLOOR -- tests"\
+                 "went missing without failing. Check for a module-level"\
+                 "importorskip hiding an absent optional dependency."
+            exit 1
+          fi
+
       - name: Test suite
-        run: python -m pytest tests/ -q
+        run: python -m pytest tests/ -q -rs --tb=short
 
       - name: Installation is usable from an unrelated directory
         # The IrenBLink failure: an install that only resolves when the working

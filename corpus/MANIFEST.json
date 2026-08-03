@@ -1,6 +1,6 @@
 {
   "corpus": "FITA conformance corpus",
-  "format_version": "1.3",
+  "format_version": "1.4",
   "toolchain": {
     "python": "3.12.10",
     "numpy": "2.4.6",
@@ -25,11 +25,12 @@
     "companion UNCERT_* and MASK_* planes",
     "FITA_ADJ order, enabled flags, and typed parameter values",
     "FITA_ADJ variable-length parameters (curve points, response arrays)",
-    "stereo FITA_ZSC / FITA_ZRF / FITA_ZAN",
+    "stereo FITA_ZSC / FITA_ZRF and the field it scales, FITA_FDI / FITA_FDU",
+    "FITA_ZDU when present -- dropping it silently re-imposes the [0,1] domain",
     "ObsCore provenance columns and their TUCDn annotations"
   ],
   "counts": {
-    "conformance": 15,
+    "conformance": 17,
     "legacy": 1,
     "science": 1,
     "roundtrip": 1
@@ -46,7 +47,7 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "989bc98ad7ef9520d2b8e0823fee008d0507f4f7b41f7509ba4539f0fde491ec"
+      "sha256": "739ff259fb33be2edb2db9fedd0d510e17efdb267b60c446dba346e2c4fe5b76"
     },
     {
       "file": "conformance/full_provenanced.fita",
@@ -57,7 +58,7 @@
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 60480,
-      "sha256": "f564184df03f73158dc1576cc3abcd0a20684869efcd5800e8d541d771c2166a"
+      "sha256": "dce65fa0910710e3a9c43f4714f450b17af5ac4cab2c83dfcca5136f77c9bb66"
     },
     {
       "file": "conformance/full_with_adjustments.fita",
@@ -68,18 +69,18 @@
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 69120,
-      "sha256": "51cfd79cd8b7c217657386e619f408b0330aa0648f98d1a9ee45382129f055bd"
+      "sha256": "c2e9a76d5a08248e00ad1fb09a8b3368a2021166a6a45adfea123ad62a404271"
     },
     {
       "file": "conformance/full_with_stereo.fita",
       "tier": "conformance",
-      "purpose": "Stereo geometry: ZSC + ZRF + ZAN",
+      "purpose": "Stereo geometry v1.4: ZSC as a percentage of FDI, in FDU",
       "clause": "S8.2",
       "expected_level": "FITA-FULL",
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 60480,
-      "sha256": "bc1e7ec3e36da859307c6712db428d9caa2bb9dbce8241a20d8aca7a59d99831"
+      "sha256": "7161e11fea51ddfe01aeddc7f10c003f96f1cf86fc5deb121dba6a158c65d1f6"
     },
     {
       "file": "conformance/full_with_uncert_mask.fita",
@@ -90,7 +91,18 @@
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 89280,
-      "sha256": "2eacf82138a21e556e617f974d4b189fdb039b195672dd9b6a8b06a4ce0d1de7"
+      "sha256": "fded24873c7eedc07d0ce01dd7cdbe8cb9dd9075d9ae3e2983bc0f4f0c627c1e"
+    },
+    {
+      "file": "conformance/full_with_zdepth_units.fita",
+      "tier": "conformance",
+      "purpose": "FITA_ZDP carries parsecs, declared by FITA_ZDU; the [0,1] domain does not apply (N-1)",
+      "clause": "S8.2",
+      "expected_level": "FITA-FULL",
+      "actual_level": "FITA-FULL",
+      "failing_clauses": [],
+      "bytes": 60480,
+      "sha256": "9c6900faa61e5fc413b70ca30aa6cd4c5f52a518fd7d6b24f2d5a711ad658595"
     },
     {
       "file": "conformance/neg_access_format_overclaim.fita",
@@ -103,7 +115,7 @@
         "S3"
       ],
       "bytes": 43200,
-      "sha256": "35a58e34add979849735e594c46bc21d36e9f203457ee3f6f09b2fcc64b9f551"
+      "sha256": "6f8b6eaa9951bc1347cda59d0617f5a21d997c98249c8f53d80626db22c851c5"
     },
     {
       "file": "conformance/neg_adj_bad_json.fita",
@@ -117,7 +129,7 @@
         "S9"
       ],
       "bytes": 37440,
-      "sha256": "dd0b0e79ac25c737a727fed660fd67c7b3b08659cf6ecba9d86e6be7abb34635"
+      "sha256": "7d27e61b489f7bb4fb38aa6165df20e4a1247589f84a73825b66e8ba2ab1729d"
     },
     {
       "file": "conformance/neg_adj_unknown_type.fita",
@@ -131,7 +143,7 @@
         "S9"
       ],
       "bytes": 37440,
-      "sha256": "a512455d245160b658dc3272edbbf2696d0f9d0bf67c5808b597cb35893c7fe2"
+      "sha256": "71cf4b46079fe80f27490eecb5ac69687ff64bc432f43c96971331dd5ce7d049"
     },
     {
       "file": "conformance/neg_alpha_bunit_alpha16.fita",
@@ -145,7 +157,7 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "8b35e28bf6397e563732d457652a1a667ad2e6fd525181b38b7d31dee0725e79"
+      "sha256": "b238786b28aacc19a944fa3e1cbb19b1c3113ce1c10a51afd786a0c9a5443316"
     },
     {
       "file": "conformance/neg_alpha_no_bzero.fita",
@@ -159,7 +171,7 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "98f9d0458512c641c652e4e1ec809fcb83899fb8119fc0c13302ce92ed2056e0"
+      "sha256": "24770083572fb029a9f88c8e4fde1ae3f1dcfe5a3141722e829c2bf78cb92ffb"
     },
     {
       "file": "conformance/neg_bad_blend_code.fita",
@@ -173,7 +185,7 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "1cba5f5099d1f476fa2de95e3209f1005e27a02230ff70eeba9050f2f5903a2d"
+      "sha256": "01e6107ef6da5fda358c9980cb4b1ab592639c545ad008517e91078ad63e1b71"
     },
     {
       "file": "conformance/neg_missing_fita_vis.fita",
@@ -187,7 +199,7 @@
         "S9"
       ],
       "bytes": 25920,
-      "sha256": "228c7173299878a646cbe1f9017a8600b7e2d6ebb8e840737c31e513c4265e5a"
+      "sha256": "27a0622d65c72eedb8dd814957a0d17dfb53383fb22ecb31624d4d832dfedca7"
     },
     {
       "file": "conformance/neg_nlayers_mismatch.fita",
@@ -201,7 +213,7 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "e2ce6bef9bb6e266a2d5b9b3a189688394acb7812b077cc056977ef895b5d997"
+      "sha256": "fed420fb8849cbb7cbe37a28fe42e4328efb8f536b0c1edb5c03fc75b253e624"
     },
     {
       "file": "conformance/neg_split16_declared.fita",
@@ -215,7 +227,7 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "2d85e4e9af34d2de5730c7cb9137b4d69b7d3464d1eb5aaad7d84e2b7dd513d7"
+      "sha256": "2c5a4c1b6856090b127ec9bb4a31dbb3cc0d3c100f067f076f87294aa82889a2"
     },
     {
       "file": "conformance/neg_zsc_not_finite.fita",
@@ -229,7 +241,21 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "e4d07059c35c4d635489c126e61203beb803cbe3daf9a5546206f8953c8a39d3"
+      "sha256": "9ac43eadba17e572f7c068586e814f49c71be0fde7714c8b7488e2c0a761abe8"
+    },
+    {
+      "file": "conformance/neg_zsc_without_field.fita",
+      "tier": "conformance",
+      "purpose": "FITA_ZSC present but FITA_FDI absent -- a percentage of nothing",
+      "clause": "S8.2",
+      "expected_level": "NON-CONFORMANT",
+      "actual_level": "NON-CONFORMANT",
+      "failing_clauses": [
+        "S8.2",
+        "S9"
+      ],
+      "bytes": 28800,
+      "sha256": "cc6699a08e7d959638c99e610d742daba4251fa7f1fada685ffef825c02fe1a9"
     },
     {
       "file": "legacy/v10_as_built.fita",
@@ -245,7 +271,7 @@
         "S9"
       ],
       "bytes": 40320,
-      "sha256": "240ad1fcaf700d1b3f4ab0e8942465380dd2adadc24a7609c307ef7c3a895c30"
+      "sha256": "075887132c0505f6293dba003977ca50c47b15e4ff72a510bfb05af3a7c56800"
     },
     {
       "file": "roundtrip/transfusion_reference.fita",
@@ -256,7 +282,7 @@
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 135360,
-      "sha256": "2cb773e68c3aa0f98610f055960910ea4aa02b8631ace103a6ff19f3c961e4ed"
+      "sha256": "54f2d8b95dfdb61ec2ebf511f1b741aa3f08d1e0b28f0ef2eab5da161e2985e6"
     },
     {
       "file": "science/three_band_field.fita",
@@ -267,7 +293,7 @@
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 198720,
-      "sha256": "aa50275230452e3eddbf7f6ec74360bab258625172b1150ab25e3d9f84aec79d"
+      "sha256": "87a827204d1c54ded40e67d8340cd39582d48f1efecd943d2d04ba0f82009e63"
     }
   ]
 }

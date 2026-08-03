@@ -108,7 +108,15 @@ def test_roundtrip_fixture_carries_the_droppable_attributes():
     geom = read_stereo_geometry(path)
     assert geom["zdp_scale"] is not None
     assert geom["zdp_ref_explicit"] is True
-    assert geom["zdp_angular"] is not None
+    # v1.4: FITA_ZAN is retired, so the fixture no longer carries it. What it
+    # must carry instead is the field the scale is a percentage of, and the
+    # depth unit -- dropping FITA_ZDU silently re-imposes the [0,1] domain and
+    # makes a conformant file non-conformant without changing a pixel.
+    assert geom["field_dia"] is not None
+    assert geom["field_unit"] == "pc"
+    assert geom["zdp_unit"] == "pc"
+    assert any(l.zdepth is not None and l.zdepth > 1.0 for l in layers), \
+        "physical depths not exercised"
 
 
 def test_survival_spec_is_published():

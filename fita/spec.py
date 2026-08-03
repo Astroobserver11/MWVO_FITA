@@ -49,7 +49,12 @@ IVOA notes
 # repeated verbatim the [CORRECTION] the standard levels at the 2026-05-25
 # delivery — three keywords added with no version bump, so files written
 # before and after claimed one version while differing in structure.
-FITA_VERSION = "1.3"   # S13 is major.minor; pol_xel added to FITA_META
+# v1.4 — principal's ruling 2026-08-02 (RULING__stereogram_scale_and_N-1):
+# "The scale of the Stereogram is a percentage of the diameter of the field
+# under study, made explicit as a measure in units practical to the subject."
+# That adds FITA_FDI / FITA_FDU / FITA_ZDU as optional structure, redefines
+# FITA_ZSC, and retires FITA_ZAN.  S13 requires the increment in this change.
+FITA_VERSION = "1.4"   # S13 is major.minor; stereo scale is now field-relative
 
 # ── Primary HDU mandatory keywords (all ≤8 chars, standard FITS) ────────────
 KW_VERSION   = "FITAVER"    # str  format version
@@ -59,9 +64,12 @@ KW_CANVAS_W  = "FITACW"     # int  canvas width  (pixels)
 KW_CANVAS_H  = "FITACH"     # int  canvas height (pixels)
 KW_BUNIT     = "BUNIT"      # str  physical flux unit (FITS standard)
 KW_INSTRUME  = "INSTRUME"   # str  originating instrument
-KW_ZSCALE    = "FITA_ZSC"   # float OPTIONAL stereo parallax scale (px, full ZDP range)
+KW_FIELD_DIA = "FITA_FDI"   # float OPTIONAL diameter of the field under study, in FITA_FDU
+KW_FIELD_UNI = "FITA_FDU"   # str   OPTIONAL FITS unit of FITA_FDI ('pc'|'km'|'arcsec'|'deg'|'AU')
+KW_ZSCALE    = "FITA_ZSC"   # float OPTIONAL stereo parallax, as a PERCENTAGE of FITA_FDI
 KW_ZREF      = "FITA_ZRF"   # float OPTIONAL reference plane: ZDP at zero parallax
-KW_ZANG      = "FITA_ZAN"   # float OPTIONAL angular measure of the parallax (arcsec)
+KW_ZDEPTH_U  = "FITA_ZDU"   # str   OPTIONAL FITS unit of FITA_ZDP; absent => dimensionless [0,1]
+KW_ZANG      = "FITA_ZAN"   # float RETIRED v1.4 — see the dissolution note below
 
 # Stereo geometry — decision D-6, ratified 2026-08-02; convention settled by
 # author ruling Q2, 2026-08-02.  All three keywords are OPTIONAL and written
@@ -73,15 +81,33 @@ KW_ZANG      = "FITA_ZAN"   # float OPTIONAL angular measure of the parallax (ar
 # traceable, and a rendered pair whose parallax cannot be recovered is not
 # traceable.  These keywords record the geometry actually used.
 #
-# Convention (normative when FITA_ZSC is present):
+# Convention (normative when FITA_ZSC is present) — REDEFINED in v1.4:
 #
-#     FITA_ZSC = total horizontal parallax, in pixels, spanned by the full
-#                FITA_ZDP range
+#     FITA_FDI = diameter of the field under study
+#     FITA_FDU = its unit, chosen to be practical to the SUBJECT: pc for a
+#                dust cube, km for a cometary surface, arcsec or deg for a sky
+#                field, AU for a disc.
+#     FITA_ZSC = total horizontal parallax across the full FITA_ZDP range, as
+#                a PERCENTAGE of FITA_FDI (dimensionless; 4.0 means 4 %).
 #     FITA_ZRF = the ZDP value placed at ZERO parallax (the screen plane).
 #                Defaults to 0.0 when omitted, i.e. background at the screen.
 #
-#     per-eye offset:  dx = ±(FITA_ZSC / 2) * (FITA_ZDP − FITA_ZRF)
+#     per-eye offset:  dx = ±(FITA_ZSC / 100) * FITA_FDI * (zdp_n − FITA_ZRF) / 2
 #                      left eye = −,  right eye = +
+#
+# dx is in units of FITA_FDU.  Converting it to display pixels needs the WCS or
+# a stated plate scale and is the RENDERER's job — that conversion is
+# deliberately not recorded in the file.  The file records the *measured*
+# stimulus; the renderer records the *rendering*.
+#
+# Why this replaced a pixel count.  v1.2 defined FITA_ZSC in pixels, but a
+# pixel is a property of a rendering target, not of a field, and is meaningless
+# without a display size the file does not know.  A percentage alone is
+# unanchored; a physical length alone is not a stimulus.  Together they are a
+# metric chain, which is what the MWVO depth-stimulus discipline requires.
+#
+# Validator consequence: FITA_ZSC present without FITA_FDI and FITA_FDU is a
+# MUST failure.  A percentage of nothing is not a measurement.
 #
 # With FITA_ZRF = 0.0 a layer at ZDP=0 (21 cm HI) sits in the screen plane and
 # ZDP=1 (X-ray plasma) carries the full separation forward.  With FITA_ZRF =
@@ -90,13 +116,39 @@ KW_ZANG      = "FITA_ZAN"   # float OPTIONAL angular measure of the parallax (ar
 # chosen plane rather than always pushed one way.  A negative FITA_ZSC
 # inverts the depth sense.
 #
-# FITA_ZAN — the angular measure (arcsec on sky, across the full ZDP range).
-# Author ruling Q2: a bare pixel count satisfies the real→model metric chain
-# ONLY when a complete model is missing; otherwise an angular measure is
-# required, UNLESS it can be deduced from context.  A layer WCS supplies that
-# context — pixel scale × FITA_ZSC gives the angle — so FITA_ZAN may be
-# omitted when a usable WCS is present, and SHOULD be written when it is not.
-# See fita.stereo.angular_parallax(), which performs the deduction.
+# FITA_ZDU — the unit of FITA_ZDP for this file, resolving N-1.
+#
+# Eight archived stereo files carry Edenhofer distance bins (624.05 / 1248.10 /
+# 2496.20 pc) in FITA_ZDP, while S8.2 defines the domain as [0,1].  The
+# principal's ruling: those values are in a unit practical to the subject, so
+# the writer's instinct was right — the defect is that the parsec-ness is
+# nowhere DECLARED.  A reader has no way to know.  It is a missing declaration,
+# not a wrong value.
+#
+#     FITA_ZDU ABSENT   → FITA_ZDP is dimensionless and MUST lie in [0,1]
+#                         (the v1.2 rule, unchanged — absence stays the strict
+#                         case, so no existing conformant file changes meaning)
+#     FITA_ZDU PRESENT  → FITA_ZDP carries a physical depth in that unit and
+#                         the [0,1] constraint MUST NOT be applied
+#
+# A renderer MUST normalise a FITA_ZDU-bearing cube to [0,1] over the range
+# actually present before applying parallax.  See fita.stereo.normalise_depths().
+# This makes the eight files conformant by adding ONE keyword rather than by
+# rewriting 48 layers of real science data — consistent with D-5 (absence by
+# omission) and D-1 (grandfathering).
+#
+# FITA_ZAN — RETIRED in v1.4, by dissolution rather than by replacement.
+#
+# The open question was "sky angle or viewing disparity?"  The answer is
+# neither: the question was malformed.  Once the field diameter is declared in
+# a subject-practical unit and the scale is a percentage of it, the separation
+# is expressible in whatever unit the subject wants — angle for a sky field,
+# length for a cube — by arithmetic, with no new keyword and no ambiguity.
+# FITA_ZAN hard-coded arcsec, which privileges the sky-projection case and is
+# exactly the wrong default for a 3D dust cube measured in parsecs.
+#
+# Readers MUST continue to accept FITA_ZAN in files written before v1.4 (D-1);
+# writers SHOULD NOT emit it.
 
 # ── Layer-level keywords (carried in each FLUX_* extension) ─────────────────
 KW_LAYER_ID   = "FITA_LID"   # int   layer index (1-based)

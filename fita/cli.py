@@ -92,11 +92,16 @@ def cmd_info(args):
     print(f"  {len(layers)} layer(s)")
     for l in layers:
         wave = f"{l.wave_cval*1e9:.2f} nm" if l.wave_cval else "-"
+        # FITA_FMN/FITA_FMX are SHOULD, not MUST (S6.2), so a fully
+        # FITA-CORE-conformant file may omit them.  Report the absence the
+        # same way `wave` already does rather than crashing on None.
+        fmin = f"{l.flux_min:.3g}" if l.flux_min is not None else "-"
+        fmax = f"{l.flux_max:.3g}" if l.flux_max is not None else "-"
         print(
             f"  [{l.layer_id:3d}] {l.name:<24s}  "
             f"shape={l.shape}  wave={wave}  "
             f"blend={l.blend_mode}  opacity={l.opacity:.2f}  "
-            f"flux=[{l.flux_min:.3g}, {l.flux_max:.3g}]  "
+            f"flux=[{fmin}, {fmax}]  "
             f"alpha={l.alpha_src}"
         )
 

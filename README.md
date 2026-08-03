@@ -151,7 +151,7 @@ waves, fluxes = cube.sed(px=512, py=512)
 | **Per-layer alpha** | uint16 with `BZERO=32768`, derived from a selected flux range |
 | **14 blend modes** | `NORMAL SCREEN MULTIPLY ADD OVERLAY SOFTLGT HARDLGT CDODGE CBURN DIFF LUM COLOR HUE SAT` |
 | **Adjustment layers** | `FITA_ADJ` — LEVELS, CURVES, BRIGHTNESS, FXSTRETCH, BANDMAP, FXNORM, in typed columns |
-| **Phased stereography** | `FITA_ZDP` encodes physical ISM penetration depth; `FITA_ZSC`/`FITA_ZRF`/`FITA_ZAN` record the rendered parallax |
+| **Phased stereography** | `FITA_ZDP` encodes physical ISM penetration depth, dimensionless or in `FITA_ZDU`; `FITA_ZSC` records the parallax as a percentage of the field `FITA_FDI`/`FITA_FDU` — a measure in units practical to the subject, never pixels |
 | **Per-layer WCS** | multi-resolution layers without resampling to a common grid |
 | **Uncertainty & masks** | companion `UNCERT_*` / `MASK_*` planes |
 | **Provenance** | IVOA ObsCore DM v1.1, its column set, UCDs as `TUCDn` |
@@ -207,7 +207,27 @@ what is not:
 **Established.** The flux/alpha invariant holds bit-for-bit in the default
 `FLOAT32` mode — measured, zero pixels altered. Files are valid FITS with
 verifying checksums. The FITS ⇄ Zarr data model is verified equivalent.
-**193 tests** pass in the kernel-only configuration; **241** with the optional URANODYNE stack installed, which gates three test modules. Quoting one number without its configuration is how the two counts came to disagree between machines.
+**Test counts, with their preconditions.** A bare number is not a claim about
+coverage, so here is the whole table:
+
+| Configuration | collected | passed |
+|---|---|---|
+| kernel only — `pip install -e ".[dev]"` | **221** | 221 |
+| \+ URANODYNE | **269** | 262, with **7 skipped** |
+| \+ URANODYNE \+ `openpyxl`, `photutils`, `reproject`, `matplotlib` | **269** | 269 |
+
+URANODYNE gates three modules (`test_calibration`, `test_pipeline`,
+`test_wideangle`) holding 48 tests between them; the four packages above gate 7
+tests inside those modules. `[dev]` already carries all four, so the middle row
+is the configuration in which URANODYNE is installed but the kernel's own dev
+extras are not — the one ATOP measured. **The CI matrix runs the first row**:
+it does not install URANODYNE, so "CI green" is evidence about the kernel, not
+about the science stack.
+
+Rows 1 and 3 measured on BTOP, Python 3.12; row 2 measured by ATOP on Python
+3.14.5 against the v1.3.0 source. Three environments produced three different
+numbers and all three reported success — which is why the count is now
+published with its preconditions and why CI asserts a collected floor.
 
 **Not established.** The HDF5 backend round-trip is **untested**, so the
 "all three backends" claim is confirmed for two of three. No `.fita` file has

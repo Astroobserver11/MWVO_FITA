@@ -27,7 +27,7 @@ except ImportError:
 from .spec import (
     FITA_VERSION, PACK_FLOAT32, PACK_SPLIT16,
     KW_VERSION, KW_PACK, KW_NLAYERS, KW_CANVAS_W, KW_CANVAS_H,
-    KW_ZSCALE, KW_ZREF, KW_ZANG,
+    KW_ZSCALE, KW_ZREF, KW_ZANG, KW_FIELD_DIA, KW_FIELD_UNI, KW_ZDEPTH_U,
     KW_DEPTH, KW_VISIBLE, KW_UNCERT_EXT, KW_MASK_EXT,
     EXTNAME_LAYERS, EXTNAME_ADJ, EXTNAME_META,
     LAYER_TABLE_COLS, flux_extname, alpha_extname,
@@ -146,13 +146,21 @@ def read_zdp_scale(path: str | Path) -> Optional[float]:
 
 
 def read_stereo_geometry(path: str | Path) -> Dict[str, Optional[float]]:
-    """Read the full stereo geometry: scale, reference plane, angular measure.
+    """Read the full stereo geometry (S8.2, v1.4).
 
     `zdp_ref` defaults to 0.0 when the keyword is absent, because that is the
-    convention's stated default (background at the screen plane).  `zdp_scale`
-    and `zdp_angular` return None when absent, because for those an absence is
-    a real statement -- no geometry recorded, and no angle recorded -- not a
-    default value.
+    convention's stated default (background at the screen plane).  Everything
+    else returns None when absent, because for those an absence is a real
+    statement -- no geometry recorded, no field declared, no unit declared --
+    not a default value.
+
+    `zdp_unit` is the one to read carefully: None means FITA_ZDP is
+    dimensionless and constrained to [0,1], a string means it carries a
+    physical depth in that unit and the [0,1] rule does not apply (N-1).
+
+    `zdp_angular` reads the RETIRED FITA_ZAN.  It is still reported because
+    files written before v1.4 carry it and D-1 grandfathering means a reader
+    must not choke on them; writers should no longer emit it.
     """
     _require_astropy()
     with fits.open(str(path)) as hdul:
@@ -160,10 +168,16 @@ def read_stereo_geometry(path: str | Path) -> Dict[str, Optional[float]]:
         scale = h.get(KW_ZSCALE, None)
         ref = h.get(KW_ZREF, None)
         ang = h.get(KW_ZANG, None)
+        fdi = h.get(KW_FIELD_DIA, None)
+        fdu = h.get(KW_FIELD_UNI, None)
+        zdu = h.get(KW_ZDEPTH_U, None)
     return {
         "zdp_scale": None if scale is None else float(scale),
         "zdp_ref": 0.0 if ref is None else float(ref),
         "zdp_ref_explicit": ref is not None,
+        "field_dia": None if fdi is None else float(fdi),
+        "field_unit": None if fdu is None else str(fdu).strip(),
+        "zdp_unit": None if zdu is None else str(zdu).strip(),
         "zdp_angular": None if ang is None else float(ang),
     }
 
@@ -254,6 +268,9 @@ def write(
     zdp_scale: Optional[float] = None,
     zdp_ref: Optional[float] = None,
     zdp_angular: Optional[float] = None,
+    field_dia: Optional[float] = None,
+    field_unit: Optional[str] = None,
+    zdp_unit: Optional[str] = None,
     checksum: bool = True,
     date: Optional[str] = None,
     origin: Optional[str] = None,
@@ -287,14 +304,32 @@ def write(
 
     zdp_scale:
         Optional stereo parallax scale written to PRIMARY as ``FITA_ZSC``:
-        the total horizontal separation, in pixels, spanned by the full
-        FITA_ZDP range (decision D-6).
+        the total horizontal separation across the full FITA_ZDP range, as a
+        **percentage of** ``field_dia`` (decision D-6; redefined from pixels
+        by the principal's ruling of 2026-08-02).
 
         This is a RENDERER's statement, not a compositor's -- pass it only
         when writing a file whose stereo geometry has actually been fixed.
         Leaving it unset records "no stereo geometry", which is honest;
         writing 0.0 would claim a measured separation of zero.  See
         ``fita.stereo``.
+
+    field_dia, field_unit:
+        ``FITA_FDI`` / ``FITA_FDU`` -- the diameter of the field under study
+        and its unit, chosen to be practical to the subject (``pc`` for a dust
+        cube, ``km`` for a cometary surface, ``arcsec`` or ``deg`` for a sky
+        field, ``AU`` for a disc).
+
+        ``zdp_scale`` without these is a MUST failure at validation: a
+        percentage of nothing is not a measurement.  A ValueError is raised
+        here rather than writing a file the validator will reject.
+
+    zdp_unit:
+        ``FITA_ZDU`` -- the unit of FITA_ZDP for this file.  Leave it None and
+        FITA_ZDP is dimensionless and must lie in [0,1] (the strict, default
+        case).  Set it and FITA_ZDP carries a physical depth in that unit,
+        which is how the archived Edenhofer cubes declare their parsecs
+        without rewriting 48 layers of science data (N-1).
     """
     _require_astropy()
 
@@ -323,13 +358,36 @@ def write(
     # S8.2 / D-6: OPTIONAL, renderer-written.  Absence means "no stereo
     # geometry recorded", which is why 0.0 is written only if asked for
     # explicitly rather than as a default.
+    #
+    # v1.4: FITA_ZSC is a percentage of FITA_FDI, so writing it without the
+    # field it is a percentage OF produces a file this library's own validator
+    # rejects.  Refuse at the writer rather than emit it -- the project's
+    # characteristic defect is silent loss that looks like success, and a
+    # writer that happily emits a MUST-failing file is that defect.
+    if zdp_scale is not None and (field_dia is None or field_unit is None):
+        raise ValueError(
+            "zdp_scale (FITA_ZSC) is a percentage of the field diameter and "
+            "requires field_dia (FITA_FDI) and field_unit (FITA_FDU). "
+            "A percentage of nothing is not a measurement -- standard S8.2, "
+            "principal's ruling 2026-08-02."
+        )
+    if field_dia is not None:
+        phdr[KW_FIELD_DIA] = (float(field_dia), "diameter of the field under study")
+    if field_unit is not None:
+        phdr[KW_FIELD_UNI] = (str(field_unit), "FITS unit of FITA_FDI")
     if zdp_scale is not None:
         phdr[KW_ZSCALE] = (float(zdp_scale),
-                           "px parallax across full ZDP range (D-6)")
+                           "pct of FITA_FDI, full ZDP range (D-6)")
     if zdp_ref is not None:
         phdr[KW_ZREF] = (float(zdp_ref), "ZDP placed at zero parallax")
+    if zdp_unit is not None:
+        phdr[KW_ZDEPTH_U] = (str(zdp_unit), "FITS unit of FITA_ZDP")
+    # FITA_ZAN is RETIRED in v1.4 (dissolved, not replaced).  Still writable so
+    # a caller reproducing a pre-v1.4 file can, but no longer emitted by
+    # anything in this library.
     if zdp_angular is not None:
-        phdr[KW_ZANG] = (float(zdp_angular), "arcsec parallax, full ZDP range")
+        phdr[KW_ZANG] = (float(zdp_angular),
+                         "RETIRED v1.4: arcsec parallax, full ZDP range")
     # FITS-standard provenance. DATE is deliberately overridable: it is the
     # only non-deterministic value the writer would otherwise introduce.
     if date is None:

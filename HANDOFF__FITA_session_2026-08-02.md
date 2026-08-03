@@ -15,9 +15,9 @@ normative standard. Everything below is verified state, not plan.
 | **Repo** | https://github.com/Astroobserver11/MWVO_FITA — public |
 | **Sibling** | https://github.com/Astroobserver11/uranodyne — public |
 | **Concept DOI** | `10.5281/zenodo.21763301` (always newest) |
-| **Format version** | `FITAVER = 1.3` · package `1.3.0` |
-| **Tests** | 241 passing · CI green on 3 OS × 3 Python |
-| **Corpus** | 18 labelled files, byte-reproducible within a recorded toolchain |
+| **Format version** | `FITAVER = 1.4` · package `1.4.0` |
+| **Tests** | 221 collected kernel-only · 269 with URANODYNE — see README for the full precondition table. CI runs the kernel-only row and now asserts a collected floor |
+| **Corpus** | 20 labelled files, byte-reproducible within the toolchain pinned in `corpus/TOOLCHAIN.lock` |
 | **Local paths** | `C:\Users\astro\fita` (kernel) · `.../fita/uranodyne` (nested repo) |
 
 **Releases:** v1.2.0 (DOI'd, contains a false claim), v1.2.1 (erratum), v1.3.0 (erratum
@@ -40,7 +40,7 @@ the verb.* It imports `fita`; the dependency never runs the other way.
 ## 3. The one thing to internalise
 
 This project's characteristic failure is **silent loss that looks like success**. It has now
-happened seven times:
+happened nine times, and the last two are inside the instruments built to catch the first seven:
 
 | # | Failure | How it hid |
 |---|---|---|
@@ -51,6 +51,18 @@ happened seven times:
 | 5 | Git treated `*.fita` as text | FITS headers are ASCII; CRLF would shift every 2880-byte block |
 | 6 | Checksum certified pre-corruption bytes | in-place table edit didn't update the cached datasum |
 | 7 | **ObsCore v1.2 does not exist** | inherited from an internal doc, never checked against the source |
+| 8 | **`fita conform` exited 0 on a NON-CONFORMANT file** | it printed every defect correctly and returned success; only `--strict` propagated the verdict. *In the validator* |
+| 9 | **Module-level `importorskip` hides uncollected tests** | pytest reports ONE skip per module however many tests it holds, so 48 missing tests showed as one skip line. The passed count moves; nothing says the denominator moved with it. *In the test harness* |
+
+**#9 is the worst-placed of all.** The test suite is the instrument this project uses to detect
+silent loss, and it had the defect it exists to detect. It is also why "CI green on 3 OS × 3
+Python" was not evidence about coverage: the matrix does not install URANODYNE, so every cell was
+silently running the kernel-only subset. Closed by asserting a **collected-count floor** in CI —
+one step that makes the denominator visible.
+
+**Corollary to the corollary.** #7 and #9 share a shape worth naming: *a number that fits is not a
+cause*. `241 − 48 = 193` reproduced the observed count exactly and was still the wrong
+explanation — the real one needed five optional dependencies, not one. See RULE E, §5.
 
 **Corollary:** a green test proves the function ran, not that the file is right. Prefer tests
 that compare *values* after a round trip, are NaN-aware, and assert what a *third-party reader*
@@ -77,10 +89,17 @@ clause.
 
 ## 5. Open items, in priority order
 
-1. **N-1 — needs Ignacio's ruling.** Eight archived ATOP files carry **parsecs** (624/1248/2496)
-   in `FITA_ZDP`, while §8.2 now normatively defines the domain as `[0,1]` and the parallax
-   formula assumes it. Either those files are non-conformant or the domain needs a physical-units
-   variant. **Do not guess this** — it is a science-representation decision.
+0. **CLOSED — N-1 and `FITA_ZAN`.** Ruled 2026-08-02
+   (`RULING__stereogram_scale_and_N-1__2026-08-02.md`): the stereogram scale is a percentage of the
+   field diameter, stated in a unit practical to the subject. Implemented as **v1.4** — `FITA_FDI`
+   / `FITA_FDU` / `FITA_ZDU` added, `FITA_ZSC` redefined from pixels, `FITA_ZAN` retired by
+   dissolution. The eight archived files become conformant by adding **one keyword**; that header
+   edit is still owed and is ATOP's to make (they are not on BTOP).
+1. **RULE E — needs Ignacio's ruling.** ATOP drafts (escalation §3): a finding **MUST NOT** be
+   closed as *environmental* until the difference is named and pinned, re-run under the declared
+   environment, both results published with preconditions, and the difference added to the shipped
+   environment declaration. Raised because N-5 was closed on arithmetic that fit the number
+   without being the cause.
 2. **PyPI distribution name.** `fita`, `fitb`, `fitr`, `fito` are all TAKEN by unrelated projects;
    the FIT(a–z) namespace cannot be controlled and bulk-registering would be squatting. Author
    accepted the fix: prefix with **`mwvo-`** (`mwvo`, `mwvo-fita`, `mwvo-fitr`, `mwvo-fito`,
@@ -93,7 +112,12 @@ clause.
    audit return on C1–C12.
 6. **FITS convention registration** — not started. Still the highest-leverage adoption step.
 7. **The paper.** Track: ratify ✓ validator ✓ corpus ✓ DOI ✓ → registration → paper.
-8. **`FITA_ZAN`** — sky angle or viewing disparity? Marked provisional in §8.2.
+8. **`DISTANPC` — undeclared structure in a UranoDyne writer.** `uranodyne/pipeline/edenhofer.py`
+   normalises distance into `zdepth` **and** stashes the parsec value in a private 8-char keyword
+   `DISTANPC`, which `extra_header` writes straight into every `FLUX_*` header. It is nowhere in
+   the standard. v1.4 makes it redundant — `FITA_ZDP` in parsecs plus `FITA_ZDU = 'pc'` says the
+   same thing normatively. Third instance of "structure that lives only in code is a de-facto
+   specification" (§4). ATOP is looking at this.
 9. **PACI / `FITA_ZCAT` boundary (D-8)** — anchor class is epistemic status, which §10.3 assigns
    to FITO. Rule once for both.
 

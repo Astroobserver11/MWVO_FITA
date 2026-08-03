@@ -197,6 +197,12 @@ def _check_layout(hdul, r, pack):
 
 def _check_layers(hdul, r, pack):
     """S5, §6.2, §6.3, §7, §8 per-layer checks."""
+    # PRIMARY-level declaration that governs the per-layer FITA_ZDP domain
+    # (v1.4, N-1).  Read once: it is a property of the file, not of a layer.
+    from .spec import KW_ZDEPTH_U
+    _zdu = hdul[0].header.get(KW_ZDEPTH_U, None)
+    zdp_unit = None if _zdu is None else str(_zdu).strip() or None
+
     for idx, fhdu in _iter_flux_hdus(hdul):
         fh = fhdu.header
         where = flux_extname(idx)
@@ -222,14 +228,26 @@ def _check_layers(hdul, r, pack):
                 f"FLUX BUNIT parseable (got {fh.get('BUNIT')!r})", where)
 
         # §8.2 FITA_ZDP domain + §4.3/§8.2 no -1 sentinel
+        #
+        # v1.4 (N-1): the [0,1] domain applies only when PRIMARY declares no
+        # FITA_ZDU.  With a unit present, FITA_ZDP carries a physical depth --
+        # the archived Edenhofer cubes hold parsecs -- and constraining it to
+        # [0,1] would condemn correct science data for a missing declaration
+        # that is now declarable.  Absence stays the strict case, so no
+        # existing conformant file changes meaning.
         if "FITA_ZDP" in fh:
             try:
                 z = float(fh["FITA_ZDP"])
-                r.check("S8.2", MUST, 0.0 <= z <= 1.0,
-                        f"FITA_ZDP in [0,1] (got {z}); absence must omit the keyword, "
-                        f"not use a sentinel", where)
+                if zdp_unit is None:
+                    r.check("S8.2", MUST, 0.0 <= z <= 1.0,
+                            f"FITA_ZDP in [0,1] (got {z}); absence must omit the keyword, "
+                            f"not use a sentinel", where)
+                else:
+                    r.check("S8.2", MUST, bool(np.isfinite(z)),
+                            f"FITA_ZDP is a finite depth in {zdp_unit!r} (got {z})", where)
             except (TypeError, ValueError):
-                r.check("S8.2", MUST, False, "FITA_ZDP is a float in [0,1]", where)
+                domain = "a float in [0,1]" if zdp_unit is None else f"a float in {zdp_unit!r}"
+                r.check("S8.2", MUST, False, f"FITA_ZDP is {domain}", where)
 
         # §6.3 ALPHA encoding: unsigned-16 via BZERO=32768, no 'alpha16' BUNIT
         aname = alpha_extname(idx)
@@ -264,7 +282,8 @@ def _check_layers(hdul, r, pack):
 
 def _check_zdp_scale(hdul, r):
     """S8.2 / D-6 stereo geometry -- OPTIONAL, but meaningful when present."""
-    from .spec import KW_ZSCALE, KW_ZREF, KW_ZANG, KW_DEPTH
+    from .spec import (KW_ZSCALE, KW_ZREF, KW_ZANG, KW_DEPTH,
+                       KW_FIELD_DIA, KW_FIELD_UNI, KW_ZDEPTH_U)
 
     hdr = hdul[0].header
 
@@ -281,13 +300,32 @@ def _check_zdp_scale(hdul, r):
     has_scale, scale, scale_ok = _finite(KW_ZSCALE)
     has_ref, ref, ref_ok = _finite(KW_ZREF)
     has_ang, ang, ang_ok = _finite(KW_ZANG)
+    has_dia, dia, dia_ok = _finite(KW_FIELD_DIA)
 
     for kw, present, ok in ((KW_ZSCALE, has_scale, scale_ok),
                             (KW_ZREF, has_ref, ref_ok),
-                            (KW_ZANG, has_ang, ang_ok)):
+                            (KW_ZANG, has_ang, ang_ok),
+                            (KW_FIELD_DIA, has_dia, dia_ok)):
         if present:
             r.check("S8.2", MUST, ok,
                     f"{kw} is a finite number (got {hdr[kw]!r})", "PRIMARY")
+
+    # v1.4: the units must be real FITS units, or the "practical to the
+    # subject" half of the ruling records a string nobody can act on.
+    for kw in (KW_FIELD_UNI, KW_ZDEPTH_U):
+        if kw in hdr:
+            r.check("S8.2", MUST, _bunit_is_valid(hdr[kw]),
+                    f"{kw} is a valid FITS unit string (got {hdr[kw]!r})", "PRIMARY")
+
+    # A declared field diameter must be a real extent.  Zero or negative would
+    # make the parallax formula divide the depth budget into nothing.
+    if has_dia and dia_ok:
+        r.check("S8.2", MUST, dia > 0,
+                f"{KW_FIELD_DIA}={dia:g} is a positive diameter", "PRIMARY")
+        r.check("S8.2", SHOULD, KW_FIELD_UNI in hdr,
+                f"{KW_FIELD_DIA} is accompanied by {KW_FIELD_UNI}; a number "
+                "without a unit is not a measure practical to the subject",
+                "PRIMARY")
 
     if has_ref and ref_ok:
         # The reference plane names a point on the ZDP axis, so it has to lie
@@ -298,6 +336,21 @@ def _check_zdp_scale(hdul, r):
     if not has_scale or not scale_ok:
         return
 
+    # ── the clause that enforces the ruling ──────────────────────────────────
+    # FITA_ZSC is a PERCENTAGE of FITA_FDI (v1.4).  Without the field it is a
+    # percentage of nothing, which is not a measurement -- the exact failure
+    # the pixel-count convention had, restated.  MUST, not SHOULD: a stereo
+    # record that cannot be converted to a physical separation does not record
+    # a stimulus at all.
+    r.check("S8.2", MUST, has_dia,
+            f"{KW_ZSCALE} is present, so {KW_FIELD_DIA} MUST be too: "
+            f"{KW_ZSCALE} is a percentage of the field diameter and a "
+            "percentage of nothing is not a measurement", "PRIMARY")
+    r.check("S8.2", MUST, KW_FIELD_UNI in hdr,
+            f"{KW_ZSCALE} is present, so {KW_FIELD_UNI} MUST be too: the field "
+            "diameter must be stated in a unit practical to the subject",
+            "PRIMARY")
+
     # A parallax scale with nothing to scale records a stimulus that was never
     # applied.  Not fatal -- it may be a renderer default on a flat cube --
     # but it should not pass silently.
@@ -307,21 +360,19 @@ def _check_zdp_scale(hdul, r):
             f"{KW_ZSCALE}={scale:g} but no layer carries {KW_DEPTH}; "
             "the recorded parallax applies to nothing", "PRIMARY")
 
-    # Author ruling Q2: a bare pixel count is a complete record only when no
-    # angular measure can be had.  An angle is required unless deducible from
-    # context, and a celestial WCS on any layer is that context.
-    if not has_ang and scale != 0.0:
-        deducible = False
-        for h in hdul:
-            if not str(h.name).startswith("FLUX_"):
-                continue
-            if {"CDELT1", "CD1_1", "PC1_1"} & set(h.header.keys()):
-                deducible = True
-                break
-        r.check("S8.2", SHOULD, deducible,
-                f"{KW_ZANG} absent and no WCS to deduce it from; the stereo "
-                "record is pixel-only, valid only where a complete model is "
-                "unavailable", "PRIMARY")
+    # FITA_ZAN is RETIRED in v1.4, by dissolution.  The old check required an
+    # angular measure or a WCS to deduce one from; that requirement is gone,
+    # because FITA_FDI/FITA_FDU now carry the absolute half of the metric chain
+    # in whatever unit suits the subject.  Files written before v1.4 still
+    # carry FITA_ZAN and MUST still read (D-1), so its presence is not an
+    # error -- but a writer emitting it now is producing a keyword the
+    # standard no longer defines.
+    if has_ang:
+        r.check("S8.2", SHOULD, False,
+                f"{KW_ZANG} is retired in v1.4 (dissolved: the separation "
+                f"follows from {KW_FIELD_DIA}/{KW_FIELD_UNI} by arithmetic). "
+                "Readers must still accept it; writers should not emit it",
+                "PRIMARY")
 
 
 def _check_adjustments(hdul, r):

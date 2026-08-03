@@ -229,9 +229,23 @@ def build_conformance(out: Path):
     p = out / "full_with_stereo.fita"
     layers = base_layers(2)
     layers[0].zdepth, layers[1].zdepth = 0.0, 1.0
-    write(str(p), layers, overwrite=True, zdp_scale=24.0, zdp_ref=0.5,
-          zdp_angular=86.4, provenance=_provenance("CORPUS-STEREO"))
-    _record(p, "Stereo geometry: ZSC + ZRF + ZAN", "S8.2", "FITA-FULL")
+    write(str(p), layers, overwrite=True, zdp_scale=4.0, zdp_ref=0.5,
+          field_dia=1200.0, field_unit="pc",
+          provenance=_provenance("CORPUS-STEREO"))
+    _record(p, "Stereo geometry v1.4: ZSC as a percentage of FDI, in FDU",
+            "S8.2", "FITA-FULL")
+
+    # N-1, made demonstrable rather than asserted: FITA_ZDP in parsecs, legal
+    # only because FITA_ZDU declares the unit.  These are the Edenhofer
+    # distance bins the eight archived ATOP files carry.
+    p = out / "full_with_zdepth_units.fita"
+    layers = base_layers(2)
+    layers[0].zdepth, layers[1].zdepth = 624.05, 2496.20
+    write(str(p), layers, overwrite=True, zdp_scale=4.0, zdp_ref=0.0,
+          field_dia=2500.0, field_unit="pc", zdp_unit="pc",
+          provenance=_provenance("CORPUS-ZDU"))
+    _record(p, "FITA_ZDP carries parsecs, declared by FITA_ZDU; the [0,1] "
+               "domain does not apply (N-1)", "S8.2", "FITA-FULL")
 
     p = out / "full_with_uncert_mask.fita"
     layers = base_layers(2)
@@ -268,11 +282,22 @@ def build_conformance(out: Path):
         ("neg_zsc_not_finite.fita", "S8.2",
          "FITA_ZSC is not a number",
          lambda h: h[0].header.__setitem__(KW_ZSCALE, "not-a-number")),
+        # The clause that enforces the principal's ruling of 2026-08-02: a
+        # scale is a percentage OF something, and without FITA_FDI it is a
+        # percentage of nothing.  The library refuses to write this, so it is
+        # built conformant and then broken -- which is also the only way a
+        # third-party writer could produce it.
+        ("neg_zsc_without_field.fita", "S8.2",
+         "FITA_ZSC present but FITA_FDI absent -- a percentage of nothing",
+         lambda h: h[0].header.__delitem__("FITA_FDI")),
     ]
     for name, clause, purpose, breaker in neg:
         p = out / name
+        _zsc = "zsc" in name
         write(str(p), base_layers(1), overwrite=True,
-              zdp_scale=24.0 if "zsc" in name else None)
+              zdp_scale=4.0 if _zsc else None,
+              field_dia=1200.0 if _zsc else None,
+              field_unit="pc" if _zsc else None)
         _corrupt(p, breaker)
         _record(p, purpose, clause, "NON-CONFORMANT")
 
@@ -351,7 +376,8 @@ def build_science(out: Path):
               BandMapAdjustment(channel="R", layer_id=1),
               BandMapAdjustment(channel="G", layer_id=2),
               BandMapAdjustment(channel="B", layer_id=3)]),
-          zdp_scale=16.0, zdp_ref=0.25,
+          zdp_scale=3.0, zdp_ref=0.25,
+          field_dia=0.35, field_unit="deg",
           provenance=_provenance("CORPUS-SCIENCE", target="M27-like field"))
     _record(p, "Three-band field with depth, blend modes, uncertainty, "
                "false-colour band mapping and stereo geometry",
@@ -371,7 +397,8 @@ SURVIVAL_SPEC = [
     "companion UNCERT_* and MASK_* planes",
     "FITA_ADJ order, enabled flags, and typed parameter values",
     "FITA_ADJ variable-length parameters (curve points, response arrays)",
-    "stereo FITA_ZSC / FITA_ZRF / FITA_ZAN",
+    "stereo FITA_ZSC / FITA_ZRF and the field it scales, FITA_FDI / FITA_FDU",
+    "FITA_ZDU when present -- dropping it silently re-imposes the [0,1] domain",
     "ObsCore provenance columns and their TUCDn annotations",
 ]
 
@@ -386,11 +413,16 @@ def build_roundtrip(out: Path):
     out.mkdir(parents=True, exist_ok=True)
     p = out / "transfusion_reference.fita"
 
+    # Depths are in PARSECS, declared by FITA_ZDU below.  Deliberate: a bridge
+    # that drops FITA_ZDU does not merely lose a keyword, it silently
+    # re-imposes the [0,1] domain and turns a conformant file into a file
+    # carrying 2496 where the standard permits 1.  That is the N-1 failure
+    # exactly, and it is the kind this tier exists to catch.
     layers = []
     for i, (name, blend, opac, vis, zdp) in enumerate([
-            ("visible-front", "SCREEN", 1.00, True, 1.0),
-            ("hidden-mid", "MULTIPLY", 0.50, False, 0.5),   # visible=False
-            ("no-depth", "ADD", 0.75, True, None),          # zdepth absent
+            ("visible-front", "SCREEN", 1.00, True, 2496.20),
+            ("hidden-mid", "MULTIPLY", 0.50, False, 1248.10),  # visible=False
+            ("no-depth", "ADD", 0.75, True, None),             # zdepth absent
     ]):
         l = FITALayer.from_array(_field(seed=i, blank=True), layer_id=i + 1,
                                  name=name, blend_mode=blend, opacity=opac,
@@ -418,7 +450,8 @@ def build_roundtrip(out: Path):
     stack.adjustments[3].enabled = False              # a disabled step
 
     write(str(p), layers, overwrite=True, adjustments=stack,
-          zdp_scale=24.0, zdp_ref=0.5, zdp_angular=86.4,
+          zdp_scale=4.0, zdp_ref=0.5,
+          field_dia=2500.0, field_unit="pc", zdp_unit="pc",
           provenance=_provenance("CORPUS-TRANSFUSION"))
     _record(p, "Carries every attribute a transfusion could silently drop; "
                "see survival_spec in the manifest",
@@ -471,7 +504,43 @@ def write_manifest(out: Path):
     }
     (out / "MANIFEST.json").write_text(
         json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    write_toolchain_lock(out, manifest["toolchain"])
     return manifest
+
+
+def write_toolchain_lock(out: Path, toolchain: dict):
+    """Emit an installable pin of the toolchain that produced these bytes.
+
+    N-6 and the environmental escalation of 2026-08-02: ATOP skipped the
+    byte-comparison because its astropy/numpy/python differed from the recorded
+    ones, and had no declared environment to install in order to match. A
+    toolchain recorded only as JSON metadata is a description; a verifier needs
+    something it can install.
+
+    Generated FROM the manifest rather than maintained beside it, so the two
+    cannot drift -- the same reason the corpus is a generator and not a folder
+    of files.
+    """
+    lines = [
+        "# FITA conformance corpus -- toolchain lock (GENERATED, do not edit)",
+        "#",
+        "# The corpus is byte-reproducible only within this toolchain. Install it",
+        "# before comparing bytes:",
+        "#",
+        "#     pip install -r corpus/TOOLCHAIN.lock",
+        "#     python corpus/build_corpus.py --verify",
+        "#",
+        "# Semantic checks -- conformance level and failing clauses -- hold across",
+        "# versions and are enforced regardless of what is installed here.",
+        "#",
+        "# Written by corpus/build_corpus.py from MANIFEST.json's toolchain block.",
+        "# Python %s (not installable from here; use a matching interpreter)"
+        % toolchain["python"],
+        "",
+    ]
+    for pkg in ("numpy", "astropy"):
+        lines.append("%s==%s" % (pkg, toolchain[pkg]))
+    (out / "TOOLCHAIN.lock").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def build_all(root: Path):

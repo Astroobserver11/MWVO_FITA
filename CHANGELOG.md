@@ -5,6 +5,98 @@ implements. Per §13 of the standard, **any change to required or optional
 structure requires a version increment** — a rule this project has broken
 twice and now enforces in code.
 
+## [1.4] — 2026-08-02
+
+Applies the principal's ruling of 2026-08-02
+(`RULING__stereogram_scale_and_N-1__2026-08-02.md`):
+
+> *"The scale of the Stereogram is a percentage of the diameter of the field under
+> study, made explicit as a measure in units practical to the subject."*
+
+### Added
+- **`FITA_FDI` / `FITA_FDU`** — the diameter of the field under study and its unit,
+  chosen to be practical to the subject (`pc`, `km`, `arcsec`, `deg`, `AU`). These
+  supply the absolute half of the metric chain.
+- **`FITA_ZDU`** — the unit of `FITA_ZDP`, resolving **N-1**. Absent, `FITA_ZDP` is
+  dimensionless and must lie in `[0,1]` (unchanged). Present, it carries a physical
+  depth and the `[0,1]` constraint does not apply. The eight archived Edenhofer
+  files hold 624.05 / 1248.10 / 2496.20 pc: the values were right and the
+  *declaration* was missing, so they become conformant by adding one keyword rather
+  than by rewriting 48 layers of science data.
+- `fita.stereo.normalise_depths()` and `to_display_pixels()`.
+- Two corpus fixtures: `full_with_zdepth_units.fita` (parsec depths, FITA-FULL) and
+  `neg_zsc_without_field.fita` (the clause that enforces the ruling).
+
+### Changed
+- **`FITA_ZSC` is now a percentage of `FITA_FDI`, not a pixel count.** A pixel is a
+  property of a rendering target, not of a field, and is meaningless without a
+  display size the file does not know. Parallax is now
+  `dx = ±(FITA_ZSC/100) × FITA_FDI × (zdp_n − FITA_ZRF)/2`, in units of `FITA_FDU`.
+  Converting to display pixels is the renderer's job and is deliberately not
+  recorded in the file.
+- `fita.stereo` reports separations in `FITA_FDU`, never in pixels.
+- `fita doctor` names the exact directory to add to PATH when the console script is
+  installed but not reachable — ATOP lost a session to a diagnostic that stated the
+  fault without localising it.
+- `fita doctor` now **fails** on format/package version drift. It previously printed
+  both numbers and returned OK regardless, so it could never have caught N-3.
+
+### Removed
+- **`FITA_ZAN` is retired by dissolution.** The open question — sky angle or viewing
+  disparity? — was malformed: once the field diameter carries a subject-practical
+  unit, the separation follows by arithmetic in whatever unit the subject wants.
+  `FITA_ZAN` hard-coded arcsec, the wrong default for a parsec-scale dust cube.
+  Readers must still accept it (D-1); writers no longer emit it.
+
+### Fixed
+- **N-7** — `fita info` crashed with `TypeError` on every archived file. `FITA_FMN` /
+  `FITA_FMX` are SHOULD, not MUST, so a fully FITA-CORE-conformant file may omit
+  them; the CLI assumed a keyword the standard makes optional. Absent bounds now
+  print as `-`, matching the convention `wave` already used in the same line.
+
+### Also in this release — the environmental escalation
+
+ATOP escalated (HIGH) that N-5 was closed as *environmental* on arithmetic that fit
+the observed number without being its cause: `241 − 48 = 193` matched, but reaching
+241 *passing* needs five optional dependencies, not one. ATOP measured **234 passed,
+7 skipped, 241 collected** on the v1.3.0 tree. The correction that shipped was
+therefore still wrong — the erratum's own failure mode, recurring inside the fix for it.
+
+- **Failure instance #9 recorded**: a module-level `pytest.importorskip` reports ONE
+  skip per module however many tests it holds, so 48 missing tests appeared as a
+  single skip line. The passed count moves and nothing says the denominator moved
+  with it. This is in the **test harness** — the instrument the project uses to
+  detect silent loss had the defect it exists to detect.
+- **CI asserts a collected-count floor** and reports skips (`-rs`). Until now the
+  matrix did not install URANODYNE, so every cell silently ran the kernel-only
+  subset and reported green; "CI green" was not evidence about coverage.
+- **README publishes the counts with their preconditions** — 221 kernel-only, 269
+  with URANODYNE, and what each row requires. Three environments had produced three
+  numbers and all three reported success.
+- **`corpus/TOOLCHAIN.lock`** — an installable pin of the toolchain that produced the
+  corpus bytes, generated *from* `MANIFEST.json` so the two cannot drift. Closes
+  **N-6**: ATOP skipped byte-comparison because its toolchain differed and there was
+  no declared environment to install in order to match.
+
+**RULE E** (no finding closed as *environmental* until the difference is named,
+pinned, re-run, published with preconditions, and shipped in the environment
+declaration) is drafted by ATOP and **awaits the principal's ruling** — it is not
+adopted here.
+
+### Version note — why this is 1.4 and not 1.5
+
+§13 requires an increment for any change to **required or optional structure**. The
+escalation items change documentation, CI and packaging; they add no keyword, alter
+no HDU, and change no validator verdict. Incrementing for them would stamp a new
+`FITAVER` into files that are structurally identical to v1.4 — a version claim
+without a structural difference, which is the same defect as a structural difference
+without a version claim, running the other way. The stereo ruling is the only
+structural change in this release, so the format is **1.4**.
+
+### Compatibility
+Adds only OPTIONAL structure. Absence of every new keyword reproduces v1.3 meaning
+exactly, so no existing conformant file changes status.
+
 ## [1.3] — 2026-08-02
 
 ### Added

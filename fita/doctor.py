@@ -177,15 +177,51 @@ def _check_namespace_pollution():
         "environment only")
 
 
+def _script_dirs():
+    """Candidate directories a console script can be installed into.
+
+    Both schemes, because the distinction is the whole problem: a wheel
+    installed with --user puts 'fita' in the USER scripts directory, and a
+    machine whose PATH carries only the system one reports no console script
+    while the entry point exists and is perfectly correct.
+    """
+    import sysconfig
+    out = []
+    for scheme in (None, "nt_user" if os.name == "nt" else "posix_user"):
+        try:
+            d = sysconfig.get_path("scripts") if scheme is None \
+                else sysconfig.get_path("scripts", scheme=scheme)
+        except (KeyError, ValueError):
+            continue
+        if d and d not in out:
+            out.append(d)
+    return out
+
+
 def _check_console_script():
     path = shutil.which("fita")
     if path:
         return Result(OK, "console script", path)
+
+    # ATOP, 2026-08-02: the wheel was fine, the entry point was fine, and
+    # neither Scripts directory was on PATH.  Reporting "not on PATH" without
+    # saying WHICH directory to add cost a session's diagnosis, so name it.
+    exe = "fita.exe" if os.name == "nt" else "fita"
+    found = [d for d in _script_dirs()
+             if os.path.exists(os.path.join(d, exe))]
+    if found:
+        return Result(
+            WARN, "console script",
+            f"'fita' is installed at {os.path.join(found[0], exe)} but that "
+            "directory is not on PATH",
+            f"add this directory to PATH: {found[0]}   "
+            "(use 'python -m fita' meanwhile)")
+
+    searched = " ; ".join(_script_dirs()) or "no scripts directory resolved"
     return Result(
-        WARN, "console script", "'fita' is not on PATH",
-        "the entry point exists but its directory is not on PATH; use "
-        "'python -m fita' meanwhile, or add the interpreter's Scripts "
-        "directory to PATH")
+        WARN, "console script", "'fita' is not on PATH and no entry point "
+        f"was found in: {searched}",
+        "reinstall the package ('pip install -e .') or use 'python -m fita'")
 
 
 # --------------------------------------------------------------------------
@@ -202,9 +238,24 @@ def _check_versions():
         from importlib.metadata import version
         dist = version("fita")
     except Exception:
-        dist = "(not installed as a distribution)"
-    return Result(OK, "versions",
-                  "format FITAVER=%s | package fita==%s" % (FITA_VERSION, dist))
+        dist = None
+
+    summary = "format FITAVER=%s | package fita==%s" % (
+        FITA_VERSION, dist or "(not installed as a distribution)")
+    if dist is None:
+        return Result(OK, "versions", summary)
+
+    # N-3 was version drift; this check displayed both numbers and returned OK
+    # regardless, so it could never have caught it.  A diagnostic that reports
+    # a defect and passes is the N-4 defect wearing different clothes.
+    # S13 makes FITAVER major.minor, so compare only those two components.
+    if tuple(dist.split(".")[:2]) != tuple(FITA_VERSION.split(".")[:2]):
+        return Result(
+            WARN, "versions", summary + "  -- DRIFT",
+            "the format version and the installed package disagree; "
+            "reinstall ('pip install -e .') if the package is stale, or "
+            "align pyproject.toml with fita.spec.FITA_VERSION")
+    return Result(OK, "versions", summary)
 
 
 def _check_dep(modname, label, required, remedy):

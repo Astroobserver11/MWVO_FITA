@@ -80,3 +80,56 @@ def test_verdict_severity_ordering(status, expected, monkeypatch, capsys):
     code = doc.doctor()
     capsys.readouterr()
     assert code == expected
+
+
+# ── ruling 2026-08-02 S5.1: name the directory, do not just report the fault ──
+
+def test_missing_console_script_names_the_directory_to_add(monkeypatch, tmp_path):
+    """ATOP lost a session to 'not on PATH' without a directory to add.
+
+    The wheel was correct, the entry point was correct, and neither Scripts
+    directory was on PATH.  A diagnostic that states a fault it can localise
+    but does not localise it is only half a diagnostic.
+    """
+    import os
+    exe = "fita.exe" if os.name == "nt" else "fita"
+    scripts = tmp_path / "Scripts"
+    scripts.mkdir()
+    (scripts / exe).write_text("")
+
+    monkeypatch.setattr(doc.shutil, "which", lambda _n: None)
+    monkeypatch.setattr(doc, "_script_dirs", lambda: [str(scripts)])
+
+    r = doc._check_console_script()
+    assert r.status == doc.WARN
+    assert str(scripts) in r.remedy
+
+
+def test_missing_console_script_says_where_it_looked(monkeypatch, tmp_path):
+    """When the entry point genuinely is not installed, the remedy is
+    different -- reinstall, not edit PATH -- so the two must not be conflated."""
+    monkeypatch.setattr(doc.shutil, "which", lambda _n: None)
+    monkeypatch.setattr(doc, "_script_dirs", lambda: [str(tmp_path / "nowhere")])
+
+    r = doc._check_console_script()
+    assert r.status == doc.WARN
+    assert "nowhere" in r.detail
+    assert "reinstall" in r.remedy
+
+
+def test_version_drift_is_detected(monkeypatch):
+    """N-3 was version drift, and the check that displays both numbers
+    returned OK regardless -- it could never have caught it."""
+    import importlib.metadata as md
+    monkeypatch.setattr(md, "version", lambda _n: "1.2.0")
+    r = doc._check_versions()
+    assert r.status == doc.WARN
+    assert "DRIFT" in r.detail
+
+
+def test_matching_versions_pass(monkeypatch):
+    """A patch-level difference is not drift: S13 makes FITAVER major.minor."""
+    import importlib.metadata as md
+    from fita.spec import FITA_VERSION
+    monkeypatch.setattr(md, "version", lambda _n: FITA_VERSION + ".7")
+    assert doc._check_versions().status == doc.OK

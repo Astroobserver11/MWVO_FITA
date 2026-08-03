@@ -1,20 +1,26 @@
-> **RATIFIED CANONICAL — v1.2.** Produced on BTOP 2026-08-02 by applying the validating author's
+> **RATIFIED CANONICAL — v1.4.** Produced on BTOP 2026-08-02 by applying the validating author's
 > ratification rulings (§12) to the byte-exact 2026-07-29 v1.1 DRAFT. The normative body (§§1–11)
-> is unchanged from that DRAFT except where v1.2 amends it. `FITA_AMENDMENT__2026-08-02.md`
+> is unchanged from that DRAFT except where v1.2 and later amend it. `FITA_AMENDMENT__2026-08-02.md`
 > §3.1–§3.8 has been **APPLIED**: §2.1 (checker), §4.2 (stereo + FITS provenance keywords),
-> §8.2 (stereo convention), §8.3 (FITA_ADJ schema, new), §9 (ObsCore v1.1), §13. v1.2 adds only
-> OPTIONAL structure, so files conformant at v1.1 remain conformant.
+> §8.2 (stereo convention), §8.3 (FITA_ADJ schema, new), §9 (ObsCore v1.1), §13.
+> **v1.3** adds the missing ObsCore mandatory column `pol_xel` (see
+> `ERRATUM__ObsCore_version__2026-08-02.md`). **v1.4** applies the principal's ruling on stereogram
+> scale (§8.2), resolving N-1 and retiring `FITA_ZAN`. Every increment adds only OPTIONAL
+> structure, so files conformant at v1.1 remain conformant.
 > **This file supersedes the DRAFT and is destined to replace `FITA_FORMAT_STANDARD.md` on ATOP**
-> (deliver over the Tailscale bridge; do not maintain two canonicals). Ruling record of provenance:
-> `FITA_v1.1_RATIFICATION__2026-08-02.md`.
+> (deliver over the Tailscale bridge; do not maintain two canonicals). Ruling records of provenance:
+> `FITA_v1.1_RATIFICATION__2026-08-02.md`, `RULING__stereogram_scale_and_N-1__2026-08-02.md`.
+>
+> *The filename still reads `v1.2` because it is cited from published records; the document's
+> version is the one stated below, and §13's table is the authority.*
 
 # FITA — Flexible Image Transfer Alpha
-## Format Standard Document — v1.2 (RATIFIED)
+## Format Standard Document — v1.4 (RATIFIED)
 
 | Field | Value |
 |---|---|
 | **Document status** | **RATIFIED 2026-08-02** — normative; the §12 decisions are ruled (see §12.0). Ruled by I. A. Cisneros. |
-| **Format version described** | `FITAVER = 1.1` (supersedes the as-built `1.0`) |
+| **Format version described** | `FITAVER = 1.4` (supersedes the as-built `1.0`) |
 | **Date** | 2026-07-29 |
 | **Authored on** | ATOP (`astro-workstation`) during the MWVO concordance sequence |
 | **Supersedes** | `FITA_Format_Guide.ipynb` (tutorial), `fita/spec.py` docstring, and the digest in `MWVO_Rehydration_Capsule.md` §4.1, **as normative sources** |
@@ -175,9 +181,12 @@ retained as OPTIONAL and currently unimplemented — see §8 and open decision D
 | `FITACH` | int | **SHOULD** | Canvas height (px) | `[CORRECTION]` |
 | `BUNIT` | str | **SHOULD** | Default flux unit if layers do not override | `[AS-BUILT]` |
 | `INSTRUME` | str | **MAY** | Originating instrument | `[AS-BUILT]` |
-| `FITA_ZSC` | float | **MAY** | Stereo parallax: total horizontal separation in px across the full `FITA_ZDP` range (§8.2) | `[NEW v1.2]` |
+| `FITA_FDI` | float | **SHOULD** | Diameter of the field under study, in `FITA_FDU` (§8.2) | `[NEW v1.4]` |
+| `FITA_FDU` | str | **SHOULD** | FITS unit of `FITA_FDI`, practical to the subject (§8.2) | `[NEW v1.4]` |
+| `FITA_ZSC` | float | **MAY** | Stereo parallax across the full `FITA_ZDP` range, as a **percentage of `FITA_FDI`** (§8.2) | `[NEW v1.2]`, redefined `[v1.4]` |
 | `FITA_ZRF` | float | **MAY** | Reference plane: the `FITA_ZDP` value placed at zero parallax; default `0.0` (§8.2) | `[NEW v1.2]` |
-| `FITA_ZAN` | float | **MAY** | Angular measure of the full-range parallax, arcsec on sky (§8.2) | `[NEW v1.2]` |
+| `FITA_ZDU` | str | **MAY** | FITS unit of `FITA_ZDP`; absent means dimensionless `[0,1]` (§8.2.3) | `[NEW v1.4]` |
+| `FITA_ZAN` | float | — | **RETIRED v1.4** by dissolution (§8.2.4). Readers MUST accept it; writers SHOULD NOT emit it | `[NEW v1.2]`, retired `[v1.4]` |
 | `DATE` | str | **SHOULD** | UTC date the file was written, ISO-8601 | `[NEW v1.2]` |
 | `CREATOR` | str | **SHOULD** | Software that wrote the file | `[NEW v1.2]` |
 | `ORIGIN` | str | **MAY** | Organisation responsible for the file | `[NEW v1.2]` |
@@ -263,7 +272,7 @@ A 2-D celestial WCS **SHOULD** be present. `[AS-BUILT]`
 | `FITA_FMX` | float | **SHOULD** | Flux range ceiling | `[AS-BUILT]` |
 | `FITA_WCV` | float | **SHOULD** | Central wavelength, **metres** | `[AS-BUILT]` |
 | `FITA_WBW` | float | **MAY** | Bandpass FWHM, metres | `[AS-BUILT]` |
-| `FITA_ZDP` | float | **MAY** | Stereo depth, `[0,1]` (§8.2) | `[AS-BUILT]` |
+| `FITA_ZDP` | float | **MAY** | Stereo depth: `[0,1]` when PRIMARY declares no `FITA_ZDU`, otherwise a physical depth in that unit (§8.2.3) | `[AS-BUILT]`, qualified `[v1.4]` |
 | `FITA_UNC` | str | **MAY** | `EXTNAME` of the companion uncertainty plane | `[AS-BUILT]` |
 | `FITA_MSK` | str | **MAY** | `EXTNAME` of the companion mask plane | `[AS-BUILT]` |
 
@@ -396,9 +405,9 @@ false-colour where brightness comes from the science layer and hue from a refere
 
 ### 8.2 `FITA_ZDP` — phased stereography
 
-`FITA_ZDP` assigns each layer a depth in `[0,1]`, where `0.0` is the deepest/background plane and
-`1.0` the foreground. It encodes **physical ISM penetration depth**, not an arbitrary stacking
-order: 21 cm H I → 0.0; Hα → 0.5; X-ray hot plasma → 1.0. `[AS-BUILT]`
+`FITA_ZDP` assigns each layer a depth, where the lowest value is the deepest/background plane and
+the highest the foreground. It encodes **physical ISM penetration depth**, not an arbitrary
+stacking order: 21 cm H I → back; Hα → middle; X-ray hot plasma → front. `[AS-BUILT]`
 
 A renderer **SHOULD** apply a differential x-offset proportional to `FITA_ZDP` to produce binocular
 parallax. `[MEASURED]` `FITA_ZDP` survives round-trip through both the FITS and Zarr backends.
@@ -407,20 +416,54 @@ parallax. `[MEASURED]` `FITA_ZDP` survives round-trip through both the FITS and 
 negative sentinel. v1.0 writes `-1.0` into the `ZDEPTH` *table column* while omitting the header
 keyword — two different absence conventions in one file. See D-5.
 
-`[NEW v1.2]` This standard does not fix a single parallax scaling — the mapping belongs to a
-rendering job, not to a file. It does require that a rendering which *has* fixed one **records
-it**, so the depth stimulus remains measurable after the fact. Three OPTIONAL keywords carry that
-record, written by a **renderer**, never by the compositor.
+#### 8.2.1 The ruling `[NEW v1.4]`
+
+The principal ruled, 2026-08-02:
+
+> **"The scale of the Stereogram is a percentage of the diameter of the field under study, made
+> explicit as a measure in units practical to the subject."**
+
+Two requirements in one sentence, and a conformant file satisfies **both**:
+
+1. **The scale is relative** — a percentage of the field diameter. Dimensionless. Not pixels.
+2. **The field is absolute** — its diameter stated in a unit *practical to the subject*: `pc` for a
+   dust cube, `km` for a cometary surface, `arcsec` or `deg` for a sky field, `AU` for a disc.
+
+A percentage alone is unanchored; a physical length alone is not a stimulus. Together they are a
+**metric chain**, which is what the MWVO depth-stimulus discipline requires and what a pixel count
+could never supply — a pixel is a property of a rendering target, not of a field, and is
+meaningless without a display size the file does not know.
+
+This **supersedes** the v1.2 definition of `FITA_ZSC` in pixels.
+
+#### 8.2.2 The depth record
+
+This standard does not fix a single parallax scaling — the mapping belongs to a rendering job, not
+to a file. It does require that a rendering which *has* fixed one **records it**, so the depth
+stimulus remains measurable after the fact. These keywords carry that record, all PRIMARY, written
+by a **renderer** except as noted.
+
+| Keyword | Type | Req. | Meaning |
+|---|---|---|---|
+| `FITA_FDI` | float | **SHOULD** | Diameter of the field under study, in `FITA_FDU` |
+| `FITA_FDU` | str | **SHOULD** | Unit of `FITA_FDI` — a valid FITS unit string practical to the subject |
+| `FITA_ZSC` | float | **MAY** | Total parallax across the full `FITA_ZDP` range, **as a percentage of `FITA_FDI`** (`4.0` means 4 %) |
+| `FITA_ZRF` | float | **MAY** | The `FITA_ZDP` value placed at zero parallax; default `0.0` |
+| `FITA_ZDU` | str | **MAY** | Unit of `FITA_ZDP` — see §8.2.3 |
 
 **Convention (normative whenever `FITA_ZSC` is present):**
 
 ```
-FITA_ZSC  total horizontal parallax, in pixels, across the full FITA_ZDP range
-FITA_ZRF  the FITA_ZDP value placed at ZERO parallax (the screen plane); default 0.0
+zdp_n = (FITA_ZDP - min) / (max - min)     if FITA_ZDU present, over the range present
+        FITA_ZDP                            otherwise
 
-per-eye offset:   dx = +/-(FITA_ZSC / 2) * (FITA_ZDP - FITA_ZRF)
-                  left eye = -, right eye = +
+dx    = +/-(FITA_ZSC / 100) * FITA_FDI * (zdp_n - FITA_ZRF) / 2
+        left eye = -, right eye = +
 ```
+
+`dx` is in units of `FITA_FDU`. Converting it to display pixels requires the WCS or a stated plate
+scale, and **is the renderer's job** — that conversion is deliberately **not** recorded in the
+file. The file records the *measured stimulus*; the renderer records the *rendering*.
 
 A negative `FITA_ZSC` inverts the depth sense. A layer with no `FITA_ZDP` (absence by omission,
 D-5) sits at zero parallax and **MUST NOT** be assigned a default depth.
@@ -430,21 +473,52 @@ background sits at the screen and every layer is pushed forward; with `FITA_ZRF 
 layer sits at the screen, layers below it recede and layers above advance. `FITA_ZRF` **SHOULD**
 lie within `[0,1]`.
 
-**The angular measure.** `[NEW v1.2]` A parallax recorded only in pixels is a complete record
-**only where no complete model is available**. Otherwise an angular measure is REQUIRED, **unless
-it can be deduced from context** — a celestial WCS on any layer is such a context, since pixel
-scale x `FITA_ZSC` yields the angle. Therefore `FITA_ZAN` **MAY** be omitted when a usable WCS is
-present, and **SHOULD** be written when it is not. An implementation **MUST NOT** fabricate a pixel
-scale in order to produce an angle: where the scale is unknown the angle is unknown, and reporting
-it as such is the conformant behaviour.
+**The clause that enforces the ruling.** `FITA_ZSC` present without `FITA_FDI` **and** `FITA_FDU`
+is a **MUST** failure: a percentage of nothing is not a measurement. A conformant writer **MUST
+NOT** emit such a file.
 
-`FITA_ZSC`, `FITA_ZRF` and `FITA_ZAN` **MUST** be finite when present. A `FITA_ZSC` on a cube where
-no layer carries `FITA_ZDP` records a stimulus that was never applied, and is reported at SHOULD
-severity.
+`FITA_ZSC`, `FITA_ZRF` and `FITA_FDI` **MUST** be finite when present, and `FITA_FDI` **MUST** be
+positive. `FITA_FDU` and `FITA_ZDU` **MUST** be valid FITS unit strings. A `FITA_ZSC` on a cube
+where no layer carries `FITA_ZDP` records a stimulus that was never applied, and is reported at
+SHOULD severity.
 
-> **Open.** Whether `FITA_ZAN` should measure a *sky* angle or a *viewing* disparity — screen pixel
-> pitch and viewing distance, which is never deducible from the file — is not settled. This clause
-> specifies the sky angle and is provisional in that respect.
+#### 8.2.3 `FITA_ZDU` — physical depth units `[NEW v1.4]`
+
+Resolves **N-1**. Eight archived stereo files carry Edenhofer distance bins (624.05 / 1248.10 /
+2496.20 pc) in `FITA_ZDP` — a unit practical to the subject, which is precisely what the ruling
+requires. The writer's instinct was right. **The defect is that the parsec-ness is nowhere
+declared:** the file asserts a number in a keyword this standard defined as `[0,1]`, and nothing in
+it says "these are parsecs". A reader has no way to know. That is a *missing declaration*, not a
+wrong value.
+
+| `FITA_ZDU` | Consequence |
+|---|---|
+| **absent** | `FITA_ZDP` is dimensionless and **MUST** lie in `[0,1]` — the v1.2 rule, unchanged |
+| **present** | `FITA_ZDP` carries a physical depth in `FITA_ZDU`; the `[0,1]` constraint **MUST NOT** be applied |
+
+A renderer **MUST** normalise a `FITA_ZDU`-bearing cube to `[0,1]` over the range **actually
+present** before applying parallax. Where only one distinct depth is present there is no range;
+such a cube normalises to the screen plane rather than to either extreme.
+
+This makes the eight archived files conformant by adding **one keyword** rather than by rewriting
+48 layers of real science data, or by relaxing the `[0,1]` rule for everyone. Absence remains the
+strict case, so **no existing conformant file changes meaning** — consistent with D-5 (absence by
+omission) and D-1 (grandfathering).
+
+#### 8.2.4 `FITA_ZAN` — retired `[NEW v1.4]`
+
+v1.2 left open whether `FITA_ZAN` should measure a *sky* angle or a *viewing* disparity. **The
+answer is neither, and the question was malformed.** Once the field diameter is declared in a
+subject-practical unit and the scale is a percentage of it, the separation is expressible in
+whatever unit the subject wants — angle for a sky field, length for a cube — by arithmetic, with no
+new keyword and no ambiguity.
+
+`FITA_ZAN` is therefore **retired by dissolution, not replaced**. It hard-coded arcsec, which
+privileges the sky-projection case and is exactly the wrong default for a 3D dust cube whose
+practical unit is parsecs.
+
+Readers **MUST** continue to accept `FITA_ZAN` in files written before v1.4 (D-1); writers **SHOULD
+NOT** emit it. Its presence is reported at SHOULD severity and never invalidates a file.
 
 ---
 
@@ -740,6 +814,8 @@ best-effort basis.
 | 1.1 | 2026-08-02 | **RATIFIED** | §12 decisions ruled (full slate): D-2 delete SPLIT16 · D-3 implement `FITA_ADJ` · D-4 full ObsCore v1.1 · D-1/5/6/7 per §12.0. Body unchanged. |
 
 | 1.2 | 2026-08-02 | **RATIFIED** | `FITA_ADJ` schema normative (§8.3); stereo geometry `FITA_ZSC`/`FITA_ZRF`/`FITA_ZAN` (§8.2); ObsCore v1.1 achieved and reachable (§9); conformance checker shipped (§2.1); `CHECKSUM`/`DATASUM` and FITS provenance keywords (§4.2). Adds only OPTIONAL structure. |
+| 1.3 | 2026-08-02 | **RATIFIED** | `pol_xel` added to `FITA_META` — the ObsCore v1.1 mandatory column that was missing (see the ObsCore erratum). Adds only OPTIONAL structure. |
+| 1.4 | 2026-08-02 | **RATIFIED** | Principal's ruling on stereogram scale (§8.2.1): `FITA_ZSC` redefined from pixels to a **percentage of `FITA_FDI`**; `FITA_FDI`/`FITA_FDU` added (§8.2.2); `FITA_ZDU` added, resolving **N-1** (§8.2.3); `FITA_ZAN` **retired by dissolution** (§8.2.4). Adds only OPTIONAL structure; absence of the new keywords preserves v1.2 meaning exactly. |
 
 `[CORRECTION v1.2]` The same omission recurred on 2026-08-02: optional structure (`FITA_ZRF`,
 `FITA_ZAN`, the `FITA_ADJ` columns) was added after v1.1 was ratified while the writer still

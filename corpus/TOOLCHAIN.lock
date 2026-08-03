@@ -1,0 +1,16 @@
+# FITA conformance corpus -- toolchain lock (GENERATED, do not edit)
+#
+# The corpus is byte-reproducible only within this toolchain. Install it
+# before comparing bytes:
+#
+#     pip install -r corpus/TOOLCHAIN.lock
+#     python corpus/build_corpus.py --verify
+#
+# Semantic checks -- conformance level and failing clauses -- hold across
+# versions and are enforced regardless of what is installed here.
+#
+# Written by corpus/build_corpus.py from MANIFEST.json's toolchain block.
+# Python 3.12.10 (not installable from here; use a matching interpreter)
+
+numpy==2.4.6
+astropy==7.2.0
