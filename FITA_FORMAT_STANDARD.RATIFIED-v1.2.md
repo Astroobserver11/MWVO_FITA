@@ -99,7 +99,7 @@ archived, delivered to a collaborator, or registered in a VO service.
 
 `[NEW]` A conformance checker **SHOULD** be provided as `fita.validate(path) -> ConformanceReport`.
 `[AS-BUILT v1.2]` It is provided, and exposed on the command line as `fita conform`
-(`--quiet`, `--strict`; exit 0 = FITA-FULL, 1 = FITA-CORE, 2 = non-conformant). The absence of
+(`--quiet`, `--strict`). **Exit 2 on non-conformance, always** — a validator that reports failure and exits 0 passes silently in every script. `--strict` additionally exits 1 for a file that is FITA-CORE but not FITA-FULL. The absence of
 such a checker in v1.0 is why the defects in §11 went undetected through 110 passing tests.
 
 `[NEW v1.2]` The §5.4 flux comparison **MUST** be NaN-aware. `numpy.array_equal` is False

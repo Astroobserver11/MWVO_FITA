@@ -62,7 +62,8 @@ try:
 except ImportError:
     pass  # uranodyne not installed — format-kernel-only mode
 
-__version__ = "1.0.0"
+from .spec import FITA_VERSION
+__version__ = FITA_VERSION   # N-3: one source of truth (fita.spec)
 __all__ = [
     "FITACube", "FITALayer",
     "clip_flux", "normalise", "stretch",

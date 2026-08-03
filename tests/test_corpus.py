@@ -165,3 +165,43 @@ def test_legacy_alpha_is_genuinely_wrapped():
         assert "BZERO" not in alpha.header, "fixture healed itself"
         assert alpha.data.min() < 0, \
             "alpha should carry negative (wrapped) values as v1.0 wrote them"
+
+
+# ── N-4 regression (ATOP audit, 2026-08-02) ─────────────────────────────────
+
+def _conform_exit(path, *flags):
+    """Run `fita conform` in a subprocess and return its exit code."""
+    import subprocess, sys
+    return subprocess.run(
+        [sys.executable, "-m", "fita", "conform", str(path), "--quiet", *flags],
+        capture_output=True).returncode
+
+
+def test_conform_exits_nonzero_on_a_nonconformant_file():
+    """N-4: the validator used to exit 0 on a file with dozens of MUST
+    violations unless --strict was passed, so `fita conform --quiet` reported
+    SILENT SUCCESS in any script. The analysis was right and the wrapper threw
+    the verdict away -- this project's characteristic defect occurring inside
+    the tool built to catch it. Failure must always propagate."""
+    legacy = CORPUS / "legacy" / "v10_as_built.fita"
+    assert _conform_exit(legacy) == 2, "non-conformant file must exit 2 by default"
+    assert _conform_exit(legacy, "--strict") == 2
+
+
+def test_conform_exits_zero_on_conformant_files():
+    """The converse: a conformant file must never fail by default. CORE is a
+    pass; --strict is what additionally demands FULL."""
+    core = CORPUS / "conformance" / "core_minimal.fita"
+    full = CORPUS / "conformance" / "full_provenanced.fita"
+    assert _conform_exit(core) == 0
+    assert _conform_exit(core, "--strict") == 1      # CORE but not FULL
+    assert _conform_exit(full) == 0
+    assert _conform_exit(full, "--strict") == 0
+
+
+def test_reported_version_is_consistent():
+    """N-3: fita.__version__ said 1.0.0 while spec and metadata said 1.3 --
+    version drift in a project whose subject is provenance."""
+    import fita
+    from fita.spec import FITA_VERSION
+    assert fita.__version__ == FITA_VERSION

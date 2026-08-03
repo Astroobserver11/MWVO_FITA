@@ -136,7 +136,19 @@ def cmd_conform(args):
             worst = 2                      # not even CORE conformant
         elif not report.is_full and worst < 1:
             worst = 1                      # CORE but not FULL
-    sys.exit(worst if args.strict else 0)
+
+    # N-4 (ATOP audit, 2026-08-02): this used to exit 0 unless --strict was
+    # given, so `fita conform --quiet` returned SILENT SUCCESS on files with
+    # dozens of MUST violations. The analysis was right and the wrapper threw
+    # it away -- the project's characteristic defect occurring inside the tool
+    # built to catch it.
+    #
+    # Non-conformance now ALWAYS exits 2. --strict additionally demands
+    # FITA-FULL, exiting 1 for a file that is merely CORE. A conformant file
+    # never fails by default; a non-conformant one never passes.
+    if worst >= 2:
+        sys.exit(2)
+    sys.exit(1 if (args.strict and worst == 1) else 0)
 
 
 def cmd_doctor(args):
