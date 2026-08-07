@@ -166,18 +166,35 @@ overclaim.
      the analogue ancestor of the luminance-masked wavelength composition the document describes,
      and belong in the lineage argument beside the multiplane camera and chroma key — not in an
      acknowledgements list.
-   - **Daphne Hallas** — `astrophoto.com`. Spelling corrected (Hallas, not Halas). **Open point:**
-     the site presents as *"Tony and Daphne Hallas"*, jointly, and Tony Hallas is the more commonly
-     cited name for the processing technique. The document credits Daphne alone. Whether the
-     influence being recorded is Daphne's individually or the partnership's is the principal's to
-     state — it is his own recollection, and a paper should not silently widen or narrow it.
+   - **Tony and Daphne Hallas** — `astrophoto.com`. Spelling corrected (Hallas, not Halas), and
+     **RESOLVED 2026-08-03: attribute to the couple.** The principal's reason is the correct one
+     for a citation — *that is how they appear to history*. The site presents them jointly, their
+     work is published jointly, and an attribution should name the unit that the record knows.
+     The document's "Daphne Halas" becomes **"Tony and Daphne Hallas"** throughout.
    - **For submission:** cite *works*, not homepages. Malin has a substantial published record
      (AAO plate work; *Colours of the Stars*, Malin & Murdin); the Hallas technique material
      appears largely in the popular astronomical press. A referee will expect citable sources.
-2. The Doppler/medium argument in §2 of that document is a **paradigm claim**, not a
-   presentation claim. It belongs with [[project_unphysics]], and mixing it into a methods paper
-   would give a reviewer a reason to reject the method for the framing. Recommend separating:
-   the method paper stands on the perceptual and corroboration results alone.
+2. **The Doppler/medium argument — RULED 2026-08-03: it travels with the paper, as an
+   *Observation*.**
+
+   BTOP had recommended separating it, on the grounds that a paradigm claim gives a referee a
+   reason to reject the method over its framing. **The ruling is better than the recommendation,
+   and it dissolves that risk rather than accepting it.** An Observation states what was noticed
+   without asserting a mechanism or demanding assent — so it is not a challenge to the Doppler
+   interpretation and cannot be refuted as one.
+
+   More than that: **as an Observation it stops being a digression and becomes the paper's
+   justification for its own design.** The argument notices that reading spectral shift as
+   recession velocity transfuses the Doppler effect of sound in a viscous medium onto a quantum
+   phenomenon, and that wave functions capture probability as a convenience of mathematics rather
+   than by direct analogy to nature. That noticing is *exactly why* v1.5 labels radial velocity
+   **INFERRED** and not **MEASURED**, why the depth axis of a velocity cube is **non-metric**, and
+   why the legend refuses to report an effective apparent distance in model space.
+
+   So the section answers a question a referee will otherwise ask — *why does this software go to
+   such lengths not to call it a distance?* — and answers it with the standard's own machinery.
+   The format is the formal expression of the Observation. Recommend it be placed where it
+   motivates the epistemic labelling, not in a discussion section where it reads as a thesis.
 3. Figures require the metrology this slate defines — a phased stereogram figure without its
    declared baseline, excursion and z-kind is the undeclared-geometry defect in print.
 
