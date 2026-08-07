@@ -154,6 +154,14 @@ def test_every_corpus_file_carries_a_verifying_checksum():
         path = CORPUS / entry["file"]
         with warnings.catch_warnings():
             warnings.simplefilter("error")
+            # neg_orphan_trailing_bytes exists BECAUSE of this warning: it is
+            # padded past its last HDU, and astropy says so only here. Every
+            # HDU inside it still carries a verifying checksum -- which is the
+            # fixture's point. Per-HDU integrity cannot see bytes that belong
+            # to no HDU, so the file-level S4.2 check is what catches it
+            # (failure instance #11).
+            warnings.filterwarnings(
+                "ignore", message="Unexpected extra padding at the end")
             with fits.open(str(path), checksum=True) as hdul:
                 for hdu in hdul:
                     assert "CHECKSUM" in hdu.header, \

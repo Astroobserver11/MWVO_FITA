@@ -54,6 +54,19 @@ happened nine times, and the last two are inside the instruments built to catch 
 | 8 | **`fita conform` exited 0 on a NON-CONFORMANT file** | it printed every defect correctly and returned success; only `--strict` propagated the verdict. *In the validator* |
 | 9 | **Module-level `importorskip` hides uncollected tests** | pytest reports ONE skip per module however many tests it holds, so 48 missing tests showed as one skip line. The passed count moves; nothing says the denominator moved with it. *In the test harness* |
 | 10 | **The reader discarded every negative `FITA_ZDP`** | it still implemented the `-1.0` sentinel **D-5 retired** — and for *any* negative value. Dormant while §8.2 forced `[0,1]`; **v1.4 made physical depths legal and woke it.** A five-channel velocity cube round-tripped to a *different stereogram* — two channels gone, survivors renormalised — while `max separation` printed the same number throughout |
+| 11 | **A truncated archive file kept its exact byte size** | ATOP, 2026-08-03. Frame15 of the 130@G set holds **19 of its 26** FLUX extensions at **exactly** 2,034,961,920 bytes — same as the fourteen good copies — valid FITS, passing `verify()`, header still claiming 26. In the archive since **30 July**. The only cheap signal anywhere was one astropy warning about extra padding |
+
+**#11 is the purest instance yet, and it was caught by luck.** `FITANL` was stale only because the
+interrupted writer died before updating it. ▣ Measured on BTOP: repair `FITANL` to agree with the
+truncated content and the file validates **FITA-CORE with zero MUST failures** — identical size,
+internally consistent, a third of the science gone. Closed by a new §4.2 check for **orphan bytes
+after the last HDU**, which is the one signal that survives the repair. Corpus fixture
+`neg_orphan_trailing_bytes.fita` pins the undetectable variant, not the lucky one.
+
+**RULE S, from ATOP's own account of how it missed this:** its 2026-08-02 sweep read Frame1 and
+treated "15 identical copies" as one file. *Never sample a set asserted to be identical — hash it.*
+The check was present and correct; the **sampling** was the hole. Size equality is not identity:
+all fifteen matched to the byte.
 
 **#9 is the worst-placed of all.** The test suite is the instrument this project uses to detect
 silent loss, and it had the defect it exists to detect. It is also why "CI green on 3 OS × 3
@@ -101,6 +114,18 @@ clause.
    environment, both results published with preconditions, and the difference added to the shipped
    environment declaration. Raised because N-5 was closed on arithmetic that fit the number
    without being the cause.
+1b. **N-2 — invalid `BUNIT='snr'` on 8 of the 26 layers of the `130@G` master.** ATOP reported this
+   as "on BTOP's list." **It was on no list** — nothing in this repository tracked it until now,
+   which is the delivery-failure pattern at task level rather than file level. A v1.4/v1.5
+   migration task, not a storage one; the dedup correctly preserved it in the retained copy.
+1c. **Frame15 disposition — needs a ruling.** ATOP recommends renaming it
+   `130@G-10,10.CORRUPT-2026-07-30.fita` and hardlinking the canonical name to the good copy:
+   path works, evidence preserved, costs 2.03 GB of the 25.98 GB reclaimed. **BTOP concurs** — it
+   is the only option that keeps the sole physical artifact of a failed write while un-breaking
+   the path. **Also owed: hash the `I:` canonical master.** The `C:` tree is an inspection copy
+   set, so the corruption is a *copy-process* failure, not a build failure — but that is an
+   inference until the original is hashed, and `I:` is **not mounted on BTOP**, so only ATOP can
+   do it. Until then, no statement about the archive's integrity is safe.
 2. **PyPI distribution name.** `fita`, `fitb`, `fitr`, `fito` are all TAKEN by unrelated projects;
    the FIT(a–z) namespace cannot be controlled and bulk-registering would be squatting. Author
    accepted the fix: prefix with **`mwvo-`** (`mwvo`, `mwvo-fita`, `mwvo-fitr`, `mwvo-fito`,

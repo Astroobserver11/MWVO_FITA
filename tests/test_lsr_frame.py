@@ -206,3 +206,61 @@ def test_channel_width_verdict_boundaries():
     assert lsr.channel_width_verdict(0.2, 1.0) is None
     assert lsr.channel_width_verdict(None, 1.0) is None
     assert lsr.channel_width_verdict(7.0, None) is None
+
+
+# --- failure instance #11: the truncated write that keeps its size ---------
+
+def _truncate_and_pad(tmp_path, n_keep, repair_fitanl):
+    """Reproduce the Frame15 shape: drop trailing layers, pad back to size."""
+    layers = [FITALayer.from_array(np.zeros((16, 16), dtype=np.float32),
+                                   layer_id=i + 1, name="L%d" % (i + 1))
+              for i in range(4)]
+    good = tmp_path / "good.fita"
+    write(str(good), layers)
+    full = good.stat().st_size
+
+    p = tmp_path / ("t%d%s.fita" % (n_keep, repair_fitanl))
+    with fits.open(str(good), memmap=False) as opened:
+        keep = fits.HDUList([h.copy() for h in opened
+                             if not (h.name.startswith(("FLUX_", "ALPHA_"))
+                                     and int(h.name.split("_")[1]) > n_keep)])
+        if repair_fitanl:
+            keep[0].header["FITANL"] = n_keep
+    keep.writeto(str(p), overwrite=True)
+    with open(p, "ab") as f:
+        f.write(b"\0" * (full - p.stat().st_size))
+    assert p.stat().st_size == full        # the whole point: size is unchanged
+    return str(good), str(p)
+
+
+def test_truncated_write_is_caught_even_when_the_header_agrees(tmp_path):
+    """ATOP, 2026-08-03: Frame15 held 19 of 26 FLUX extensions at exactly the
+    size of the fourteen good copies, valid FITS, passing verify(). It was
+    caught only because the dead writer left FITANL stale.
+
+    Measured: repair FITANL to match the truncation and every other check
+    passes. Orphan trailing blocks are the only surviving signal.
+    """
+    good, bad = _truncate_and_pad(tmp_path, 1, repair_fitanl=True)
+    assert validate(good).is_core                       # control
+    res = validate(bad)
+    must = [f for f in res.findings if not f.ok and f.severity == "MUST"]
+    assert not res.is_core
+    assert any("orphan bytes" in f.message for f in must)
+
+
+def test_stale_fitanl_truncation_is_caught_twice(tmp_path):
+    """The actual Frame15 case: two independent MUST failures, not one."""
+    _, bad = _truncate_and_pad(tmp_path, 1, repair_fitanl=False)
+    must = [f for f in validate(bad).findings
+            if not f.ok and f.severity == "MUST"]
+    assert any("FITANL" in f.message for f in must)
+    assert any("orphan bytes" in f.message for f in must)
+
+
+def test_a_healthy_file_has_no_orphan_bytes(tmp_path):
+    p = tmp_path / "clean.fita"
+    write(str(p), [FITALayer.from_array(np.zeros((8, 8), dtype=np.float32),
+                                        layer_id=1, name="a")])
+    assert not [f for f in validate(str(p)).findings
+                if not f.ok and "orphan bytes" in f.message]

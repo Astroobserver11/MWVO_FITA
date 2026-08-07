@@ -27,6 +27,7 @@ Usage
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Optional
@@ -186,6 +187,33 @@ def _check_layout(hdul, r, pack):
     if nl is not None:
         r.check("S4.2", MUST, len(flux_idx) == int(nl),
                 f"{KW_NLAYERS}={nl} matches {len(flux_idx)} FLUX extensions found", "PRIMARY")
+
+    # S4.2 -- ORPHAN TRAILING BYTES.  Failure instance #11, ATOP 2026-08-03:
+    # an interrupted re-write left Frame15 of the 130@G archive with 19 of its
+    # 26 FLUX extensions, EXACTLY the same byte size as the fourteen good
+    # copies, valid FITS, and passing verify().  It was caught only because the
+    # dead writer left FITANL stale at 26.  Measured here: had FITANL been
+    # updated to match the truncated content, the file would validate CORE+
+    # with ZERO MUST failures -- identical size, internally consistent, a third
+    # of the science gone.
+    #
+    # The one signal that survives that repair is bytes beyond the last HDU:
+    # astropy mentions it only as "Unexpected extra padding at the end of the
+    # file", a warning nobody reads.  Promote it to a finding, because a
+    # truncate-then-pad is otherwise invisible to content inspection.
+    try:
+        fname = getattr(hdul, "filename", lambda: None)()
+        if fname and os.path.exists(fname):
+            end = max(hd.fileinfo()["datLoc"] + hd.fileinfo()["datSpan"]
+                      for hd in hdul)
+            trailing = os.path.getsize(fname) - int(end)
+            r.check("S4.2", MUST, trailing <= 0,
+                    f"no orphan bytes after the last HDU (found {trailing} = "
+                    f"{trailing // 2880} FITS blocks); a file padded past its "
+                    f"last extension is the signature of an interrupted write",
+                    "FILE")
+    except Exception:
+        pass
     # ascending, contiguous 1..n
     r.check("S4.1", MUST, flux_idx == sorted(flux_idx),
             "FLUX extensions in ascending layer order", "FLUX_*")

@@ -30,7 +30,7 @@
     "ObsCore provenance columns and their TUCDn annotations"
   ],
   "counts": {
-    "conformance": 20,
+    "conformance": 21,
     "legacy": 1,
     "science": 1,
     "roundtrip": 1
@@ -225,6 +225,21 @@
       ],
       "bytes": 28800,
       "sha256": "982a4a024b9fb05665b53491f30b02678f55eb438deb3601ed5420d38976c67a"
+    },
+    {
+      "file": "conformance/neg_orphan_trailing_bytes.fita",
+      "tier": "conformance",
+      "purpose": "Truncated write padded back to full size, FITANL consistent with the surviving layers: only the orphan trailing blocks reveal it (instance #11)",
+      "clause": "S4.2",
+      "expected_level": "NON-CONFORMANT",
+      "actual_level": "NON-CONFORMANT",
+      "failing_clauses": [
+        "S4.1",
+        "S4.2",
+        "S9"
+      ],
+      "bytes": 46080,
+      "sha256": "fdea0e9c64f3d1525ff175e96a1b304ae94886b4aa714c3aca018a070239cc73"
     },
     {
       "file": "conformance/neg_split16_declared.fita",

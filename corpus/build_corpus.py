@@ -327,6 +327,28 @@ def build_conformance(out: Path):
         _corrupt(p, breaker)
         _record(p, purpose, clause, "NON-CONFORMANT")
 
+    # Failure instance #11, ATOP 2026-08-03.  An interrupted re-write left
+    # Frame15 of the 130@G archive holding 19 of its 26 FLUX extensions at
+    # EXACTLY the byte size of the fourteen good copies -- valid FITS, passing
+    # verify(), and caught only because the dead writer left FITANL stale.
+    # Here FITANL is deliberately made CONSISTENT with the truncated content,
+    # which is the variant nothing else detects: the orphan trailing blocks are
+    # the only remaining signal.
+    p = out / "neg_orphan_trailing_bytes.fita"
+    write(str(p), base_layers(2), overwrite=True)
+    _full = p.stat().st_size
+    _corrupt(p, lambda h: (h.pop(4), h.pop(3),          # drop FLUX/ALPHA_0002
+                           h[0].header.__setitem__("FITANL", 1)))
+    # Every surviving HDU keeps a VERIFYING checksum -- the point of the fixture
+    # is that nothing inside the file is wrong.  The padding lands outside any
+    # HDU, so no per-HDU checksum can see it, which is exactly why this needed a
+    # file-level check rather than a stronger per-HDU one.
+    with open(p, "ab") as f:
+        f.write(b"\0" * (_full - p.stat().st_size))
+    _record(p, "Truncated write padded back to full size, FITANL consistent "
+               "with the surviving layers: only the orphan trailing blocks "
+               "reveal it (instance #11)", "S4.2", "NON-CONFORMANT")
+
     # access_format overclaim: needs provenance to exist before it can lie.
     p = out / "neg_access_format_overclaim.fita"
     write(str(p), base_layers(1), overwrite=True,
