@@ -5,6 +5,79 @@ implements. Per §13 of the standard, **any change to required or optional
 structure requires a version increment** — a rule this project has broken
 twice and now enforces in code.
 
+## [1.5] — 2026-08-03
+
+Applies the principal's rulings A, B and C of 2026-08-03, and closes **D-14** and
+**D-17**. The subject is the velocity cube, and the governing distinction is:
+
+> *The x and y displacements have one logical physical interpretation: actual space
+> corresponding to the angular distance for each pixel at the accepted distance.
+> **There is no correspondence to the spectral shift or its conversion into
+> recession velocity.***
+
+### Fixed — failure instance #10, and it was activated by v1.4
+- **The reader silently discarded every negative `FITA_ZDP`.** `io.py` still
+  implemented the `-1.0` absence sentinel that **D-5 retired**, and not only for
+  `-1.0` — for *any* negative value. This was harmless while §8.2 confined
+  `FITA_ZDP` to `[0,1]`, and **v1.4 made physical depths legal**. The first data
+  class to exercise that freedom is the velocity cube, whose channels are signed by
+  nature. Writing a five-channel cube and reading it back returned a **different
+  stereogram** — two channels gone, the survivors renormalised over the remainder,
+  and the `max separation` summary line unchanged throughout. Round-trip regression
+  tests now compare the *rendered offsets*, not a flag.
+
+### Added
+- **The FITS WCS Paper III spectral block, adopted rather than reinvented** (ruling
+  B): `SPECSYS`, `VELOSYS`, `SSYSOBS`, `RESTFRQ`, `RESTWAV`, `CTYPE3`/`CDELT3`/
+  `CUNIT3`. No `FITA_*` twins for facts the FITS standard already expresses. This
+  also discharges the standing claim in `spec.py` to follow Paper III — previously
+  asserted in a docstring and implemented nowhere.
+- **`FITA_VSE`** (**D-17**) — the uncertainty on `VELOSYS`. The one new `FITA_*`
+  name here, justified because FITS defines `VELOSYS` and provides **no companion
+  uncertainty keyword**: the standard is silent, not contradicted.
+- **`FITA_ZEP`** — the epistemic status of the depth axis. Per ruling A the label is
+  a property of the **axis**, inherited by every z value; not per-value, not
+  per-file. A slice cannot escape it by being displaced in x or y.
+- **`fita.lsr`** — the bibliography, shipped as data and retrieved from NASA ADS
+  rather than recalled. Published `V_sun` spans **5.2 → 14.6 km/s**; the single
+  1998→2010 revision moved it by **7 km/s**, which at 0.1–1 km/s channelisation is
+  **7 to 70 channels**. Vocabulary is four terms (ruling C): `ESTABLISHED`,
+  **`ADOPTED`**, `INFERRED`, `PROPOSED`.
+
+### Changed
+- **The LSR is `ADOPTED`, not established** (ruling C). An adopted value is one the
+  community agrees to use for comparability — a different epistemic act from
+  measuring. Reid et al. (2014) give the structural reason it persists: Θ₀ and
+  V_sun are correlated and only their *sum* is well constrained, so the split is
+  model-dependent.
+- **The legend refuses to convert a non-metric depth axis into a distance**
+  (**D-14**). A velocity cube reports *apparent z only*, states that the separation
+  is a presentation device, and carries all three slice labels at once — spectral
+  displacement `MEASURED`, radial velocity `INFERRED`, frame `ADOPTED`. Reporting a
+  distance there would assert in a header the very thing awaiting scientific
+  consensus.
+
+### Validator
+- `VELOSYS` without `SPECSYS` → **MUST** fail: a frame velocity with no frame named.
+- `FITA_VSE` without `VELOSYS` → **MUST** fail, and the writer refuses to emit it.
+- `FITA_ZEP` outside the closed vocabulary → **MUST** fail.
+- A velocity-valued `FITA_ZDU` with no `SPECSYS` → **SHOULD** warn: the labels
+  cannot be recomputed under another convention, so the cube is not reproducible.
+- `FITA_VSE` wider than `CDELT3` → **SHOULD** warn. This is the error bar entering
+  the pipeline, and the historical revisions land squarely in that regime.
+
+### Corpus
+Three fixtures, 20 → 23 files: `full_velocity_frame.fita` (non-metric axis, signed
+channels, frame declared) and the negative pair `neg_velosys_without_specsys` /
+`neg_vse_without_velosys`.
+
+### Compatibility
+Adds only OPTIONAL structure; absence of every new keyword reproduces v1.4 meaning.
+**The increment is required even though v1.4 was never tagged** — v1.4 corpus files
+exist and are committed, so files written before and after would otherwise claim one
+version while differing in structure, which is verbatim the `[CORRECTION]` the
+standard levels at the 2026-05-25 delivery.
+
 ## [1.4] — 2026-08-02
 
 Applies the principal's ruling of 2026-08-02

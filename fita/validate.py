@@ -280,6 +280,83 @@ def _check_layers(hdul, r, pack):
                         f"FITA_UNC points to missing extension {uname!r}", where)
 
 
+def _check_spectral_frame(hdul, r):
+    """S8.5 -- the spectral reference frame of a velocity cube (v1.5).
+
+    Author ruling, 2026-08-03: the LSR is ADOPTED, not established. Published
+    V_sun spans 5.2 to 14.6 km/s while ALMA and HI cubes are channelised at
+    0.1-1 km/s, so a cube whose labels were computed under one convention and
+    are read under another is mislabelled by more than its own resolution. A
+    cube that does not declare its frame is therefore not reproducible: its
+    labels cannot be recomputed. See fita.lsr.
+    """
+    from .spec import (KW_SPECSYS, KW_VELOSYS, KW_VELOSYS_E, KW_ZDEPTH_U,
+                       KW_ZDEPTH_EP, KW_CDELT3, KW_CUNIT3)
+    from .lsr import SPECSYS_VALUES, VOCABULARY, channel_width_verdict
+
+    hdr = hdul[0].header
+    where = "PRIMARY"
+
+    specsys = hdr.get(KW_SPECSYS)
+    has_velosys = KW_VELOSYS in hdr
+    has_vse = KW_VELOSYS_E in hdr
+
+    # A frame velocity with no frame named is not interpretable.
+    if has_velosys:
+        r.check("S8.5", MUST, specsys is not None,
+                f"{KW_VELOSYS} present requires {KW_SPECSYS}: a frame velocity "
+                f"with no frame named is not interpretable", where)
+
+    # Same reasoning as FITA_ZSC-without-FITA_FDI: an uncertainty on nothing.
+    if has_vse:
+        r.check("S8.5", MUST, has_velosys,
+                f"{KW_VELOSYS_E} is the uncertainty on {KW_VELOSYS} and "
+                f"requires it; an uncertainty on nothing is not a measurement",
+                where)
+
+    if specsys is not None:
+        r.check("S8.5", SHOULD, str(specsys).strip().upper() in SPECSYS_VALUES,
+                f"{KW_SPECSYS}={specsys!r} is a FITS WCS Paper III frame "
+                f"({', '.join(SPECSYS_VALUES)})", where)
+
+    # Ruling A: the epistemic label is an AXIS property, and its vocabulary is
+    # closed (Ruling C added ADOPTED as the fourth term).
+    if KW_ZDEPTH_EP in hdr:
+        val = str(hdr[KW_ZDEPTH_EP]).strip().upper()
+        r.check("S8.5", MUST, val in VOCABULARY,
+                f"{KW_ZDEPTH_EP}={val!r} is one of {', '.join(VOCABULARY)}", where)
+
+    # A velocity-valued depth axis without a declared frame: the labels exist
+    # but cannot be recomputed under a different convention.
+    zdu = hdr.get(KW_ZDEPTH_U)
+    if zdu is not None and specsys is None:
+        try:
+            from astropy import units as u
+            is_velocity = u.Unit(str(zdu)).is_equivalent(u.km / u.s)
+        except Exception:
+            is_velocity = False
+        if is_velocity:
+            r.check("S8.5", SHOULD, False,
+                    f"{KW_ZDEPTH_U}={zdu!r} is a velocity but no {KW_SPECSYS} "
+                    f"is declared; the slice labels cannot be recomputed under "
+                    f"another convention, so the cube is not reproducible", where)
+
+    # The error bar entering the pipeline: warn when the frame uncertainty is
+    # wider than the channel spacing -- the cube resolves velocities it cannot
+    # place. The historical revisions land squarely in this regime.
+    if has_vse and KW_CDELT3 in hdr:
+        try:
+            from astropy import units as u
+            cu = u.Unit(str(hdr.get(KW_CUNIT3) or "m/s"))
+            width = abs(float(hdr[KW_CDELT3])) * cu.to(u.km / u.s)
+            vse = abs(float(hdr[KW_VELOSYS_E])) * u.Unit("m/s").to(u.km / u.s)
+            msg = channel_width_verdict(vse, width)
+            r.check("S8.5", SHOULD, msg is None,
+                    msg or "LSR uncertainty is within the channel width", where)
+        except Exception:
+            pass
+
+
 def _check_zdp_scale(hdul, r):
     """S8.2 / D-6 stereo geometry -- OPTIONAL, but meaningful when present."""
     from .spec import (KW_ZSCALE, KW_ZREF, KW_ZANG, KW_DEPTH,
@@ -499,6 +576,7 @@ def validate(path: str | Path) -> ConformanceReport:
         _check_layout(hdul, r, pack)
         _check_layers(hdul, r, pack)
         _check_zdp_scale(hdul, r)
+        _check_spectral_frame(hdul, r)
         _check_adjustments(hdul, r)
         _check_provenance(hdul, r)
     finally:

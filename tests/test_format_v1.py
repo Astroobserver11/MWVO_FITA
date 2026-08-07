@@ -103,7 +103,7 @@ def test_extname_constants():
 
 
 def test_fita_version_string():
-    assert FITA_VERSION == "1.4"   # amended 2026-08-02 (stereo scale became field-relative)
+    assert FITA_VERSION == "1.5"   # amended 2026-08-03 (spectral frame block; rulings A/B/C)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -727,7 +727,7 @@ def test_hdf5_info(rng_flux, tmp_path):
     write(str(path), [layer])
     d = info(str(path))
 
-    assert d["version"] == "1.4"
+    assert d["version"] == "1.5"
     assert d["nlayers"] == 1
     assert d["pack"] == "FLOAT32"
     li = d["layers"][0]

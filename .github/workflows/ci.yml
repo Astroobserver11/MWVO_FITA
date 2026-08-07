@@ -44,7 +44,7 @@ jobs:
       # deliberately when tests are added; never lower it to make CI pass.
       - name: Collected-count floor (the denominator must be visible)
         env:
-          KERNEL_FLOOR: "221"
+          KERNEL_FLOOR: "253"
         run: |
           collected=$(python -m pytest tests/ -q --collect-only 2>/dev/null \
                       | grep -Eo '^[0-9]+ tests collected' | grep -Eo '^[0-9]+')

@@ -54,7 +54,16 @@ IVOA notes
 # under study, made explicit as a measure in units practical to the subject."
 # That adds FITA_FDI / FITA_FDU / FITA_ZDU as optional structure, redefines
 # FITA_ZSC, and retires FITA_ZAN.  S13 requires the increment in this change.
-FITA_VERSION = "1.4"   # S13 is major.minor; stereo scale is now field-relative
+# v1.5 — author rulings A/B/C, 2026-08-03.  Adds OPTIONAL structure, which S13
+# requires an increment for: the FITS WCS Paper III spectral block is adopted
+# (SPECSYS / VELOSYS / SSYSOBS / RESTFRQ / RESTWAV), plus FITA_VSE (D-17 — the
+# uncertainty FITS gives VELOSYS no companion for) and FITA_ZEP (the epistemic
+# status of the depth axis).  v1.4 corpus files exist and are committed, so the
+# increment is required even though v1.4 was never tagged: files written before
+# and after would otherwise claim one version while differing in structure,
+# which is verbatim the [CORRECTION] the standard levels at the 2026-05-25
+# delivery.
+FITA_VERSION = "1.5"   # S13 is major.minor; spectral frame block + FITA_ZEP
 
 # ── Primary HDU mandatory keywords (all ≤8 chars, standard FITS) ────────────
 KW_VERSION   = "FITAVER"    # str  format version
@@ -70,6 +79,40 @@ KW_ZSCALE    = "FITA_ZSC"   # float OPTIONAL stereo parallax, as a PERCENTAGE of
 KW_ZREF      = "FITA_ZRF"   # float OPTIONAL reference plane: ZDP at zero parallax
 KW_ZDEPTH_U  = "FITA_ZDU"   # str   OPTIONAL FITS unit of FITA_ZDP; absent => dimensionless [0,1]
 KW_ZANG      = "FITA_ZAN"   # float RETIRED v1.4 — see the dissolution note below
+
+# ── Spectral axis / velocity cubes — v1.5, author ruling B 2026-08-03 ───────
+# ADOPT the FITS WCS Paper III keywords; do NOT mint FITA_ twins for facts the
+# FITS standard already expresses.  These are standard FITS names, listed here
+# so the reader/writer plumbing has one place to look.
+KW_SPECSYS   = "SPECSYS"    # str   spectral reference frame ('LSRK', 'BARYCENT', ...)
+KW_VELOSYS   = "VELOSYS"    # float velocity of that frame w.r.t. the observer, m/s
+KW_SSYSOBS   = "SSYSOBS"    # str   frame the observation was taken in ('TOPOCENT')
+KW_RESTFRQ   = "RESTFRQ"    # float rest frequency, Hz
+KW_RESTWAV   = "RESTWAV"    # float rest wavelength, m
+KW_CTYPE3    = "CTYPE3"     # str   'FREQ'|'WAVE'|'VRAD'|'VOPT' — the axis kind
+KW_CDELT3    = "CDELT3"     # float channel width, in CUNIT3
+KW_CUNIT3    = "CUNIT3"     # str   unit of CRVAL3/CDELT3
+
+# The ONE new FITA keyword here (D-17).  FITS defines VELOSYS but provides no
+# companion uncertainty keyword, and the LSR's uncertainty is the whole point
+# (see fita.lsr): published V_sun spans 5.2 to 14.6 km/s, while ALMA and HI
+# cubes are channelised at 0.1-1 km/s.  The standard is SILENT here, not
+# contradicted, which is the only condition under which minting a FITA_ name is
+# justified.
+KW_VELOSYS_E = "FITA_VSE"   # float OPTIONAL uncertainty on VELOSYS, same units (m/s)
+
+# Author ruling A, 2026-08-03 — the epistemic label is a property of the AXIS,
+# inherited by every z value on it; NOT per-value and NOT per-file.  A slice
+# cannot escape the label by being displaced in x or y, because displacement is
+# a rendering operation while inference is a statement about how the number was
+# obtained.  A velocity slice therefore always carries three labels at once:
+#
+#     spectral displacement   MEASURED   the observable at the detector
+#     radial velocity         INFERRED   the Doppler conversion of it
+#     local standard of rest  ADOPTED    the frame the inference is computed in
+#
+# See fita.lsr for the vocabulary and the published spread.
+KW_ZDEPTH_EP = "FITA_ZEP"   # str   OPTIONAL epistemic status of the FITA_ZDP axis
 
 # Stereo geometry — decision D-6, ratified 2026-08-02; convention settled by
 # author ruling Q2, 2026-08-02.  All three keywords are OPTIONAL and written

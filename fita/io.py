@@ -28,6 +28,8 @@ from .spec import (
     FITA_VERSION, PACK_FLOAT32, PACK_SPLIT16,
     KW_VERSION, KW_PACK, KW_NLAYERS, KW_CANVAS_W, KW_CANVAS_H,
     KW_ZSCALE, KW_ZREF, KW_ZANG, KW_FIELD_DIA, KW_FIELD_UNI, KW_ZDEPTH_U,
+    KW_SPECSYS, KW_VELOSYS, KW_VELOSYS_E, KW_SSYSOBS, KW_RESTFRQ, KW_RESTWAV,
+    KW_CTYPE3, KW_CDELT3, KW_CUNIT3, KW_ZDEPTH_EP,
     KW_DEPTH, KW_VISIBLE, KW_UNCERT_EXT, KW_MASK_EXT,
     EXTNAME_LAYERS, EXTNAME_ADJ, EXTNAME_META,
     LAYER_TABLE_COLS, flux_extname, alpha_extname,
@@ -171,6 +173,17 @@ def read_stereo_geometry(path: str | Path) -> Dict[str, Optional[float]]:
         fdi = h.get(KW_FIELD_DIA, None)
         fdu = h.get(KW_FIELD_UNI, None)
         zdu = h.get(KW_ZDEPTH_U, None)
+        # v1.5 spectral / LSR block
+        specsys = h.get(KW_SPECSYS, None)
+        velosys = h.get(KW_VELOSYS, None)
+        vse = h.get(KW_VELOSYS_E, None)
+        ssysobs = h.get(KW_SSYSOBS, None)
+        restfrq = h.get(KW_RESTFRQ, None)
+        restwav = h.get(KW_RESTWAV, None)
+        zep = h.get(KW_ZDEPTH_EP, None)
+        cdelt3 = h.get(KW_CDELT3, None)
+        cunit3 = h.get(KW_CUNIT3, None)
+        ctype3 = h.get(KW_CTYPE3, None)
     return {
         "zdp_scale": None if scale is None else float(scale),
         "zdp_ref": 0.0 if ref is None else float(ref),
@@ -179,6 +192,16 @@ def read_stereo_geometry(path: str | Path) -> Dict[str, Optional[float]]:
         "field_unit": None if fdu is None else str(fdu).strip(),
         "zdp_unit": None if zdu is None else str(zdu).strip(),
         "zdp_angular": None if ang is None else float(ang),
+        "specsys": None if specsys is None else str(specsys).strip(),
+        "velosys": None if velosys is None else float(velosys),
+        "velosys_err": None if vse is None else float(vse),
+        "ssysobs": None if ssysobs is None else str(ssysobs).strip(),
+        "restfrq": None if restfrq is None else float(restfrq),
+        "restwav": None if restwav is None else float(restwav),
+        "zdp_epistemic": None if zep is None else str(zep).strip().upper(),
+        "ctype3": None if ctype3 is None else str(ctype3).strip(),
+        "cdelt3": None if cdelt3 is None else float(cdelt3),
+        "cunit3": None if cunit3 is None else str(cunit3).strip(),
     }
 
 
@@ -271,6 +294,13 @@ def write(
     field_dia: Optional[float] = None,
     field_unit: Optional[str] = None,
     zdp_unit: Optional[str] = None,
+    specsys: Optional[str] = None,
+    velosys: Optional[float] = None,
+    velosys_err: Optional[float] = None,
+    ssysobs: Optional[str] = None,
+    restfrq: Optional[float] = None,
+    restwav: Optional[float] = None,
+    zdp_epistemic: Optional[str] = None,
     checksum: bool = True,
     date: Optional[str] = None,
     origin: Optional[str] = None,
@@ -382,6 +412,38 @@ def write(
         phdr[KW_ZREF] = (float(zdp_ref), "ZDP placed at zero parallax")
     if zdp_unit is not None:
         phdr[KW_ZDEPTH_U] = (str(zdp_unit), "FITS unit of FITA_ZDP")
+    # v1.5 -- spectral axis / velocity cubes. Author ruling B, 2026-08-03:
+    # adopt the FITS WCS Paper III names rather than minting FITA_ twins.
+    if specsys is not None:
+        phdr[KW_SPECSYS] = (str(specsys), "spectral reference frame (ADOPTED)")
+    if velosys is not None:
+        phdr[KW_VELOSYS] = (float(velosys), "frame velocity wrt observer, m/s")
+    if ssysobs is not None:
+        phdr[KW_SSYSOBS] = (str(ssysobs), "frame the observation was taken in")
+    if restfrq is not None:
+        phdr[KW_RESTFRQ] = (float(restfrq), "rest frequency, Hz")
+    if restwav is not None:
+        phdr[KW_RESTWAV] = (float(restwav), "rest wavelength, m")
+    # D-17: FITS has no uncertainty companion to VELOSYS, and the LSR's
+    # uncertainty is the point (fita.lsr). Refuse an error without its value --
+    # an uncertainty on nothing is not a measurement, the same reasoning that
+    # makes FITA_ZSC require FITA_FDI.
+    if velosys_err is not None and velosys is None:
+        raise ValueError(
+            "velosys_err (FITA_VSE) is the uncertainty on VELOSYS and requires "
+            "velosys. An uncertainty on nothing is not a measurement."
+        )
+    if velosys_err is not None:
+        phdr[KW_VELOSYS_E] = (float(velosys_err), "uncertainty on VELOSYS, m/s")
+    # Ruling A: the epistemic label belongs to the AXIS, written once.
+    if zdp_epistemic is not None:
+        from .lsr import VOCABULARY
+        if str(zdp_epistemic).upper() not in VOCABULARY:
+            raise ValueError(
+                "zdp_epistemic must be one of %s (got %r)"
+                % (", ".join(VOCABULARY), zdp_epistemic))
+        phdr[KW_ZDEPTH_EP] = (str(zdp_epistemic).upper(),
+                              "epistemic status of the FITA_ZDP axis")
     # FITA_ZAN is RETIRED in v1.4 (dissolved, not replaced).  Still writable so
     # a caller reproducing a pre-v1.4 file can, but no longer emitted by
     # anything in this library.
@@ -609,9 +671,18 @@ def read(path: str | Path) -> List[FITALayer]:
             except KeyError:
                 mask = None
 
-            # zdepth: stored as -1.0 sentinel when absent
+            # zdepth: absence is encoded by OMISSION (D-5).  The v1.0 `-1.0`
+            # sentinel was retired there and MUST NOT be reinstated by the
+            # reader.  This line used to discard every NEGATIVE value as
+            # "absent", which was harmless only while S8.2 confined FITA_ZDP to
+            # [0,1].  v1.4 made physical depths legal via FITA_ZDU, and the
+            # first data class to exercise that is the velocity cube -- whose
+            # channels are signed by nature.  The reader silently dropped every
+            # approaching channel and renormalised over what survived, so a
+            # round trip returned a DIFFERENT stereogram while the summary line
+            # was unchanged.  Failure instance #10.
             _zdp_raw = h.get("FITA_ZDP", None)
-            zdepth = float(_zdp_raw) if (_zdp_raw is not None and float(_zdp_raw) >= 0.0) else None
+            zdepth = None if _zdp_raw is None else float(_zdp_raw)
 
             visible = bool(h.get("FITA_VIS", True))
 

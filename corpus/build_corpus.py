@@ -247,6 +247,23 @@ def build_conformance(out: Path):
     _record(p, "FITA_ZDP carries parsecs, declared by FITA_ZDU; the [0,1] "
                "domain does not apply (N-1)", "S8.2", "FITA-FULL")
 
+    # v1.5 -- the NON-METRIC depth axis. A velocity cube is the case D-14 exists
+    # for: signed channels, a depth axis that is not a length, and a declared
+    # frame without which the labels cannot be recomputed. The negative depths
+    # also pin failure instance #10, where the reader discarded them silently.
+    p = out / "full_velocity_frame.fita"
+    layers = base_layers(2)
+    layers[0].zdepth, layers[1].zdepth = -40.0, 40.0
+    write(str(p), layers, overwrite=True, zdp_scale=4.0, zdp_ref=0.0,
+          field_dia=1200.0, field_unit="pc", zdp_unit="km/s",
+          specsys="LSRK", velosys=-14200.0, velosys_err=200.0,
+          ssysobs="TOPOCENT", restfrq=1.42040575e9,
+          zdp_epistemic="INFERRED",
+          provenance=_provenance("CORPUS-LSR"))
+    _record(p, "Velocity cube: non-metric depth axis with signed channels, "
+               "SPECSYS/VELOSYS declared, FITA_VSE within the channel width",
+            "S8.5", "FITA-FULL")
+
     p = out / "full_with_uncert_mask.fita"
     layers = base_layers(2)
     for l in layers:
@@ -290,6 +307,15 @@ def build_conformance(out: Path):
         ("neg_zsc_without_field.fita", "S8.2",
          "FITA_ZSC present but FITA_FDI absent -- a percentage of nothing",
          lambda h: h[0].header.__delitem__("FITA_FDI")),
+        # v1.5, same reasoning one clause along: a frame velocity with no frame
+        # named is not interpretable, and the writer refuses to emit it.
+        ("neg_velosys_without_specsys.fita", "S8.5",
+         "VELOSYS present but SPECSYS absent -- a frame velocity with no frame",
+         lambda h: h[0].header.__setitem__("VELOSYS", -14200.0)),
+        # An uncertainty on nothing is not a measurement (D-17).
+        ("neg_vse_without_velosys.fita", "S8.5",
+         "FITA_VSE present but VELOSYS absent -- an uncertainty on nothing",
+         lambda h: h[0].header.__setitem__("FITA_VSE", 7000.0)),
     ]
     for name, clause, purpose, breaker in neg:
         p = out / name

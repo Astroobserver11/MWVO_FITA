@@ -1,6 +1,6 @@
 {
   "corpus": "FITA conformance corpus",
-  "format_version": "1.4",
+  "format_version": "1.5",
   "toolchain": {
     "python": "3.12.10",
     "numpy": "2.4.6",
@@ -30,7 +30,7 @@
     "ObsCore provenance columns and their TUCDn annotations"
   ],
   "counts": {
-    "conformance": 17,
+    "conformance": 20,
     "legacy": 1,
     "science": 1,
     "roundtrip": 1
@@ -47,7 +47,7 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "739ff259fb33be2edb2db9fedd0d510e17efdb267b60c446dba346e2c4fe5b76"
+      "sha256": "8e40da3736f2b219040c5d91251ff428165519065d869fe9f071e06c9acc4eac"
     },
     {
       "file": "conformance/full_provenanced.fita",
@@ -58,7 +58,18 @@
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 60480,
-      "sha256": "dce65fa0910710e3a9c43f4714f450b17af5ac4cab2c83dfcca5136f77c9bb66"
+      "sha256": "b259a4544d6295c1001cf73d49dfe905e80810060e89aae0a39025b88690f794"
+    },
+    {
+      "file": "conformance/full_velocity_frame.fita",
+      "tier": "conformance",
+      "purpose": "Velocity cube: non-metric depth axis with signed channels, SPECSYS/VELOSYS declared, FITA_VSE within the channel width",
+      "clause": "S8.5",
+      "expected_level": "FITA-FULL",
+      "actual_level": "FITA-FULL",
+      "failing_clauses": [],
+      "bytes": 60480,
+      "sha256": "fe8413ce3686479ac5ceb24370a481318cee5cdc10202bfe0bf7d8393a4fb6d9"
     },
     {
       "file": "conformance/full_with_adjustments.fita",
@@ -69,7 +80,7 @@
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 69120,
-      "sha256": "c2e9a76d5a08248e00ad1fb09a8b3368a2021166a6a45adfea123ad62a404271"
+      "sha256": "ce12d8d7b676f2ed44935e4b642c4d4a7bb4d57523c46534eee8022ee637f127"
     },
     {
       "file": "conformance/full_with_stereo.fita",
@@ -80,7 +91,7 @@
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 60480,
-      "sha256": "7161e11fea51ddfe01aeddc7f10c003f96f1cf86fc5deb121dba6a158c65d1f6"
+      "sha256": "f2d0ea2fe55161654d4c12e5c6f86417191d7d1cf8680af93f44debdaac1c60e"
     },
     {
       "file": "conformance/full_with_uncert_mask.fita",
@@ -91,7 +102,7 @@
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 89280,
-      "sha256": "fded24873c7eedc07d0ce01dd7cdbe8cb9dd9075d9ae3e2983bc0f4f0c627c1e"
+      "sha256": "d37c21c61a5e216e3988fd4db2a51c1aa1467523ad6927b12e072f7a7912d53e"
     },
     {
       "file": "conformance/full_with_zdepth_units.fita",
@@ -102,7 +113,7 @@
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 60480,
-      "sha256": "9c6900faa61e5fc413b70ca30aa6cd4c5f52a518fd7d6b24f2d5a711ad658595"
+      "sha256": "dd2f38c9f831b579d33d0dfce2e2aa6dd1d372387eabde306d3c9b78d551e11b"
     },
     {
       "file": "conformance/neg_access_format_overclaim.fita",
@@ -115,7 +126,7 @@
         "S3"
       ],
       "bytes": 43200,
-      "sha256": "6f8b6eaa9951bc1347cda59d0617f5a21d997c98249c8f53d80626db22c851c5"
+      "sha256": "41fe6622c8ebdfc1099dd76d7902bdfb4563ed37e8bc54734a9a4ece6090b085"
     },
     {
       "file": "conformance/neg_adj_bad_json.fita",
@@ -129,7 +140,7 @@
         "S9"
       ],
       "bytes": 37440,
-      "sha256": "7d27e61b489f7bb4fb38aa6165df20e4a1247589f84a73825b66e8ba2ab1729d"
+      "sha256": "8d04179db1d6ae8ee60fcb3e4515a6e3db6bd83e741b8254c9b125e3c5cb082a"
     },
     {
       "file": "conformance/neg_adj_unknown_type.fita",
@@ -143,7 +154,7 @@
         "S9"
       ],
       "bytes": 37440,
-      "sha256": "71cf4b46079fe80f27490eecb5ac69687ff64bc432f43c96971331dd5ce7d049"
+      "sha256": "019da85fb0d397c0d4bf732776964f74c7adb31579759fafd0ee1c77f4cd4a3f"
     },
     {
       "file": "conformance/neg_alpha_bunit_alpha16.fita",
@@ -157,7 +168,7 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "b238786b28aacc19a944fa3e1cbb19b1c3113ce1c10a51afd786a0c9a5443316"
+      "sha256": "63a4bedd341af65b489c0f86abed87dd23fa509d094f1def8d264265ae502a33"
     },
     {
       "file": "conformance/neg_alpha_no_bzero.fita",
@@ -171,7 +182,7 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "24770083572fb029a9f88c8e4fde1ae3f1dcfe5a3141722e829c2bf78cb92ffb"
+      "sha256": "f8ff1450e6b79398742c9d3fbd1aa87aeeccbd487ab15c8a179e6114980bdc66"
     },
     {
       "file": "conformance/neg_bad_blend_code.fita",
@@ -185,7 +196,7 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "01e6107ef6da5fda358c9980cb4b1ab592639c545ad008517e91078ad63e1b71"
+      "sha256": "6871cc56bf5da519b1de3c122d644a169b75aba7f0873261f9309cc2e8543fdf"
     },
     {
       "file": "conformance/neg_missing_fita_vis.fita",
@@ -199,7 +210,7 @@
         "S9"
       ],
       "bytes": 25920,
-      "sha256": "27a0622d65c72eedb8dd814957a0d17dfb53383fb22ecb31624d4d832dfedca7"
+      "sha256": "3b1bfad7723f0c5c3073e8ef4dd235ceb7eba948704939ae0aa92cc0a8eff9dc"
     },
     {
       "file": "conformance/neg_nlayers_mismatch.fita",
@@ -213,7 +224,7 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "fed420fb8849cbb7cbe37a28fe42e4328efb8f536b0c1edb5c03fc75b253e624"
+      "sha256": "982a4a024b9fb05665b53491f30b02678f55eb438deb3601ed5420d38976c67a"
     },
     {
       "file": "conformance/neg_split16_declared.fita",
@@ -227,7 +238,35 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "2c5a4c1b6856090b127ec9bb4a31dbb3cc0d3c100f067f076f87294aa82889a2"
+      "sha256": "0fc292824ae1f4da4e89d2693d7dc9eab8c8650bfc71f4ba8046b52ec4aa45c1"
+    },
+    {
+      "file": "conformance/neg_velosys_without_specsys.fita",
+      "tier": "conformance",
+      "purpose": "VELOSYS present but SPECSYS absent -- a frame velocity with no frame",
+      "clause": "S8.5",
+      "expected_level": "NON-CONFORMANT",
+      "actual_level": "NON-CONFORMANT",
+      "failing_clauses": [
+        "S8.5",
+        "S9"
+      ],
+      "bytes": 28800,
+      "sha256": "6b242a4c0056178724cb61ae799885b740066dcb888648b946069dbc0a234aae"
+    },
+    {
+      "file": "conformance/neg_vse_without_velosys.fita",
+      "tier": "conformance",
+      "purpose": "FITA_VSE present but VELOSYS absent -- an uncertainty on nothing",
+      "clause": "S8.5",
+      "expected_level": "NON-CONFORMANT",
+      "actual_level": "NON-CONFORMANT",
+      "failing_clauses": [
+        "S8.5",
+        "S9"
+      ],
+      "bytes": 28800,
+      "sha256": "9da1940e68b2ee0db8ccd7bfad763a7f90f837681f4ed66050b3371711de9e49"
     },
     {
       "file": "conformance/neg_zsc_not_finite.fita",
@@ -241,7 +280,7 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "9ac43eadba17e572f7c068586e814f49c71be0fde7714c8b7488e2c0a761abe8"
+      "sha256": "e373e7ec4c96ed708050318b4101b2b565139e2c70957926566b2135a70a8368"
     },
     {
       "file": "conformance/neg_zsc_without_field.fita",
@@ -255,7 +294,7 @@
         "S9"
       ],
       "bytes": 28800,
-      "sha256": "cc6699a08e7d959638c99e610d742daba4251fa7f1fada685ffef825c02fe1a9"
+      "sha256": "9f2c51c71203f6363034e44928f744f1867c292576fdc51efbaece9f388f89de"
     },
     {
       "file": "legacy/v10_as_built.fita",
@@ -271,7 +310,7 @@
         "S9"
       ],
       "bytes": 40320,
-      "sha256": "075887132c0505f6293dba003977ca50c47b15e4ff72a510bfb05af3a7c56800"
+      "sha256": "4465aa7ea912ac2e739d285ca6438b80f0825be995e51e71f9264f704aa32ee5"
     },
     {
       "file": "roundtrip/transfusion_reference.fita",
@@ -282,7 +321,7 @@
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 135360,
-      "sha256": "54f2d8b95dfdb61ec2ebf511f1b741aa3f08d1e0b28f0ef2eab5da161e2985e6"
+      "sha256": "588ebe14fca39b340a3813a92f8c4f017befe6719033a3a4c1c15a5e000d1042"
     },
     {
       "file": "science/three_band_field.fita",
@@ -293,7 +332,7 @@
       "actual_level": "FITA-FULL",
       "failing_clauses": [],
       "bytes": 198720,
-      "sha256": "87a827204d1c54ded40e67d8340cd39582d48f1efecd943d2d04ba0f82009e63"
+      "sha256": "26c77f54a02277394824e3c1cb7a44f62c729e15a05ae0bf919556e562d78dbf"
     }
   ]
 }

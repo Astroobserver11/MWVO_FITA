@@ -193,12 +193,40 @@ def to_display_pixels(dx: float, field_dia: float,
 
 # ── human-readable summary ───────────────────────────────────────────────────
 
+def _depth_axis_is_metric(zdp_unit: Optional[str]) -> bool:
+    """Is the depth axis a LENGTH, so a distance in model space is recoverable?
+
+    D-14, ruled 2026-08-03.  The x,y displacements are actual space -- per-pixel
+    angular scale times the accepted distance.  The DEPTH axis has no such
+    correspondence unless it is itself a length.  For a velocity axis there is
+    none at all, and a legend that reported one would assert in a header the
+    very thing awaiting scientific consensus: that spectral shift encodes
+    spatial distribution.
+    """
+    if zdp_unit is None:
+        return False                      # dimensionless [0,1]: a budget, not a length
+    try:
+        from astropy import units as u
+        return bool(u.Unit(str(zdp_unit)).is_equivalent(u.m))
+    except Exception:
+        return False
+
+
 def describe(layers: Iterable, zdp_scale: float, field_dia: float,
              field_unit: str = "", zdp_ref: float = 0.0,
-             zdp_unit: Optional[str] = None) -> str:
+             zdp_unit: Optional[str] = None,
+             specsys: Optional[str] = None,
+             velosys_kms: Optional[float] = None,
+             velosys_err_kms: Optional[float] = None,
+             zdp_epistemic: Optional[str] = None) -> str:
     """Human-readable summary of the stereo geometry a file encodes.
 
     Reports the separation in FITA_FDU, never in pixels -- ruling S4.5.
+
+    For a NON-METRIC depth axis it reports apparent z and states that no
+    distance claim is being made (D-14), and it labels a velocity slice with
+    all three of its labels -- measured displacement, inferred velocity,
+    adopted frame (ruling A, 2026-08-03).
     """
     layers = list(layers)
     rows = stereo_offsets(layers, zdp_scale, field_dia, zdp_ref, zdp_unit)
@@ -217,6 +245,34 @@ def describe(layers: Iterable, zdp_scale: float, field_dia: float,
         % (max_parallax(layers, zdp_scale, field_dia, zdp_ref, zdp_unit),
            u, len(depthed)),
     ]
+
+    # D-14: say what the depth axis IS, so the separation above is not read as a
+    # measured distance when it is not one.
+    if _depth_axis_is_metric(zdp_unit):
+        lines.append("depth axis = METRIC (%s): effective apparent distance in "
+                     "model space is recoverable" % zdp_unit)
+    else:
+        lines.append("depth axis = NON-METRIC (%s): APPARENT Z ONLY -- the "
+                     "separation is a presentation device, NOT a distance claim"
+                     % (zdp_unit or "dimensionless"))
+
+    # Ruling A: a velocity slice carries three labels at once, and the legend of
+    # any illustration presenting such a cube must show all three.
+    if zdp_unit is not None and not _depth_axis_is_metric(zdp_unit):
+        from .lsr import LSR_STATUS
+        lines += [
+            "slice axis:",
+            "  spectral displacement  MEASURED   the observable at the detector",
+            "  radial velocity        %-10s the Doppler conversion of it"
+            % (zdp_epistemic or "INFERRED"),
+            "  frame %-16s %-10s %s"
+            % (specsys or "NOT DECLARED", LSR_STATUS,
+               "labels are not recomputable" if specsys is None
+               else ("VELOSYS = %.4g%s km/s"
+                     % (velosys_kms if velosys_kms is not None else float("nan"),
+                        "" if velosys_err_kms is None
+                        else " +/- %.3g" % velosys_err_kms))),
+        ]
     for r in rows:
         if r["zdepth_n"] is None:
             lines.append("  [%d] %-20s ZDP absent -> zero parallax"

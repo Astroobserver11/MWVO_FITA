@@ -53,6 +53,7 @@ happened nine times, and the last two are inside the instruments built to catch 
 | 7 | **ObsCore v1.2 does not exist** | inherited from an internal doc, never checked against the source |
 | 8 | **`fita conform` exited 0 on a NON-CONFORMANT file** | it printed every defect correctly and returned success; only `--strict` propagated the verdict. *In the validator* |
 | 9 | **Module-level `importorskip` hides uncollected tests** | pytest reports ONE skip per module however many tests it holds, so 48 missing tests showed as one skip line. The passed count moves; nothing says the denominator moved with it. *In the test harness* |
+| 10 | **The reader discarded every negative `FITA_ZDP`** | it still implemented the `-1.0` sentinel **D-5 retired** — and for *any* negative value. Dormant while §8.2 forced `[0,1]`; **v1.4 made physical depths legal and woke it.** A five-channel velocity cube round-tripped to a *different stereogram* — two channels gone, survivors renormalised — while `max separation` printed the same number throughout |
 
 **#9 is the worst-placed of all.** The test suite is the instrument this project uses to detect
 silent loss, and it had the defect it exists to detect. It is also why "CI green on 3 OS × 3
