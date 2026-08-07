@@ -9,10 +9,10 @@ that cannot touch the science.**
 | | |
 |---|---|
 | **File suffix** | `.fita` |
-| **Format version** | 1.2 |
+| **Format version** | 1.5 |
 | **MIME type** | `application/fits` |
 | **Based on** | FITS Standard v4.0 — every `.fita` file is a valid FITS MEF |
-| **Normative spec** | [`FITA_FORMAT_STANDARD`](FITA_FORMAT_STANDARD.RATIFIED-v1.2.md) |
+| **Normative spec** | [`FITA_FORMAT_STANDARD`](https://github.com/Astroobserver11/MWVO_FITA/blob/main/FITA_FORMAT_STANDARD.RATIFIED-v1.2.md) |
 | **Licence** | MIT (software) · CC0 (specification) |
 
 ---
@@ -110,7 +110,7 @@ fita conform yourfile.fita   # exit 2 = non-conformant, ALWAYS
 fita doctor                         # is this INSTALL correct, from here?
 ```
 
-A [conformance corpus](corpus/) of 18 files with recorded status ships with
+A [conformance corpus](https://github.com/Astroobserver11/MWVO_FITA/tree/main/corpus) of 24 files with recorded status ships with
 this repository, so an independent implementation can be **scored rather than
 trusted**.
 
@@ -119,7 +119,7 @@ trusted**.
 ## Quick start
 
 ```bash
-pip install git+https://github.com/Astroobserver11/MWVO_FITA.git
+pip install mwvo-fita          # distribution name; the import name is `fita`
 ```
 
 ```python
@@ -243,7 +243,7 @@ in v1.1: the writer refuses it and the reader raises. The ObsCore claim was an
 overclaim (nine mandatory columns missing, per-column UCDs never written to the
 file); it was withdrawn, then earned properly at v1.2. The unregistered MIME
 type `application/fits+alpha` is no longer emitted. See
-[`FITA_AMENDMENT__2026-08-02.md`](FITA_AMENDMENT__2026-08-02.md).
+[`FITA_AMENDMENT__2026-08-02.md`](https://github.com/Astroobserver11/MWVO_FITA/blob/main/FITA_AMENDMENT__2026-08-02.md).
 
 ---
 
@@ -251,11 +251,11 @@ type `application/fits+alpha` is no longer emitted. See
 
 | File | Standing |
 |---|---|
-| [`FITA_FORMAT_STANDARD`](FITA_FORMAT_STANDARD.RATIFIED-v1.2.md) | **Normative.** Governs everything. |
-| [`FITA_AMENDMENT__2026-08-02.md`](FITA_AMENDMENT__2026-08-02.md) | v1.1 → v1.2 clause text — **APPLIED** to the standard above; retained as the record of what changed and why |
-| [`FITA_v1.1_RATIFICATION__2026-08-02.md`](FITA_v1.1_RATIFICATION__2026-08-02.md) | decision log |
-| [`corpus/README.md`](corpus/README.md) | the conformance corpus |
-| [`FITA_Format_Guide.ipynb`](FITA_Format_Guide.ipynb) | tutorial — **non-normative** |
+| [`FITA_FORMAT_STANDARD`](https://github.com/Astroobserver11/MWVO_FITA/blob/main/FITA_FORMAT_STANDARD.RATIFIED-v1.2.md) | **Normative.** Governs everything. |
+| [`FITA_AMENDMENT__2026-08-02.md`](https://github.com/Astroobserver11/MWVO_FITA/blob/main/FITA_AMENDMENT__2026-08-02.md) | v1.1 → v1.2 clause text — **APPLIED** to the standard above; retained as the record of what changed and why |
+| [`FITA_v1.1_RATIFICATION__2026-08-02.md`](https://github.com/Astroobserver11/MWVO_FITA/blob/main/FITA_v1.1_RATIFICATION__2026-08-02.md) | decision log |
+| [`corpus/README.md`](https://github.com/Astroobserver11/MWVO_FITA/blob/main/corpus/README.md) | the conformance corpus |
+| [`FITA_Format_Guide.ipynb`](https://github.com/Astroobserver11/MWVO_FITA/blob/main/FITA_Format_Guide.ipynb) | tutorial — **non-normative** |
 
 Where any document and the standard disagree, **the standard governs**.
 
@@ -279,13 +279,13 @@ fita liberator FILE         # FITS Liberator sidecar
 
 ```bash
 # Core (numpy + astropy)
-pip install git+https://github.com/Astroobserver11/MWVO_FITA.git
+pip install mwvo-fita          # distribution name; the import name is `fita`
 
 # With Photoshop PSD import
 pip install "fita[psd] @ git+https://github.com/Astroobserver11/MWVO_FITA.git"
 
 # A specific, citable version
-pip install git+https://github.com/Astroobserver11/MWVO_FITA.git@v1.2.0
+pip install mwvo-fita          # distribution name; the import name is `fita`@v1.2.0
 ```
 
 > **Not yet on PyPI.** The name `fita` on PyPI belongs to an unrelated project,
@@ -309,10 +309,10 @@ Cite the **concept DOI** `10.5281/zenodo.21763301` for the software in general �
 resolves to the newest version. Cite the **version DOI** `10.5281/zenodo.21763344` when
 reproducibility matters and you mean v1.2.0 exactly.
 
-Machine-readable metadata is in [`CITATION.cff`](CITATION.cff).
+Machine-readable metadata is in [`CITATION.cff`](https://github.com/Astroobserver11/MWVO_FITA/blob/main/CITATION.cff).
 
 ## Licence
 
-MIT for the software ([`LICENSE`](LICENSE)). The format specification is
-dedicated to the public domain under CC0 ([`LICENSE-SPEC`](LICENSE-SPEC)) —
+MIT for the software ([`LICENSE`](https://github.com/Astroobserver11/MWVO_FITA/blob/main/LICENSE)). The format specification is
+dedicated to the public domain under CC0 ([`LICENSE-SPEC`](https://github.com/Astroobserver11/MWVO_FITA/blob/main/LICENSE-SPEC)) —
 a specification that cannot be freely re-implemented is not a standard.

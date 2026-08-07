@@ -3,22 +3,41 @@ requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "fita"
+# The DISTRIBUTION name is `mwvo-fita`; the IMPORT name stays `fita`.
+#
+# `fita` on PyPI is taken by an unrelated project (v0.0.1), as are `fitb`,
+# `fitr` and `fito`. The FIT(a-z) namespace cannot be controlled and bulk
+# registering it would be squatting, so the principal accepted the `mwvo-`
+# prefix on 2026-08-02. Distribution and import names differing is ordinary
+# (pillow/PIL, scikit-learn/sklearn), and renaming the module would break every
+# existing notebook for no gain.
+name = "mwvo-fita"
 version = "1.5.0"
 description = "Flexible Image Transfer Alpha — multi-wavelength FITS cube with per-layer alpha, blend modes, and IrenBLink pipeline"
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.9"
 authors = [
-    { name = "FITA / URANODYNE Project" },
+    { name = "Ignacio A. Cisneros", email = "astroobserver88@gmail.com" },
 ]
-keywords = ["astronomy", "fits", "imaging", "multi-wavelength", "compositing"]
+maintainers = [
+    { name = "Ignacio A. Cisneros", email = "astroobserver88@gmail.com" },
+]
+keywords = ["astronomy", "fits", "imaging", "multi-wavelength", "compositing",
+            "virtual-observatory", "obscore", "stereoscopy", "interstellar-medium"]
 classifiers = [
     "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering :: Astronomy",
     "Topic :: Multimedia :: Graphics",
     "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
 ]
 
 # Core runtime dependencies — always installed
@@ -26,6 +45,22 @@ dependencies = [
     "numpy>=1.22",
     "astropy>=5.0",
 ]
+
+# NOTE the ordering: [project.urls] is a SUB-TABLE, so every plain key of
+# [project] must appear ABOVE it. Placing it earlier silently absorbs the keys
+# that follow -- `dependencies` became `project.urls.dependencies` and the build
+# failed with "must be string". TOML section order is load-bearing.
+#
+# Without these the PyPI page links to nothing, and FITA's whole claim rests on
+# the normative standard and the conformance corpus, neither of which a reader
+# could otherwise find.
+[project.urls]
+Homepage      = "https://github.com/Astroobserver11/MWVO_FITA"
+Repository    = "https://github.com/Astroobserver11/MWVO_FITA"
+Documentation = "https://github.com/Astroobserver11/MWVO_FITA/blob/main/FITA_FORMAT_STANDARD.RATIFIED-v1.2.md"
+Changelog     = "https://github.com/Astroobserver11/MWVO_FITA/blob/main/CHANGELOG.md"
+"Conformance corpus" = "https://github.com/Astroobserver11/MWVO_FITA/tree/main/corpus"
+Issues        = "https://github.com/Astroobserver11/MWVO_FITA/issues"
 
 [project.optional-dependencies]
 # Photoshop PSD import (format-kernel feature — no uranodyne needed)

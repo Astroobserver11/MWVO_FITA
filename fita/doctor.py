@@ -234,9 +234,23 @@ def _check_versions():
     except Exception as exc:
         return Result(FAIL, "format version",
                       "cannot read fita.spec.FITA_VERSION (%s)" % exc)
+    # The DISTRIBUTION is `mwvo-fita`; the IMPORT name is `fita`. Looking up
+    # "fita" stopped resolving the moment the package was renamed, and because
+    # a failed lookup falls through to "not installed as a distribution", the
+    # drift check below silently returned OK -- failing OPEN, which is the N-3
+    # defect the check exists to catch. Caught by installing the wheel into a
+    # clean venv rather than by trusting that it built.
+    #
+    # "fita" is kept as a fallback so an older editable install still reports.
+    dist = None
     try:
-        from importlib.metadata import version
-        dist = version("fita")
+        from importlib.metadata import version, PackageNotFoundError
+        for candidate in ("mwvo-fita", "fita"):
+            try:
+                dist = version(candidate)
+                break
+            except PackageNotFoundError:
+                continue
     except Exception:
         dist = None
 

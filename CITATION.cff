@@ -11,7 +11,7 @@ abstract: >-
   range changes only what the eye sees and never the measured flux, verified
   bit-for-bit. It adds per-layer blend modes, non-destructive adjustment
   layers, stereo depth encoding physical ISM penetration, and IVOA ObsCore
-  v1.2 provenance, while remaining a valid FITS multi-extension file readable
+  v1.1 provenance, while remaining a valid FITS multi-extension file readable
   by any FITS reader. Designed for multi-wavelength astronomy and the
   integration of multispectral measurements into physical models and
   astrophysical inference, FITA is intended to be multi-wavelength and
@@ -22,7 +22,7 @@ authors:
     family-names: "Cisneros"
     email: "astroobserver88@gmail.com"
     orcid: "https://orcid.org/0009-0001-0282-6098"
-version: "1.4.0"
+version: "1.5.0"
 doi: "10.5281/zenodo.21763301"          # concept DOI: always the newest version
 identifiers:
   - type: doi
@@ -41,7 +41,7 @@ keywords:
   - ObsCore
 references:
   - type: standard
-    title: "FITA Format Standard v1.2"
+    title: "FITA Format Standard v1.5"
     authors:
       - given-names: "Ignacio A."
         family-names: "Cisneros"
