@@ -157,9 +157,23 @@ luminance-modulated chroma key. And, importantly, a correctly stated open questi
 overclaim.
 
 **Needs, before submission.**
-1. **Attribution check.** Two influences are named — David Malin (secure) and "Daphny Halas" (I
-   cannot verify this spelling or identity). An academic paper cannot carry an unverified personal
-   attribution; worth confirming who is meant.
+1. **Attribution — RESOLVED, with one open point.** ▣ Verified against the primary sources
+   supplied by the principal, 2026-08-03:
+   - **David Malin** — `davidmalin.com`. Spelling confirmed. Photographic scientist at the
+     Anglo-Australian Observatory from 1975; originated the first deep-sky images made with the
+     additive RGB colour process, alongside the unsharp-masking / photographic amplification
+     darkroom work. **This citation is structural, not decorative:** Malin's darkroom methods are
+     the analogue ancestor of the luminance-masked wavelength composition the document describes,
+     and belong in the lineage argument beside the multiplane camera and chroma key — not in an
+     acknowledgements list.
+   - **Daphne Hallas** — `astrophoto.com`. Spelling corrected (Hallas, not Halas). **Open point:**
+     the site presents as *"Tony and Daphne Hallas"*, jointly, and Tony Hallas is the more commonly
+     cited name for the processing technique. The document credits Daphne alone. Whether the
+     influence being recorded is Daphne's individually or the partnership's is the principal's to
+     state — it is his own recollection, and a paper should not silently widen or narrow it.
+   - **For submission:** cite *works*, not homepages. Malin has a substantial published record
+     (AAO plate work; *Colours of the Stars*, Malin & Murdin); the Hallas technique material
+     appears largely in the popular astronomical press. A referee will expect citable sources.
 2. The Doppler/medium argument in §2 of that document is a **paradigm claim**, not a
    presentation claim. It belongs with [[project_unphysics]], and mixing it into a methods paper
    would give a reviewer a reason to reject the method for the framing. Recommend separating:
