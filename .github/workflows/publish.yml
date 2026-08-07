@@ -1,0 +1,107 @@
+name: publish
+
+# Trusted Publishing (OIDC) -- NO API TOKEN EXISTS ANYWHERE.
+#
+# PyPI and this repository authenticate each other directly; the credential is
+# minted per-run and expires in 15 minutes. Nothing is stored in repository
+# secrets, nothing is pasted into a terminal, and there is no long-lived token
+# to leak. That is the point: this project burned two TestPyPI tokens to a
+# clipboard collision and a masked prompt that would not accept a paste.
+#
+# ── ONE-TIME SETUP, no secrets involved ──────────────────────────────────────
+# On https://test.pypi.org/manage/account/publishing/ (and later the same page
+# on pypi.org), add a PENDING publisher with exactly these values:
+#
+#     PyPI project name : mwvo-fita
+#     Owner             : Astroobserver11
+#     Repository name   : MWVO_FITA
+#     Workflow name     : publish.yml
+#     Environment name  : testpypi        (or: pypi)
+#
+# A "pending" publisher is how a project that does not exist yet gets created.
+# NOTE: it does NOT reserve the name -- the name is only claimed by the first
+# successful upload, so do not leave a long gap once the form is filled.
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Where to publish"
+        type: choice
+        options: [testpypi, pypi]
+        default: testpypi
+  release:
+    types: [published]        # a GitHub release publishes to PyPI proper
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # The publication gate in prose is worth little if the pipeline does not
+      # enforce it. Nothing is published that has not just passed its own suite
+      # and had its corpus verified in the same run.
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip build twine
+          python -m pip install -e ".[dev]"
+
+      - name: Test suite must pass before anything is published
+        run: python -m pytest tests/ -q
+
+      - name: Corpus must verify before anything is published
+        run: python corpus/build_corpus.py --verify
+
+      - name: Build wheel AND sdist
+        # Both, deliberately. `build --wheel` alone produces a half release,
+        # twine check still passes on it, and the index accepts it -- and a
+        # version number on PyPI is immutable, so that mistake is permanent.
+        run: python -m build
+
+      - name: Validate metadata and README rendering
+        run: python -m twine check dist/*
+
+      - name: Confirm both artifact kinds are present
+        run: |
+          test -n "$(ls dist/*.whl 2>/dev/null)"    || { echo "::error::no wheel built"; exit 1; }
+          test -n "$(ls dist/*.tar.gz 2>/dev/null)" || { echo "::error::no sdist built"; exit 1; }
+          ls -la dist/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+  testpypi:
+    needs: build
+    if: github.event_name == 'workflow_dispatch' && inputs.target == 'testpypi'
+    runs-on: ubuntu-latest
+    environment: testpypi
+    permissions:
+      id-token: write          # REQUIRED for OIDC; without it, no credential
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+  pypi:
+    needs: build
+    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.target == 'pypi')
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
