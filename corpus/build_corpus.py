@@ -337,7 +337,14 @@ def build_conformance(out: Path):
     p = out / "neg_orphan_trailing_bytes.fita"
     write(str(p), base_layers(2), overwrite=True)
     _full = p.stat().st_size
-    _corrupt(p, lambda h: (h.pop(4), h.pop(3),          # drop FLUX/ALPHA_0002
+    # Drop the layer-2 pair, DESCENDING. Popping 4 then 3 removed FLUX_0002 and
+    # -- after the list shifted -- ALPHA_0001, orphaning ALPHA_0002 and adding
+    # an S4.1 failure this fixture never meant to carry. ATOP caught it on the
+    # gate run: a fixture that fails TWO MUSTs cannot isolate the one clause it
+    # guards, so a regression silently deleting the orphan-bytes check would
+    # still exit 2 and the test would still pass. The guard for instance #11
+    # was itself unguarded.
+    _corrupt(p, lambda h: (h.pop(5), h.pop(4),          # ALPHA_0002 then FLUX_0002
                            h[0].header.__setitem__("FITANL", 1)))
     # Every surviving HDU keeps a VERIFYING checksum -- the point of the fixture
     # is that nothing inside the file is wrong.  The padding lands outside any

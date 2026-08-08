@@ -234,12 +234,11 @@
       "expected_level": "NON-CONFORMANT",
       "actual_level": "NON-CONFORMANT",
       "failing_clauses": [
-        "S4.1",
         "S4.2",
         "S9"
       ],
       "bytes": 46080,
-      "sha256": "fdea0e9c64f3d1525ff175e96a1b304ae94886b4aa714c3aca018a070239cc73"
+      "sha256": "4609f2ecb7d3e58dd4cac03167e7aab81bee281b8fbb2f750098974922cb7dc6"
     },
     {
       "file": "conformance/neg_split16_declared.fita",
