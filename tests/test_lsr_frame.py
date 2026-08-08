@@ -1,6 +1,6 @@
 """v1.5 -- the spectral frame block, signed depths, and the three slice labels.
 
-Author rulings of 2026-08-03 (A, B, C) plus D-14 and D-17. These tests assert
+Author rulings of 2026-08-07 (A, B, C) plus D-14 and D-17. These tests assert
 what a THIRD-PARTY READER would see, not merely that a function ran -- S11.5.
 """
 
@@ -234,7 +234,7 @@ def _truncate_and_pad(tmp_path, n_keep, repair_fitanl):
 
 
 def test_truncated_write_is_caught_even_when_the_header_agrees(tmp_path):
-    """ATOP, 2026-08-03: Frame15 held 19 of 26 FLUX extensions at exactly the
+    """ATOP, 2026-08-07: Frame15 held 19 of 26 FLUX extensions at exactly the
     size of the fourteen good copies, valid FITS, passing verify(). It was
     caught only because the dead writer left FITANL stale.
 

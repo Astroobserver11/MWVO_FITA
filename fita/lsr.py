@@ -1,7 +1,7 @@
 """
 fita.lsr -- the Local Standard of Rest is ADOPTED, and this module says so.
 
-Author ruling, 2026-08-03: labelling the LSR "established" is dubious; it is
+Author ruling, 2026-08-07: labelling the LSR "established" is dubious; it is
 *adopted*.  An adopted value is one the community agrees to use so results are
 comparable, which is a different epistemic act from measuring something.
 
@@ -28,7 +28,7 @@ but no companion UNCERTAINTY keyword.  The standard is silent here, not
 contradicted, which is the one condition under which minting a FITA_ name is
 justified.
 
-All bibliographic values below were retrieved from NASA ADS on 2026-08-03 and
+All bibliographic values below were retrieved from NASA ADS on 2026-08-07 and
 are quoted as published.  Nothing here is asserted from recall.
 """
 
@@ -36,7 +36,7 @@ from __future__ import annotations
 
 from typing import List, NamedTuple, Optional
 
-# Ruling C, 2026-08-03 -- the epistemic vocabulary, four terms.
+# Ruling C, 2026-08-07 -- the epistemic vocabulary, four terms.
 ESTABLISHED = "ESTABLISHED"   # fixed by measurement or an external standard
 ADOPTED     = "ADOPTED"       # a convention agreed for comparability
 INFERRED    = "INFERRED"      # derived from an observable through a model
@@ -71,7 +71,7 @@ class Determination(NamedTuple):
 
 # --- V_sun, the contested component -----------------------------------------
 #
-# Retrieved from ADS 2026-08-03, sorted oldest first so the drift is visible.
+# Retrieved from ADS 2026-08-07, sorted oldest first so the drift is visible.
 DETERMINATIONS: List[Determination] = [
     Determination(
         "1998MNRAS.298..387D", "Dehnen & Binney", 1998, 5.2, None,
@@ -159,7 +159,7 @@ def describe(velosys_kms: Optional[float] = None,
     """Human-readable account of the frame a cube declares, and its standing."""
     lo, hi, ptp = v_sun_spread()
     lines = [
-        "Local Standard of Rest -- status: %s (author ruling 2026-08-03)" % LSR_STATUS,
+        "Local Standard of Rest -- status: %s (author ruling 2026-08-07)" % LSR_STATUS,
         "",
         "  frame declared   : %s" % (specsys or "NOT DECLARED -- labels are not recomputable"),
     ]

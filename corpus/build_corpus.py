@@ -327,7 +327,7 @@ def build_conformance(out: Path):
         _corrupt(p, breaker)
         _record(p, purpose, clause, "NON-CONFORMANT")
 
-    # Failure instance #11, ATOP 2026-08-03.  An interrupted re-write left
+    # Failure instance #11, ATOP 2026-08-07.  An interrupted re-write left
     # Frame15 of the 130@G archive holding 19 of its 26 FLUX extensions at
     # EXACTLY the byte size of the fourteen good copies -- valid FITS, passing
     # verify(), and caught only because the dead writer left FITANL stale.

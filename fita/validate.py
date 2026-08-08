@@ -188,7 +188,7 @@ def _check_layout(hdul, r, pack):
         r.check("S4.2", MUST, len(flux_idx) == int(nl),
                 f"{KW_NLAYERS}={nl} matches {len(flux_idx)} FLUX extensions found", "PRIMARY")
 
-    # S4.2 -- ORPHAN TRAILING BYTES.  Failure instance #11, ATOP 2026-08-03:
+    # S4.2 -- ORPHAN TRAILING BYTES.  Failure instance #11, ATOP 2026-08-07:
     # an interrupted re-write left Frame15 of the 130@G archive with 19 of its
     # 26 FLUX extensions, EXACTLY the same byte size as the fourteen good
     # copies, valid FITS, and passing verify().  It was caught only because the
@@ -311,7 +311,7 @@ def _check_layers(hdul, r, pack):
 def _check_spectral_frame(hdul, r):
     """S8.5 -- the spectral reference frame of a velocity cube (v1.5).
 
-    Author ruling, 2026-08-03: the LSR is ADOPTED, not established. Published
+    Author ruling, 2026-08-07: the LSR is ADOPTED, not established. Published
     V_sun spans 5.2 to 14.6 km/s while ALMA and HI cubes are channelised at
     0.1-1 km/s, so a cube whose labels were computed under one convention and
     are read under another is mislabelled by more than its own resolution. A

@@ -5,9 +5,9 @@ implements. Per §13 of the standard, **any change to required or optional
 structure requires a version increment** — a rule this project has broken
 twice and now enforces in code.
 
-## [1.5] — 2026-08-03
+## [1.5] — 2026-08-07
 
-Applies the principal's rulings A, B and C of 2026-08-03, and closes **D-14** and
+Applies the principal's rulings A, B and C of 2026-08-07, and closes **D-14** and
 **D-17**. The subject is the velocity cube, and the governing distinction is:
 
 > *The x and y displacements have one logical physical interpretation: actual space

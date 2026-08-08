@@ -1,6 +1,6 @@
 # SLATE ADDENDUM 1 — the phased stereogram, and a defect in v1.4
 
-**Prepared by:** BTOP, 2026-08-03
+**Prepared by:** BTOP, 2026-08-07
 **Extends:** `FITA_DECISION_SLATE__stereo_metrology__2026-08-02.md`
 **Contains:** one defect in shipped v1.4 text, three new decisions (D-14…D-16), one publication
 directive registered.
@@ -158,7 +158,7 @@ overclaim.
 
 **Needs, before submission.**
 1. **Attribution — RESOLVED, with one open point.** ▣ Verified against the primary sources
-   supplied by the principal, 2026-08-03:
+   supplied by the principal, 2026-08-07:
    - **David Malin** — `davidmalin.com`. Spelling confirmed. Photographic scientist at the
      Anglo-Australian Observatory from 1975; originated the first deep-sky images made with the
      additive RGB colour process, alongside the unsharp-masking / photographic amplification
@@ -167,14 +167,14 @@ overclaim.
      and belong in the lineage argument beside the multiplane camera and chroma key — not in an
      acknowledgements list.
    - **Tony and Daphne Hallas** — `astrophoto.com`. Spelling corrected (Hallas, not Halas), and
-     **RESOLVED 2026-08-03: attribute to the couple.** The principal's reason is the correct one
+     **RESOLVED 2026-08-07: attribute to the couple.** The principal's reason is the correct one
      for a citation — *that is how they appear to history*. The site presents them jointly, their
      work is published jointly, and an attribution should name the unit that the record knows.
      The document's "Daphne Halas" becomes **"Tony and Daphne Hallas"** throughout.
    - **For submission:** cite *works*, not homepages. Malin has a substantial published record
      (AAO plate work; *Colours of the Stars*, Malin & Murdin); the Hallas technique material
      appears largely in the popular astronomical press. A referee will expect citable sources.
-2. **The Doppler/medium argument — RULED 2026-08-03: it travels with the paper, as an
+2. **The Doppler/medium argument — RULED 2026-08-07: it travels with the paper, as an
    *Observation*.**
 
    BTOP had recommended separating it, on the grounds that a paradigm claim gives a referee a

@@ -1,6 +1,6 @@
 # SLATE ADDENDUM 2 — D-14 ruled; the three labels of a velocity slice
 
-**Prepared by:** BTOP, 2026-08-03
+**Prepared by:** BTOP, 2026-08-07
 **Extends:** Addendum 1 (`__phased_stereo__`) and the stereo-metrology slate
 **Contains:** D-14 **RULED** (and sharpened past the proposal), a normative legend clause, one
 finding, one item parked.
@@ -9,7 +9,7 @@ finding, one item parked.
 
 ## 1. D-14 — RULED, and the ruling is sharper than the proposal
 
-**Ruled 2026-08-03:**
+**Ruled 2026-08-07:**
 
 > The x and y displacements in the phased stereograph have one logical physical interpretation:
 > the representation of actual space corresponding to the angular distance for each pixel at the
@@ -126,7 +126,7 @@ outcome, because a velocity cube cannot carry its three labels without them.
 ## 4. Parked
 
 **The ALMA/ATOMIUM geometry question** — why circular emission patterns rather than a cone —
-postponed by the principal, 2026-08-03. Not dropped. The state reached, so it need not be
+postponed by the principal, 2026-08-07. Not dropped. The state reached, so it need not be
 re-derived:
 
 - The cone is real: `v_los = v_exp·cos θ`, `r_proj = R·sin θ`, so a channel map at fixed `v_los`

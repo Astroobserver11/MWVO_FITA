@@ -54,7 +54,7 @@ IVOA notes
 # under study, made explicit as a measure in units practical to the subject."
 # That adds FITA_FDI / FITA_FDU / FITA_ZDU as optional structure, redefines
 # FITA_ZSC, and retires FITA_ZAN.  S13 requires the increment in this change.
-# v1.5 — author rulings A/B/C, 2026-08-03.  Adds OPTIONAL structure, which S13
+# v1.5 — author rulings A/B/C, 2026-08-07.  Adds OPTIONAL structure, which S13
 # requires an increment for: the FITS WCS Paper III spectral block is adopted
 # (SPECSYS / VELOSYS / SSYSOBS / RESTFRQ / RESTWAV), plus FITA_VSE (D-17 — the
 # uncertainty FITS gives VELOSYS no companion for) and FITA_ZEP (the epistemic
@@ -80,7 +80,7 @@ KW_ZREF      = "FITA_ZRF"   # float OPTIONAL reference plane: ZDP at zero parall
 KW_ZDEPTH_U  = "FITA_ZDU"   # str   OPTIONAL FITS unit of FITA_ZDP; absent => dimensionless [0,1]
 KW_ZANG      = "FITA_ZAN"   # float RETIRED v1.4 — see the dissolution note below
 
-# ── Spectral axis / velocity cubes — v1.5, author ruling B 2026-08-03 ───────
+# ── Spectral axis / velocity cubes — v1.5, author ruling B 2026-08-07 ───────
 # ADOPT the FITS WCS Paper III keywords; do NOT mint FITA_ twins for facts the
 # FITS standard already expresses.  These are standard FITS names, listed here
 # so the reader/writer plumbing has one place to look.
@@ -101,7 +101,7 @@ KW_CUNIT3    = "CUNIT3"     # str   unit of CRVAL3/CDELT3
 # justified.
 KW_VELOSYS_E = "FITA_VSE"   # float OPTIONAL uncertainty on VELOSYS, same units (m/s)
 
-# Author ruling A, 2026-08-03 — the epistemic label is a property of the AXIS,
+# Author ruling A, 2026-08-07 — the epistemic label is a property of the AXIS,
 # inherited by every z value on it; NOT per-value and NOT per-file.  A slice
 # cannot escape the label by being displaced in x or y, because displacement is
 # a rendering operation while inference is a statement about how the number was

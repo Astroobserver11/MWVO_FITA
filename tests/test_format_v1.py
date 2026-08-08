@@ -103,7 +103,7 @@ def test_extname_constants():
 
 
 def test_fita_version_string():
-    assert FITA_VERSION == "1.5"   # amended 2026-08-03 (spectral frame block; rulings A/B/C)
+    assert FITA_VERSION == "1.5"   # amended 2026-08-07 (spectral frame block; rulings A/B/C)
 
 
 # ─────────────────────────────────────────────────────────────────────────────

@@ -196,7 +196,7 @@ def to_display_pixels(dx: float, field_dia: float,
 def _depth_axis_is_metric(zdp_unit: Optional[str]) -> bool:
     """Is the depth axis a LENGTH, so a distance in model space is recoverable?
 
-    D-14, ruled 2026-08-03.  The x,y displacements are actual space -- per-pixel
+    D-14, ruled 2026-08-07.  The x,y displacements are actual space -- per-pixel
     angular scale times the accepted distance.  The DEPTH axis has no such
     correspondence unless it is itself a length.  For a velocity axis there is
     none at all, and a legend that reported one would assert in a header the
@@ -226,7 +226,7 @@ def describe(layers: Iterable, zdp_scale: float, field_dia: float,
     For a NON-METRIC depth axis it reports apparent z and states that no
     distance claim is being made (D-14), and it labels a velocity slice with
     all three of its labels -- measured displacement, inferred velocity,
-    adopted frame (ruling A, 2026-08-03).
+    adopted frame (ruling A, 2026-08-07).
     """
     layers = list(layers)
     rows = stereo_offsets(layers, zdp_scale, field_dia, zdp_ref, zdp_unit)

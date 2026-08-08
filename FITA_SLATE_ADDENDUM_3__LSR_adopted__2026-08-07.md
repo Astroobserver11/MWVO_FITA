@@ -1,6 +1,6 @@
 # SLATE ADDENDUM 3 — the LSR is ADOPTED, not established; with the bibliography
 
-**Prepared by:** BTOP, 2026-08-03
+**Prepared by:** BTOP, 2026-08-07
 **Extends:** Addendum 2 (`__velocity_legend__`)
 **Contains:** rulings A–C recorded, the D-4 bibliographic search executed against ADS, and a
 measured error budget for the verification pipeline.
@@ -64,7 +64,7 @@ reader the frame is a fixed fact. §4 shows it is not.
 
 ## 4. Ruling D — the bibliography, and it supports the concern
 
-▣ Searched against NASA ADS, 2026-08-03. **The claim that there is more than one Local Standard of
+▣ Searched against NASA ADS, 2026-08-07. **The claim that there is more than one Local Standard of
 Rest is correct, and the disagreement is larger than the channel width of the data it is applied
 to.**
 

@@ -412,7 +412,7 @@ def write(
         phdr[KW_ZREF] = (float(zdp_ref), "ZDP placed at zero parallax")
     if zdp_unit is not None:
         phdr[KW_ZDEPTH_U] = (str(zdp_unit), "FITS unit of FITA_ZDP")
-    # v1.5 -- spectral axis / velocity cubes. Author ruling B, 2026-08-03:
+    # v1.5 -- spectral axis / velocity cubes. Author ruling B, 2026-08-07:
     # adopt the FITS WCS Paper III names rather than minting FITA_ twins.
     if specsys is not None:
         phdr[KW_SPECSYS] = (str(specsys), "spectral reference frame (ADOPTED)")
