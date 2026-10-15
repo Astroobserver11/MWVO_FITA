@@ -1,0 +1,113 @@
+Name,Alias,RA_J2000,Dec_J2000,Porb_min,Porb_days,B_MG,B_source,WD_mass_Msun,Donor_mass_Msun,Distance_pc,Constellation,Type,Notes,Source
+AM Her,AM Herculis,18:16:13.3,+49:52:04.8,185.66,0.128927,14-30,cyclotron,0.6-0.7,0.26,,Hercules,polar (prototype),first polar identified (Tapia 1977); 3U 1809+50,Schwope 2025 PolarCat; Darling encyc.
+VV Pup,VV Puppis,08:15:06.2,-24:54:47.0,100.4,0.069747,31.5 / 54.6,cyclotron (two poles),0.73 +/- 0.05,0.10 +/- 0.02,137 +/- 1,Puppis,polar (archetype two-pole),discovered van Gent 1931; shortest-period variable then; i=75 deg; southern pole self-eclipsed,A&A 2020 aa35741; Howell 2006
+AN UMa,AN Ursae Majoris,11:04:29.9,+44:57:12.0,114.8,0.079753,,,,,Ursa Major,polar,coined term polars (Krzeminski & Serkowski 1977),AAVSO 2006
+AR UMa,AR Ursae Majoris,,,,116.0,0.080501,235,cyclotron,,,Ursa Major,polar,highest known WD field among CVs,Schmidt 1999
+EF Eri,EF Eridani,,,,81.0,0.056266,,,,,Eridanus,polar,period below CV minimum,Ritter & Kolb 2007
+HU Aqr,HU Aquarii,,,,125.0,0.086820,,,,,Aquarius,polar,eclipsing,Ritter & Kolb 2007
+V1500 Cyg,Nova Cyg 1975,,,,201.0,0.139613,72 / 105,cyclotron,~1.4,,Cygnus,asynchronous polar,magnetic nova; spin approaching synchronism post-nova,Harrison & Campbell 2016; MNRAS 2018
+BY Cam,BY Camelopardalis,,,,201.0,0.139753,,,,,Camelopardalis,asynchronous polar,one of 4 confirmed asynchronous polars,MNRAS 2018
+V1432 Aql,V1432 Aquilae,,,,202.0,0.140235,,,,,Aquila,asynchronous polar,,
+CD Ind,CD Indus,,,,111.0,0.077006,,,,,Indus,asynchronous polar,,
+ST LMi,ST Leonis Minoris,,,,114.0,0.079089,,,,,Leo Minor,polar,cool WD,Sion 1991
+MR Ser,MR Serpentis,,,,113.0,0.078798,,,,,Serpens,polar,,
+BL Hyi,BL Hydri / H0139-68,01:41:00.4,-67:53:27.5,113.64,0.078915,23,cyclotron,,,Hydrus,polar,PolarCat 2026 entry,PolarCat 2026
+EQ Cet,EQ Ceti / RBS0206,01:28:52.6,-23:39:44.0,92.8,0.064455,34,cyclotron,,,Cetus,polar,PolarCat 2026 entry,PolarCat 2026
+CV Hyi,CV Hydri / RX J0132-65,01:32:42.0,-65:54:32.2,77.83,0.054049,68,cyclotron,,,Hydrus,polar,below period minimum; PolarCat 2026,PolarCat 2026
+V834 Cen,V834 Centauri,,,,101.0,0.0704,,,,,Centaurus,polar,compared with VV Pup in QPO study,A&A 2020
+V347 Pav,V347 Pavo,,,,90.0,0.062553,,,,,Pavo,polar,,
+UZ For,UZ Fornacis,,,,126.5,0.087865,,,,,Fornax,polar,eclipsing,Ritter & Kolb 2007
+DP Leo,DP Leonis,,,,89.8,0.062363,,,,,Leo,polar,eclipsing,Ritter & Kolb 2007
+QQ Vul,QQ Vulpeculae,,,,222.0,0.154520,,,,,Vulpecula,polar,,
+QS Tel,QS Telescopii,,,,140.0,0.097187,,,,,Telescopium,polar,,
+V884 Her,V884 Herculis,,,,113.0,0.078480,,,,,Hercules,polar,,
+VY For,VY Fornacis,,,,228.0,0.1586,,,,,Fornax,polar,,
+EP Dra,EP Draconis,,,,105.0,0.072656,,,,,Draco,polar,,
+RS Cae,RS Caeli,,,,102.0,0.0708,,,,,Caelum,polar,,
+MN Hya,MN Hydrae,,,,203.0,0.141244,,,,,Hydra,polar,,
+V2301 Oph,V2301 Ophiuchi,,,,113.0,0.078450,,,,,Ophiuchus,polar,,
+V1043 Cen,V1043 Centauri,,,,251.0,0.174592,,,,,Centaurus,polar,,
+V895 Cen,V895 Centauri,,,,286.0,0.198553,,,,,Centaurus,polar,,
+V1309 Ori,V1309 Orionis,,,,479.0,0.332612,,,,,Orion,polar,,
+AI Tri,AI Trianguli,,,,276.0,0.191745,,,,,Triangulum,polar,,
+EK UMa,EK Ursae Majoris,,,,114.0,0.07948,,,,,Ursa Major,polar,,
+J0649-0737,,,,,263.0,0.183,,,,,,polar candidate,Ritter & Kolb 2007,
+J1553+5516,,,,,263.0,0.18297,,,,,,polar candidate,Ritter & Kolb 2007,
+J2048+0050,,,,,252.0,0.175,,,,,,polar candidate,Ritter & Kolb 2007,
+J0854+3905,,,,,113.0,0.07868,,,,,,polar candidate,Ritter & Kolb 2007,
+J1424-0227,,,,,224.0,0.15555,,,,,,polar candidate,Ritter & Kolb 2007,
+J1002-1925,,,,,210.0,0.1458,,,,,,polar candidate,Ritter & Kolb 2007,
+J1007-2017,,,,,210.0,0.1458,,,,,,polar candidate,Ritter & Kolb 2007,
+J0953+1458,,,,,104.0,0.072049,,,,,,polar candidate,Ritter & Kolb 2007,
+J2316-0527,,,,,210.0,0.14545,,,,,,polar candidate,Ritter & Kolb 2007,
+J1928-5001,,,,,101.0,0.070162,,,,,,polar candidate,Ritter & Kolb 2007,
+J0820+4934,,,,,99.0,0.06901,,,,,,polar candidate,Ritter & Kolb 2007,
+J0837+3830,,,,,191.0,0.1325,,,,,,polar candidate,Ritter & Kolb 2007,
+J1610+0352,,,,,190.0,0.1322,,,,,,polar candidate,Ritter & Kolb 2007,
+J0209+2832,,,,,96.0,0.066855,,,,,,polar candidate,Ritter & Kolb 2007,
+J2050-0536,,,,,94.0,0.065425,,,,,,polar candidate,Ritter & Kolb 2007,
+J0230-6842,,,,,182.0,0.12625,,,,,,polar candidate,Ritter & Kolb 2007,
+J0155+0028,,,,,87.0,0.060516,,,,,,polar candidate,Ritter & Kolb 2007,
+J0524+4244,,,,,157.0,0.109148,,,,,,polar candidate,Ritter & Kolb 2007,
+J0425-1945,,,,,87.0,0.0605,,,,,,polar candidate,Ritter & Kolb 2007,
+J1554+2721,,,,,152.0,0.105462,,,,,,polar candidate,Ritter & Kolb 2007,
+J0425-5714,,,,,86.0,0.059598,,,,,,polar candidate,Ritter & Kolb 2007,
+J0729+3658,,,,,150.0,0.104,,,,,,polar candidate,Ritter & Kolb 2007,
+J1541+3602,,,,,84.0,0.058,,,,,,polar candidate,Ritter & Kolb 2007,
+J0154-5947,,,,,80.0,0.0556,,,,,,polar candidate,Ritter & Kolb 2007,
+J1846+5538,,,,,129.0,0.089387,,,,,,polar candidate,Ritter & Kolb 2007,
+V516 Pup,,,,,137.0,0.0952,,,,,,polar,Ritter & Kolb 2007,
+V381 Vel,,,,,134.0,0.0931,,,,,,polar,Ritter & Kolb 2007,
+UW Pic,,,,,133.0,0.09264,,,,,,polar,Ritter & Kolb 2007,
+FH UMa,,,,,80.0,0.0556,,,,,,polar,Ritter & Kolb 2007,
+GG Leo,,,,,80.0,0.055471,,,,,,polar,Ritter & Kolb 2007,
+EU Cnc,,,,,125.0,0.0871,,,,,,polar,Ritter & Kolb 2007,
+V4738 Sgr,,,,,78.0,0.054179,,,,,,polar,Ritter & Kolb 2007,
+V1007 Her,,,,,120.0,0.083284,,,,,,polar,Ritter & Kolb 2007,
+V393 Pav,,,,,99.0,0.068625,,,,,,polar,Ritter & Kolb 2007,
+HS Cam,,,,,98.0,0.068207,,,,,,polar,Ritter & Kolb 2007,
+LW Cam,,,,,97.0,0.067547,,,,,,polar,Ritter & Kolb 2007,
+V1033 Cen,,,,,189.0,0.131518,,,,,,polar,Ritter & Kolb 2007,
+HY Eri,,,,,171.0,0.118969,,,,,,polar,Ritter & Kolb 2007,
+EU UMa,,,,,90.0,0.06260,,,,,,polar,Ritter & Kolb 2007,
+WX LMi,,,,,167.0,0.115923,,,,,,polar,Ritter & Kolb 2007,
+J0752+3628,,,,,164.0,0.114,,,,,,polar candidate,Ritter & Kolb 2007,
+J1324+0320,,,,,158.0,0.11,,,,,,polar candidate,Ritter & Kolb 2007,
+J1700+4003,,,,,116.0,0.080802,,,,,,polar candidate,Ritter & Kolb 2007,
+J1413-6520,,,,,439.0,0.304,,,,,,polar candidate,Ritter & Kolb 2007,
+V347 Tuc,,,,,281.0,0.19449,,,,,,polar,Ritter & Kolb 2007,
+Gaia18aya,,22:04:50.69,+40:08:38.4,120.17,0.08345,49+,cyclotron harmonic ~5500A,,,,,polar candidate,new CV from Gaia alerts 2020,AJ 2020 160 70
+RX J0636.3+6554,,06:36:22.92,+65:54:14.77,,,,,,,polar candidate,deeply eclipsing,AJ 2020 160 70
+PT Per,,02:42:51.20,+56:41:31.12,,,,,,,polar candidate,,
+SDSS J100516.61+694136.5,,10:05:16.58,+69:41:36.41,,,,,,,polar candidate,,
+SDSS J133309.20+143706.9,,13:33:09.19,+14:37:06.93,,,,,,,polar candidate,,
+SDSS J134441.83+204408.3,,13:44:41.83,+20:44:08.61,,,,,,,polar candidate,,
+3XMM J000511.8+634018,,00:05:11.88,+63:40:19.5,133.49,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+SDSSJ001856.92+345444.2,V479 And,00:18:56.92,+34:54:44.2,855.49,,,,,,Andromeda,polar candidate,PolarCat 2026,PolarCat 2026
+CXOGlb J002406.3-720443,Cl* NGC 104 SBG V3,00:24:06.20,-72:04:43.0,280.07,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+NGC104AGBWF2-48,,00:24:15.88,-72:04:36.4,144.15,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+SDSSJ002637.06+242915.6,,00:26:37.06,+24:29:15.7,122.86,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+XMMSL2 J005657.9+320624,,00:56:57.57,+32:06:21.9,95.25,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+ZTFJ011242.44+582757.1,,01:12:42.44,+58:27:57.1,80.91,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+SDSSJ011331.69-033233.5,,01:13:31.72,-03:32:33.4,263.0,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+SDSSJ012402.25+211359.7,,01:24:02.25,+21:13:59.7,120.20,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+Gaia23cer,AT2023row,01:26:07.79,+12:10:48.9,102.07,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+Gaia23bpl,AT 2023gll,01:33:30.89,-81:07:49.4,92.51,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+SDSSJ013421.83+042200.0,,01:34:21.83,+04:22:00.1,,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+SDSSJ013540.99+340132.9,,01:35:41.01,+34:01:32.9,,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+SDSSJ014227.07+001729.8,,01:42:27.07,+00:17:29.9,113.0,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+Swift J2218.5+1925,,22:18:32.76,+19:25:20.5,129.5,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+PTF1 J2224+17,,22:24:32.48,+17:46:48.7,103.82,,,65.0,,,,,polar candidate,PolarCat 2026; donor mass 65 MJup,PolarCat 2026
+SDSSJ223212.79+260725.1,,22:32:12.80,+26:07:25.2,,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+SDSSJ223352.56+225913.4,,22:33:52.57,+22:59:13.4,,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+SDSSJ223606.51+291559.9,,22:36:06.52,+29:16:00.1,,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+2XMMi J225036.9+573154,,22:50:36.97,+57:31:54.2,174.2,,,,,12.6,,polar candidate,PolarCat 2026; dist 12.6 pc,PolarCat 2026
+1eRASS J230721.4-400033,,23:07:22.06,-40:00:32.8,124.2,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+PTF1 J2313+16,,23:13:30.82,+16:54:16.8,81.6,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+CP Tuc,AX2315-592,23:15:19.00,-59:10:29.1,89.05,,,17.0,,10.0,,polar candidate,PolarCat 2026; donor 17 MJup; dist 10 pc,PolarCat 2026
+V358 Aqr,,23:16:03.62,-05:27:08.9,209.45,,,31.8,,,,,polar candidate,PolarCat 2026; donor 31.8 MJup,PolarCat 2026
+SWIFT J2319.4+2619,,23:19:30.44,+26:15:18.7,180.6,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+Gaia21akb,,23:29:26.09,-16:16:34.6,77.55,,76.61,,,,,,polar candidate,PolarCat 2026; B=76.61 MG,PolarCat 2026
+V677 And,,23:34:23.10,+39:14:23.2,105.2,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+Swift J2341.0+7645,,23:40:20.57,+76:42:10.5,222.11,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
+SDSSJ234502.47+342923.9,,23:45:02.48,+34:29:24.0,187.2,,,,,,polar candidate,PolarCat 2026,PolarCat 2026
