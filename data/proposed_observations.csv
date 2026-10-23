@@ -1,0 +1,6 @@
+program,facility,targets,frequencies_ghz,time_hr_per_yr,duration_yr,deliverables,science_goal
+A,SKA-MID,FAST GC FANS pulsars,0.65/1.4/3.0,200,3,timing solutions DM binary params,phase-connected timing
+B,SKA-VLBI,bright GC MSPs,1.6,100,3,parallax proper motion,independent GC distances
+C,ngVLA-Long+VLBA,54 core sources 14 GCs,1.4/5/15,150,2,proper motions SEDs,sMBH candidate confirmation
+D,SKA-LOW,bulge GCs |b|<20,0.11-0.35,100,1,steep-spectrum MSP census core continuum,faint MSP population
+E,Compute,N-body modeling,NA,NA,ongoing,mass profiles IMBH limits encounter maps,unified dynamical picture

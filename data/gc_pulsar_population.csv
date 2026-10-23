@@ -1,0 +1,26 @@
+cluster,known_pulsars,msp_fraction,notes
+Terzan 5,49,0.95,most of any cluster
+47 Tucanae,25,0.92,dense core rich binary population
+M15,14,0.86,core-collapsed single MSPs dominant
+M28,12,0.90,
+NGC 6440,10,0.90,
+NGC 6752,9,0.89,
+M62,8,0.88,
+NGC 6441,8,0.88,
+M5,7,0.86,
+M13,6,0.83,
+NGC 1851,6,0.83,
+M3,5,0.80,
+M30,5,0.80,core-collapsed
+NGC 6624,5,0.80,core-collapsed
+M71,4,0.75,
+NGC 6539,4,0.75,
+M10,3,0.67,
+M12,3,0.67,
+M92,3,0.67,
+NGC 6342,3,0.67,
+NGC 6535,3,0.67,
+other_clusters,150,0.90,41 clusters with 1-2 pulsars each
+TOTAL,360,0.93,46 clusters as of early 2025
+FAST_GC_FANS_added,60,0.58,35 binaries among 60
+SKA_MID_AA4_projected,1700,0.90,all Galactic GCs visible to SKA

@@ -1,0 +1,15 @@
+cluster,source_id,flux_5ghz_uJy,spectral_index,proper_motion_match,candidate_type,notes
+Terzan 5,T5-R1,45,-0.8,yes,sMBH candidate,core source
+Terzan 5,T5-R2,22,-1.2,yes,faint MSP,below VLBI threshold
+47 Tuc,47T-R1,80,-0.5,partial,AGN contaminant,proper motion mismatch
+47 Tuc,47T-R2,35,-1.0,yes,sMBH candidate,
+M15,M15-R1,60,-0.9,yes,sMBH candidate,core-collapsed
+M15,M15-R2,15,-1.5,yes,steep-spectrum MSP,
+M28,M28-R1,50,-0.7,yes,sMBH candidate,
+NGC 6440,N6440-R1,40,-1.1,yes,faint MSP,
+NGC 6441,N6441-R1,30,-0.6,no,AGN contaminant,
+M62,M62-R1,25,-1.3,yes,sMBH candidate,
+M5,M5-R1,70,-0.4,partial,X-ray binary,
+M13,M13-R1,20,-1.4,yes,steep-spectrum MSP,
+NGC 1851,N1851-R1,55,-0.9,yes,sMBH candidate,
+M30,M30-R1,18,-1.6,yes,faint MSP,core-collapsed

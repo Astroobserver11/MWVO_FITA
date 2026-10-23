@@ -1,0 +1,7 @@
+variable,pearson_r,sample,interpretation
+binary_fraction,0.81,3000+ BSs in 48 GCs,strong positive BS-binary link
+central_density,-0.45,3000+ BSs in 48 GCs,anti-correlate density
+collision_rate,-0.40,3000+ BSs in 48 GCs,anti-correlate collision rate
+dynamical_age,-0.35,3000+ BSs in 48 GCs,anti-correlate dynamical age
+single_msp_fraction_gc,0.40,GC MSP census,single MSPs 40% of GC MSPs
+single_msp_fraction_field,0.20,Galactic field MSP census,single MSPs 20% of field MSPs
