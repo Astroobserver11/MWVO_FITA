@@ -1,0 +1,7 @@
+layer,tracer,velocity_km_s,distance_kpc,notes
+HI_shell_GSH305+01-24,HI_21cm,-26,2.2+-0.6,expansion 8 km/s; approaching -34; receding -17
+IRDC_G304.74+01.32,C17O,-26.7,2.2 (assumed),mean velocity; 13CO blue-asymmetric infall; bound clumps; supersonic turbulence
+NaI_CaII_LS2883,optical_absorption,-14_to_-36,sightline_to_2.26,Sagittarius Arm; system behind HI shell
+NaI_CaII_LS2883,optical_absorption,low_positive,sightline_to_2.26,Southern Coalsack
+background_stars,optical_absorption,-50,>2.6,Norma-Centaurus Arm
+cluster_pulsar_system,Gaia+timing,0,2.26,systemic RV assumption; 26 km/s offset from gas

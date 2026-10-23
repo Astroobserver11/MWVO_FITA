@@ -1,0 +1,10 @@
+parameter,value,unit,source
+galactic_longitude,304.2,deg,Gaia DR3
+galactic_latitude,-1.0,deg,Gaia DR3
+distance,2.26,kpc,Gaia DR3 (parallax 0.44 mas)
+distance_uncertainty,0.07,kpc,Gaia DR3
+proper_motion_mu_alpha,-4.14,mas/yr,Gaia DR3
+proper_motion_mu_delta,-1.20,mas/yr,Gaia DR3
+age,11.7,Myr,cluster catalogs
+mass,414,solar_masses,cluster catalogs
+max_stellar_mass,7.5,solar_masses,cluster catalogs

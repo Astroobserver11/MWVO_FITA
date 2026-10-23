@@ -1,0 +1,4 @@
+pulsar,cluster,pulsar_DM_distance_kpc,cluster_Gaia_distance_kpc,membership_status,notes
+B1259-63_J1302-6350,UBC_525,2.6_VLBI,2.26,compelling_candidate,gamma-ray binary; Be companion LS 2883; 2025 census
+J1922+3704,NGC_6791,4.79,4.19,pending_timing,FAST discovery; first OC pulsar if confirmed
+J0630-2834,Collinder_132,NA,NA,likely_born_there,1.6 Myr ago per backward orbit

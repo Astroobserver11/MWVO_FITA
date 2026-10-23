@@ -1,0 +1,9 @@
+study,n_clusters,age_range,distance_limit,key_metric,value,unit
+Kuhn_etal_GaiaDR2,28,1-5_Myr,all_Gaia,expansion_fraction,>=75,percent
+Kuhn_etal_GaiaDR2,28,1-5_Myr,all_Gaia,1D_dispersion,1-3,km/s
+Armstrong_Tan_2026,23,<60_Myr,1_kpc,anisotropic_expansion_persists_past,30,Myr
+Harsha_etal,14,young,1_kpc,transverse_dispersion,0.4-0.7,km/s
+Tang_2026,many,various,500_pc,median_RV_dispersion_filtered,2.79,km/s
+Tang_2026,red_clump,various,500_pc,RV_dispersion,<1.6,km/s
+APOGEE_GALAH,100+,various,all,internal_RV_dispersion,<2,km/s
+HST_UV_Legacy_GO13297,57_total_1_open,various,various,open_clusters_in_sample,1,count (IC348)

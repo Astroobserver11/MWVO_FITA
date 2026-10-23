@@ -1,0 +1,14 @@
+parameter,value,unit,source
+pulsar_period,47.7,ms,timing
+orbital_period,1236.7,days,timing
+eccentricity,0.87,dimensionless,timing
+companion_mass,16.8,solar_masses,Gaia (LS 2883)
+distance_VLBI,2.6,kpc,VLBI parallax
+distance_Gaia,2.26,kpc,Gaia (LS 2883)
+systemic_RV,0.0,km/s,Miller-Jones (H-alpha zero point assumption)
+U_velocity,-72,km/s,derived
+V_velocity,-49,km/s,derived
+W_velocity,-3,km/s,derived
+peculiar_velocity_LSR,26,km/s,derived (+-8)
+peculiar_velocity_CenOB1,34,km/s,derived (+-13)
+drift_over_300kyr,8,pc,derived
