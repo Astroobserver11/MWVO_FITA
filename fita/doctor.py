@@ -507,7 +507,10 @@ def run_checks():
                    "used OR verified (standard S10.1 leaves it unconfirmed)"),
         _check_dep("zarr", "backend: Zarr", False, "pip install zarr numcodecs"),
         _check_dep("psd_tools", "optional: PSD import", False,
-                   "pip install 'fita[psd]'"),
+                   # The distribution is mwvo-fita, NOT fita -- `fita` on PyPI
+                   # is an unrelated project, so the old advice told users to
+                   # install a stranger's package. Left over from the rename.
+                   "pip install 'mwvo-fita[psd]'"),
         _check_data_files(),
         _check_package_is_real("uranodyne", required=False),
         _check_roundtrip(),

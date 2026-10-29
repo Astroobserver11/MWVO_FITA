@@ -277,20 +277,25 @@ fita liberator FILE         # FITS Liberator sidecar
 
 ## Installation
 
+The **distribution** is `mwvo-fita`; the **import name** is `fita`.
+
+> ⚠️ **Not published yet.** `mwvo-fita` is not on PyPI at the time of writing, so
+> use the git commands below. Do **not** run `pip install fita` — that name on
+> PyPI belongs to an unrelated project and will install the wrong software.
+
 ```bash
-# Core (numpy + astropy)
-pip install mwvo-fita          # distribution name; the import name is `fita`
+# Core (numpy + astropy) — from the repository
+pip install "mwvo-fita @ git+https://github.com/Astroobserver11/MWVO_FITA.git"
 
 # With Photoshop PSD import
-pip install "fita[psd] @ git+https://github.com/Astroobserver11/MWVO_FITA.git"
+pip install "mwvo-fita[psd] @ git+https://github.com/Astroobserver11/MWVO_FITA.git"
 
-# A specific, citable version
-pip install mwvo-fita          # distribution name; the import name is `fita`@v1.2.0
+# A specific, citable version (tag)
+pip install "mwvo-fita @ git+https://github.com/Astroobserver11/MWVO_FITA.git@v1.3.0"
 ```
 
-> **Not yet on PyPI.** The name `fita` on PyPI belongs to an unrelated project,
-> so `pip install fita` does **not** install this software. A distribution name
-> is being sorted out; until then, install from the repository above.
+Once published, the same installs become `pip install mwvo-fita` and
+`pip install "mwvo-fita[psd]"`.
 
 The science pipeline, [URANODYNE](https://github.com/Astroobserver11/uranodyne),
 is a separate distribution and is not required by the format kernel:
