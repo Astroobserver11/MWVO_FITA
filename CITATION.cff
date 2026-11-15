@@ -32,20 +32,27 @@ authors:
 # `date-released` below is the date of the v1.5.3 TAG, and that is all it is.
 # A TAG IS NOT A DEPOSIT. Zenodo archives GitHub *Releases*, not tags, and it
 # does not backfill -- so until a Release is published for this tag there is no
-# version DOI for 1.5.3, and the only deposited release remains v1.2.0. Do not
-# add a version DOI here on the strength of the tag alone; that is the shape of
-# claim this project has had to retract before.
+# version DOI for 1.5.3. Do not add one here on the strength of the tag alone.
+#
+# CORRECTED 2026-11-15: an earlier revision of this comment claimed v1.2.0 was
+# the only deposited release. Verified against the Zenodo REST API, it is not:
+# v1.3.0 is deposited as 10.5281/zenodo.21765462 and is what the concept DOI
+# currently resolves to. The claim was an inference from the repository, not a
+# measurement of the archive, and it was wrong.
 version: "1.5.3"
 date-released: "2026-11-15"
 doi: "10.5281/zenodo.21763301"          # concept DOI: always the newest version
+# Every version DOI that exists, verified against the Zenodo REST API on
+# 2026-11-15. v1.2.1 and v1.5.3 have none: v1.2.1 was tagged but never given a
+# GitHub Release, and v1.5.3's Release has not been published yet. Zenodo
+# archives Releases, not tags, and does not backfill.
 identifiers:
   - type: doi
     value: "10.5281/zenodo.21763344"
-    # The ONLY version DOI that exists. v1.2.0 is the sole release deposited to
-    # Zenodo; v1.2.1, v1.3.0 and the 1.5.x line have no version DOI, because
-    # Zenodo archives only releases created after its webhook was enabled and
-    # does not backfill. Cite the concept DOI above for "the current version".
-    description: "Version DOI for v1.2.0 specifically -- the only deposited release"
+    description: "Version DOI for v1.2.0 -- permanently carries the withdrawn 'ObsCore v1.2' claim; see ERRATUM__ObsCore_version__2026-08-02.md"
+  - type: doi
+    value: "10.5281/zenodo.21765462"
+    description: "Version DOI for v1.3.0 -- the newest deposit, and what the concept DOI above currently resolves to"
 license: MIT
 license-url: "https://github.com/Astroobserver11/MWVO_FITA/blob/main/LICENSE"
 repository-code: "https://github.com/Astroobserver11/MWVO_FITA"

@@ -248,8 +248,10 @@ their preconditions and why CI asserts a collected floor.
 **Not established.** No `.fita` file has been registered with a VO service —
 ObsCore completeness is verified by column inspection, not by registration.
 Alpha encoding has been verified through astropy but **not yet in DS9,
-QFitsView or Aladin**. The format is not on PyPI, and the 1.5.x line carries no
-release tag or version DOI: the only deposited release is v1.2.0.
+QFitsView or Aladin**. The format is not on PyPI. The newest Zenodo deposit is
+**v1.3.0** (`10.5281/zenodo.21765462`), so the 1.5 line — including the whole
+float32-enforcement and concordance pass — is tagged but **not yet archived
+under a DOI**.
 
 **Corrections that shipped.** Earlier versions of this document advertised a
 `SPLIT16` packing mode and an ObsCore v1.1 compliance claim. `SPLIT16` was
@@ -355,12 +357,21 @@ pip install "uranodyne[pipeline] @ git+https://github.com/Astroobserver11/uranod
 ## Citing
 
     Cisneros, I. A. (2026). FITA — Flexible Image Transfer Alpha: a FITS
-    convention for multi-layer astronomical images (v1.2.0).
-    Zenodo. https://doi.org/10.5281/zenodo.21763344
+    convention for multi-layer astronomical images (v1.3.0).
+    Zenodo. https://doi.org/10.5281/zenodo.21765462
 
 Cite the **concept DOI** `10.5281/zenodo.21763301` for the software in general — it always
-resolves to the newest version. Cite the **version DOI** `10.5281/zenodo.21763344` when
-reproducibility matters and you mean v1.2.0 exactly.
+resolves to the newest deposit. Cite a **version DOI** when reproducibility matters and you
+mean one release exactly:
+
+| Release | Version DOI | Note |
+|---|---|---|
+| v1.2.0 | `10.5281/zenodo.21763344` | permanently carries the withdrawn *ObsCore v1.2* claim — see the [erratum](https://github.com/Astroobserver11/MWVO_FITA/blob/main/ERRATUM__ObsCore_version__2026-08-02.md) |
+| **v1.3.0** | `10.5281/zenodo.21765462` | the newest deposit; what the concept DOI resolves to |
+
+v1.2.1 and v1.5.3 have **no** version DOI: v1.2.1 was tagged without a GitHub Release, and
+v1.5.3's Release is not yet published. Zenodo archives Releases, not tags, and does not
+backfill.
 
 Machine-readable metadata is in [`CITATION.cff`](https://github.com/Astroobserver11/MWVO_FITA/blob/main/CITATION.cff).
 
