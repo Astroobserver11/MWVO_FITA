@@ -248,10 +248,9 @@ their preconditions and why CI asserts a collected floor.
 **Not established.** No `.fita` file has been registered with a VO service —
 ObsCore completeness is verified by column inspection, not by registration.
 Alpha encoding has been verified through astropy but **not yet in DS9,
-QFitsView or Aladin**. The format is not on PyPI. The newest Zenodo deposit is
-**v1.3.0** (`10.5281/zenodo.21765462`), so the 1.5 line — including the whole
-float32-enforcement and concordance pass — is tagged but **not yet archived
-under a DOI**.
+QFitsView or Aladin**. The format is **not on PyPI**, so every install is from
+git; publication is gated on the `[uranodyne]` extra's direct URL, which PyPI
+refuses.
 
 **Corrections that shipped.** Earlier versions of this document advertised a
 `SPLIT16` packing mode and an ObsCore v1.1 compliance claim. `SPLIT16` was
@@ -357,21 +356,24 @@ pip install "uranodyne[pipeline] @ git+https://github.com/Astroobserver11/uranod
 ## Citing
 
     Cisneros, I. A. (2026). FITA — Flexible Image Transfer Alpha: a FITS
-    convention for multi-layer astronomical images (v1.3.0).
-    Zenodo. https://doi.org/10.5281/zenodo.21765462
+    convention for multi-layer astronomical images (v1.5.3).
+    Zenodo. https://doi.org/10.5281/zenodo.24239352
 
 Cite the **concept DOI** `10.5281/zenodo.21763301` for the software in general — it always
 resolves to the newest deposit. Cite a **version DOI** when reproducibility matters and you
-mean one release exactly:
+mean one release exactly. Enumerated from the Zenodo API, newest first:
 
 | Release | Version DOI | Note |
 |---|---|---|
+| **v1.5.3** | `10.5281/zenodo.24239352` | the newest deposit; what the concept DOI resolves to |
+| v1.3.0 | `10.5281/zenodo.21765462` | |
+| v1.2.1 | `10.5281/zenodo.21765372` | the ObsCore label erratum |
 | v1.2.0 | `10.5281/zenodo.21763344` | permanently carries the withdrawn *ObsCore v1.2* claim — see the [erratum](https://github.com/Astroobserver11/MWVO_FITA/blob/main/ERRATUM__ObsCore_version__2026-08-02.md) |
-| **v1.3.0** | `10.5281/zenodo.21765462` | the newest deposit; what the concept DOI resolves to |
+| v1.2.0 | `10.5281/zenodo.21763302` | **superseded duplicate**, 5 minutes older — do not cite |
 
-v1.2.1 and v1.5.3 have **no** version DOI: v1.2.1 was tagged without a GitHub Release, and
-v1.5.3's Release is not yet published. Zenodo archives Releases, not tags, and does not
-backfill.
+Two records exist for v1.2.0 because Zenodo archives Releases and does not backfill, so that
+release was deleted and recreated to get it deposited. v1.3.0 carries no tagged successor
+until v1.5.3: the format reached 1.5 on 2026-08-07 and went untagged for three months.
 
 Machine-readable metadata is in [`CITATION.cff`](https://github.com/Astroobserver11/MWVO_FITA/blob/main/CITATION.cff).
 

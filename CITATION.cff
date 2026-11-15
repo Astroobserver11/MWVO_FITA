@@ -29,30 +29,44 @@ authors:
 # mutually inconsistent version identities for this format, measured 2026-10-28.
 # tests/test_version_concordance.py now asserts this file agrees with
 # pyproject.toml and .zenodo.json, so the drift cannot recur silently.
-# `date-released` below is the date of the v1.5.3 TAG, and that is all it is.
-# A TAG IS NOT A DEPOSIT. Zenodo archives GitHub *Releases*, not tags, and it
-# does not backfill -- so until a Release is published for this tag there is no
-# version DOI for 1.5.3. Do not add one here on the strength of the tag alone.
+# `date-released` is the v1.5.3 release date. The GitHub Release was published
+# 2026-11-15 05:25 UTC and Zenodo deposited it 4 seconds later as
+# 10.5281/zenodo.24239352, which is now what the concept DOI resolves to.
 #
-# CORRECTED 2026-11-15: an earlier revision of this comment claimed v1.2.0 was
-# the only deposited release. Verified against the Zenodo REST API, it is not:
-# v1.3.0 is deposited as 10.5281/zenodo.21765462 and is what the concept DOI
-# currently resolves to. The claim was an inference from the repository, not a
-# measurement of the archive, and it was wrong.
+# A TAG IS STILL NOT A DEPOSIT, and that distinction is worth keeping here:
+# Zenodo archives Releases, not tags, and does not backfill. v1.3.0 and v1.2.1
+# each needed a Release to get a DOI, and the duplicate v1.2.0 record below is
+# what deleting and recreating a Release leaves behind.
 version: "1.5.3"
 date-released: "2026-11-15"
 doi: "10.5281/zenodo.21763301"          # concept DOI: always the newest version
-# Every version DOI that exists, verified against the Zenodo REST API on
-# 2026-11-15. v1.2.1 and v1.5.3 have none: v1.2.1 was tagged but never given a
-# GitHub Release, and v1.5.3's Release has not been published yet. Zenodo
-# archives Releases, not tags, and does not backfill.
+# Every version DOI that exists, ENUMERATED from the Zenodo REST API on
+# 2026-11-15 (GET /api/records?q=conceptdoi:... &all_versions=true), not inferred
+# from this repository. Two earlier revisions of this list were wrong because
+# they were reasoned out instead of looked up: the first claimed v1.2.0 was the
+# only deposit, the second claimed v1.2.1 had no DOI. Both were false. If this
+# list needs changing again, ask the archive.
+#
+# v1.2.0 appears TWICE, five minutes apart. That is the ObsCore erratum episode:
+# Zenodo archives Releases and does not backfill, so the release was deleted and
+# recreated to get it deposited, which left two records for one version. Cite
+# 21763344, the later one, which is the record the published badge pointed to.
 identifiers:
+  - type: doi
+    value: "10.5281/zenodo.24239352"
+    description: "Version DOI for v1.5.3 -- the newest deposit, and what the concept DOI above currently resolves to"
+  - type: doi
+    value: "10.5281/zenodo.21765462"
+    description: "Version DOI for v1.3.0"
+  - type: doi
+    value: "10.5281/zenodo.21765372"
+    description: "Version DOI for v1.2.1 -- the ObsCore label erratum"
   - type: doi
     value: "10.5281/zenodo.21763344"
     description: "Version DOI for v1.2.0 -- permanently carries the withdrawn 'ObsCore v1.2' claim; see ERRATUM__ObsCore_version__2026-08-02.md"
   - type: doi
-    value: "10.5281/zenodo.21765462"
-    description: "Version DOI for v1.3.0 -- the newest deposit, and what the concept DOI above currently resolves to"
+    value: "10.5281/zenodo.21763302"
+    description: "Superseded duplicate deposit of v1.2.0, 5 minutes older than 21763344; do not cite"
 license: MIT
 license-url: "https://github.com/Astroobserver11/MWVO_FITA/blob/main/LICENSE"
 repository-code: "https://github.com/Astroobserver11/MWVO_FITA"
