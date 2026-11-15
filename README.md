@@ -356,8 +356,8 @@ pip install "uranodyne[pipeline] @ git+https://github.com/Astroobserver11/uranod
 ## Citing
 
     Cisneros, I. A. (2026). FITA — Flexible Image Transfer Alpha: a FITS
-    convention for multi-layer astronomical images (v1.5.3).
-    Zenodo. https://doi.org/10.5281/zenodo.24239352
+    convention for multi-layer astronomical images (v1.5.4).
+    Zenodo. https://doi.org/10.5281/zenodo.24239744
 
 Cite the **concept DOI** `10.5281/zenodo.21763301` for the software in general — it always
 resolves to the newest deposit. Cite a **version DOI** when reproducibility matters and you
@@ -365,7 +365,8 @@ mean one release exactly. Enumerated from the Zenodo API, newest first:
 
 | Release | Version DOI | Note |
 |---|---|---|
-| **v1.5.3** | `10.5281/zenodo.24239352` | the newest deposit; what the concept DOI resolves to |
+| **v1.5.4** | `10.5281/zenodo.24239744` | the newest deposit; what the concept DOI resolves to |
+| v1.5.3 | `10.5281/zenodo.24239352` | archived with a test file that does not import on Python 3.9 — superseded by v1.5.4 |
 | v1.3.0 | `10.5281/zenodo.21765462` | |
 | v1.2.1 | `10.5281/zenodo.21765372` | the ObsCore label erratum |
 | v1.2.0 | `10.5281/zenodo.21763344` | permanently carries the withdrawn *ObsCore v1.2* claim — see the [erratum](https://github.com/Astroobserver11/MWVO_FITA/blob/main/ERRATUM__ObsCore_version__2026-08-02.md) |

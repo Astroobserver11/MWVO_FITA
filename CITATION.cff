@@ -29,10 +29,10 @@ authors:
 # mutually inconsistent version identities for this format, measured 2026-10-28.
 # tests/test_version_concordance.py now asserts this file agrees with
 # pyproject.toml and .zenodo.json, so the drift cannot recur silently.
-# `date-released` is the v1.5.4 release date. The newest DOI listed below is
-# still v1.5.3's: a version DOI cannot exist before its Release is published, so
-# the release being described is always absent from its own identifier list.
-# That is inherent, not an omission -- add 1.5.4's DOI after it is deposited.
+# `date-released` is the v1.5.4 release date. Its DOI was added AFTER the tag
+# was cut, because a version DOI cannot exist before its Release is published --
+# so the tagged snapshot of this file never contains its own DOI. That lag is
+# inherent and is not worth a further release to close; the next tag carries it.
 #
 # A TAG IS STILL NOT A DEPOSIT, and that distinction is worth keeping here:
 # Zenodo archives Releases, not tags, and does not backfill. v1.3.0 and v1.2.1
@@ -54,8 +54,11 @@ doi: "10.5281/zenodo.21763301"          # concept DOI: always the newest version
 # 21763344, the later one, which is the record the published badge pointed to.
 identifiers:
   - type: doi
+    value: "10.5281/zenodo.24239744"
+    description: "Version DOI for v1.5.4 -- the newest deposit, and what the concept DOI above currently resolves to"
+  - type: doi
     value: "10.5281/zenodo.24239352"
-    description: "Version DOI for v1.5.3 -- the newest deposit, and what the concept DOI above currently resolves to"
+    description: "Version DOI for v1.5.3 -- archived with a test file that does not import on Python 3.9; superseded by v1.5.4"
   - type: doi
     value: "10.5281/zenodo.21765462"
     description: "Version DOI for v1.3.0"
