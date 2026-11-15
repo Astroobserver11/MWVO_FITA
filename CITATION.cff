@@ -29,10 +29,14 @@ authors:
 # mutually inconsistent version identities for this format, measured 2026-10-28.
 # tests/test_version_concordance.py now asserts this file agrees with
 # pyproject.toml and .zenodo.json, so the drift cannot recur silently.
-# No `date-released` is given: 1.5.3 is not yet tagged or deposited, and
-# asserting a release date for an unreleased version is the kind of claim this
-# project has had to retract before.
+# `date-released` below is the date of the v1.5.3 TAG, and that is all it is.
+# A TAG IS NOT A DEPOSIT. Zenodo archives GitHub *Releases*, not tags, and it
+# does not backfill -- so until a Release is published for this tag there is no
+# version DOI for 1.5.3, and the only deposited release remains v1.2.0. Do not
+# add a version DOI here on the strength of the tag alone; that is the shape of
+# claim this project has had to retract before.
 version: "1.5.3"
+date-released: "2026-11-15"
 doi: "10.5281/zenodo.21763301"          # concept DOI: always the newest version
 identifiers:
   - type: doi
