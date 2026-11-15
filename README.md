@@ -10,7 +10,7 @@ that cannot touch the science.**
 |---|---|
 | **File suffix** | `.fita` |
 | **Format version** | `FITAVER = 1.5` — the **format** |
-| **Package version** | `mwvo-fita` 1.5.3 — the **software**; it may advance without `FITAVER` moving ([§13.1](https://github.com/Astroobserver11/MWVO_FITA/blob/main/FITA_FORMAT_STANDARD.md)) |
+| **Package version** | `mwvo-fita` 1.5.4 — the **software**; it may advance without `FITAVER` moving ([§13.1](https://github.com/Astroobserver11/MWVO_FITA/blob/main/FITA_FORMAT_STANDARD.md)) |
 | **MIME type** | `application/fits` |
 | **Based on** | FITS Standard v4.0 — every `.fita` file is a valid FITS MEF |
 | **Normative spec** | [`FITA_FORMAT_STANDARD.md`](https://github.com/Astroobserver11/MWVO_FITA/blob/main/FITA_FORMAT_STANDARD.md) |

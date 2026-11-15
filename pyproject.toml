@@ -12,14 +12,13 @@ build-backend = "setuptools.build_meta"
 # (pillow/PIL, scikit-learn/sklearn), and renaming the module would break every
 # existing notebook for no gain.
 name = "mwvo-fita"
-# 1.5.3: version concordance. `h5py` added to [dev] so CI actually exercises the
-# HDF5 backend; the standard renamed to the version-neutral FITA_FORMAT_STANDARD.md
-# and brought up to v1.5 (S8.5 specified at last); citation metadata aligned.
-# Adding an extra's dependency is a packaging change, and this project's own rule
-# is that optional structure gets a version increment in the same change as the
-# structure itself -- so the package moves even though no code did.
-# FITAVER stays 1.5 throughout: none of this changes the format (S13.1).
-version = "1.5.3"
+# 1.5.4: v1.5.3's own test suite failed on Python 3.9 -- a `tomllib` import
+# (3.11+) in a new test file, which made 15 tests fail to COLLECT while the suite
+# still reported green. The wheel was never affected (tests/ is not packaged),
+# but v1.5.3 is a citable, permanently archived artifact whose tests do not run
+# on a version its metadata claims to support, so it is re-cut rather than left
+# standing. FITAVER stays 1.5: no format change (S13.1).
+version = "1.5.4"
 description = "Flexible Image Transfer Alpha — multi-wavelength FITS cube with per-layer alpha, blend modes, and IrenBLink pipeline"
 readme = "README.md"
 license = { text = "MIT" }

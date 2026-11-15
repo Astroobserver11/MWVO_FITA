@@ -25,19 +25,20 @@ authors:
 # This is the PACKAGE version (the software), not FITAVER (the format).
 # They are different numbers and are allowed to differ -- see
 # FITA_FORMAT_STANDARD.md section 13.1. The format described is FITAVER = 1.5;
-# the package implementing it is 1.5.3. Conflating the two is what produced six
+# the package implementing it is 1.5.4. Conflating the two is what produced six
 # mutually inconsistent version identities for this format, measured 2026-10-28.
 # tests/test_version_concordance.py now asserts this file agrees with
 # pyproject.toml and .zenodo.json, so the drift cannot recur silently.
-# `date-released` is the v1.5.3 release date. The GitHub Release was published
-# 2026-11-15 05:25 UTC and Zenodo deposited it 4 seconds later as
-# 10.5281/zenodo.24239352, which is now what the concept DOI resolves to.
+# `date-released` is the v1.5.4 release date. The newest DOI listed below is
+# still v1.5.3's: a version DOI cannot exist before its Release is published, so
+# the release being described is always absent from its own identifier list.
+# That is inherent, not an omission -- add 1.5.4's DOI after it is deposited.
 #
 # A TAG IS STILL NOT A DEPOSIT, and that distinction is worth keeping here:
 # Zenodo archives Releases, not tags, and does not backfill. v1.3.0 and v1.2.1
 # each needed a Release to get a DOI, and the duplicate v1.2.0 record below is
 # what deleting and recreating a Release leaves behind.
-version: "1.5.3"
+version: "1.5.4"
 date-released: "2026-11-15"
 doi: "10.5281/zenodo.21763301"          # concept DOI: always the newest version
 # Every version DOI that exists, ENUMERATED from the Zenodo REST API on

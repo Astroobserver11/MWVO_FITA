@@ -5,6 +5,40 @@ implements. Per §13 of the standard, **any change to required or optional
 structure requires a version increment** — a rule this project has broken
 twice and now enforces in code.
 
+## [1.5.4] — 2026-11-15
+
+No code change. `FITAVER` stays **1.5**. This exists because v1.5.3's own test suite
+did not run on Python 3.9, and v1.5.3 is permanently archived
+([`10.5281/zenodo.24239352`](https://doi.org/10.5281/zenodo.24239352)).
+
+### Fixed
+- **15 tests failed to collect on Python 3.9 while the suite still reported green.**
+  `tests/test_version_concordance.py` imported `tomllib`, which is Python 3.11+,
+  while `requires-python = ">=3.9"` and the CI matrix tests 3.9. The module raised
+  at import, so pytest collected the file not at all — and reported success. The
+  3.12 and 3.13 cells passed, so it looked fine.
+  **What caught it was CI's collected-count floor**, the step whose own comment
+  says a module-level import failure "silently collects fewer tests and still
+  reports green… asserting a floor makes the denominator visible." It worked
+  exactly as documented, on the first occasion it was needed. Replaced with a
+  regex whose match is asserted unique; `KERNEL_FLOOR` raised 258 → 270.
+  *The shipped wheel was never affected — `tests/` is not packaged — so this was
+  a repository defect only. It is nonetheless inside the archived v1.5.3 zip,
+  which is why the release is re-cut rather than left standing.*
+  ⚠️ Note for future test files: the **3.9 cell collects fewer tests than 3.13**,
+  because `zarr` is not in `[dev]` and zarr 3.x requires Python ≥ 3.11, so the
+  zarr-gated module does not collect there. The floor must be the matrix minimum.
+  Verified green on all nine matrix cells plus `build`.
+
+- **The Zenodo deposit list was wrong twice, both times by inference.** It had
+  claimed v1.2.0 was the only deposit, then that v1.2.1 had no DOI. Enumerated
+  from the Zenodo REST API there are **five** records: two for v1.2.0 (`21763302`
+  superseded, `21763344`), plus v1.2.1 `21765372`, v1.3.0 `21765462` and v1.5.3
+  `24239352`. The duplicate v1.2.0 pair, five minutes apart, is what deleting and
+  recreating a Release leaves behind — the ObsCore erratum episode. Both
+  `CITATION.cff` and the README now carry the enumerated list, with the standing
+  instruction to **ask the archive, not the repository**.
+
 ## [1.5.3] — 2026-11-14
 
 Version concordance. No code behaviour changed; `FITAVER` stays **1.5** throughout.
