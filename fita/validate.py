@@ -639,8 +639,18 @@ def flux_roundtrip_ok(layers, pack=PACK_FLOAT32, tmp_path: str | Path = None) ->
             dst = by_id.get(src.layer_id)
             if dst is None:
                 return False
-            a = np.asarray(src.flux_data, dtype=np.float32)
-            b = np.asarray(dst.flux_data, dtype=np.float32)
+            # DO NOT cast here. This read `dtype=np.float32` on BOTH sides, which
+            # erased the very loss the function exists to detect: a float64 layer
+            # that round-tripped with a 3.3e-08 relative error, and two pixels that
+            # collapsed into one, were both compared AFTER truncation and so reported
+            # as bit-exact. The invariant check returned True on a broken round trip.
+            # Compare the arrays as they actually are; let a precision change fail.
+            a = np.asarray(src.flux_data)
+            b = np.asarray(dst.flux_data)
+            # Byte order is not precision: '>f4' and '<f4' hold the same values, and
+            # numpy compares them correctly. Width or kind changing is the real fault.
+            if a.dtype.kind != b.dtype.kind or a.dtype.itemsize != b.dtype.itemsize:
+                return False
             if a.shape != b.shape:
                 return False
             # Bit-exact, but NaN-aware: real astronomical images carry blanked pixels,

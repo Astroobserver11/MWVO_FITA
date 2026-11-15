@@ -522,6 +522,27 @@ def write(
 
         # D-2 (ratified 2026-08-02): SPLIT16 is deleted. Rejected in write() above;
         # FLOAT32 is the only packing a conformant writer may emit (standard S6.4).
+        #
+        # S6.1 + THE FLOAT32 RULING (P.I., 2026-11-14): under FLOAT32 packing FLUX_*
+        # MUST be BITPIX=-32. astropy writes whatever dtype it is handed, so a float64
+        # flux array silently produced BITPIX=-64 -- a file this library's OWN validator
+        # rejects (S6.1 MUST), and one its reader then truncated back to float32 on the
+        # way in. Measured round trip: max relative error 3.3e-08, with two pixels held
+        # distinct on disk collapsing to a single value on read. A silent breach of the
+        # one array the standard calls sacred, by the library itself.
+        #
+        # Raise rather than cast: losing calibrated precision must be the caller's
+        # explicit decision, never a side effect of saving. Flag, don't mask.
+        _fdt = np.asarray(layer.flux_data).dtype
+        if _fdt.kind != "f" or _fdt.itemsize != 4:
+            raise ValueError(
+                f"layer {i} ({layer.name!r}): FLUX must be float32 under "
+                f"FITAPACK='{PACK_FLOAT32}' -- standard S6.1 requires BITPIX=-32 -- "
+                f"but got dtype {_fdt}. FITA will not downcast the calibrated science "
+                f"datum silently. If the precision is expendable, say so explicitly:\n"
+                f"    layer.flux_data = layer.flux_data.astype('float32')\n"
+                f"(FITALayer.from_array() does this for you, with a warning.)"
+            )
         flux_hdu = fits.ImageHDU(data=layer.flux_data, header=lhdr)
 
         flux_hdu.name = flux_extname(i)

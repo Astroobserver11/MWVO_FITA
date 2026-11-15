@@ -12,7 +12,10 @@ build-backend = "setuptools.build_meta"
 # (pillow/PIL, scikit-learn/sklearn), and renaming the module would break every
 # existing notebook for no gain.
 name = "mwvo-fita"
-version = "1.5.0"
+# 1.5.1: enforce float32 FLUX on write, and fix the round-trip check that was
+# blind to precision loss. FITAVER stays 1.5 -- this enforces an existing MUST
+# (S6.1), it does not change the format, so no FITAVER increment is due under S13.
+version = "1.5.1"
 description = "Flexible Image Transfer Alpha — multi-wavelength FITS cube with per-layer alpha, blend modes, and IrenBLink pipeline"
 readme = "README.md"
 license = { text = "MIT" }

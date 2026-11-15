@@ -27,7 +27,7 @@ Quick start
 """
 
 from .cube    import FITACube
-from .layer   import FITALayer
+from .layer   import FITALayer, FITAPrecisionWarning
 from .flux    import (
     clip_flux, normalise, stretch, luminance_from_flux,
     luminance_to_alpha16, encode_split16, decode_split16, auto_range,
@@ -65,7 +65,7 @@ except ImportError:
 from .spec import FITA_VERSION
 __version__ = FITA_VERSION   # N-3: one source of truth (fita.spec)
 __all__ = [
-    "FITACube", "FITALayer",
+    "FITACube", "FITALayer", "FITAPrecisionWarning",
     "clip_flux", "normalise", "stretch",
     "luminance_from_flux", "luminance_to_alpha16",
     "encode_split16", "decode_split16", "auto_range",

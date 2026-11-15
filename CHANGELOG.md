@@ -5,6 +5,62 @@ implements. Per §13 of the standard, **any change to required or optional
 structure requires a version increment** — a rule this project has broken
 twice and now enforces in code.
 
+## [1.5.1] — 2026-11-14
+
+Applies the principal's ruling of 2026-11-14: **FITA enforces float32 FLUX.**
+
+`FITAVER` stays **1.5**. This release enforces an existing MUST (§6.1) and changes
+no structure, so no format increment is due under §13. The package version moves
+because behaviour does: calls that used to succeed now raise.
+
+### Fixed — the writer emitted files its own validator rejected
+- **`fita.write()` accepted a float64 FLUX array and wrote `BITPIX=-64`.** astropy
+  writes whatever dtype it is handed and `io.py` handed it `layer.flux_data`
+  unchecked, so the library produced files that `validate()` then called
+  **NON-CONFORMANT** (§6.1 MUST). The reader compounded it, force-casting back to
+  float32 on the way in: **FITA could write a file it could not read back.**
+  Measured round trip — max relative error $3.3\times10^{-8}$, and two pixels held
+  distinct on disk collapsed into a single value. A silent breach of the one array
+  the standard calls sacred, committed by the implementation itself.
+  **Ruled: raise, do not cast.** Losing calibrated precision is now always the
+  caller's explicit decision, never a side effect of saving.
+
+- 🔴 **`flux_roundtrip_ok()` was blind to the precision loss it exists to detect.**
+  The function whose entire purpose is to prove the flux/alpha invariant by
+  "bit-for-bit comparison" cast **both** sides to float32 before comparing, so a
+  float64 layer that demonstrably lost precision was compared *after* truncation
+  and reported as bit-exact. It returned `True` on a broken round trip.
+  Now compares the arrays as they are, tolerating byte order but never width.
+  *This is the project's characteristic defect for the third time — after the
+  SPLIT16 "lossy" claim and `conform` exiting 0 on non-conformant files: the fault
+  reappearing inside the tool built to stop it.* A test now greps the function's own
+  source so the cast cannot return unnoticed.
+
+- **`SPLIT16` was still reachable through the Zarr and HDF5 backends.** D-2 deleted
+  it in v1.1 as *destructive*, and `fita/ai/FITA_FORMAT_CARD.json` asserted that
+  "the writer now raises on both write and read, so no conformant path can produce
+  or consume it." **That claim was false.** `io.py` raised, but both alternative
+  backends went on calling `encode_split16()` with no guard — measured: the Zarr
+  backend accepted `pack='SPLIT16'` and wrote the file. Both now raise on write
+  *and* on read; the read path previously rescaled by `BSCALE`/`BZERO` and returned
+  numbers that cannot be recovered from a wrapped int16 store — confident nonsense.
+  The format card's claim is now true.
+
+### Added
+- **`FITAPrecisionWarning`**, exported from `fita`. `FITALayer.from_array()` still
+  casts to float32 — correct, since §6.1 mandates it, and it is the right place for
+  a float64 science array to land — but it did so in silence. It now warns when the
+  cast is lossy, using `np.can_cast` so a big-endian `'>f4'` straight off a FITS
+  read never raises a spurious warning. Byte order is not precision.
+- `tests/test_float32_enforcement.py` — 15 tests covering the ruling, all three
+  defects, and the legitimate paths that must not pay for them.
+
+### Unaffected
+The 24-file conformance corpus is **clean and unchanged**: all 35 FLUX HDUs were
+already `BITPIX=-32`, and the conform split stays 9 accepted / 15 rejected. The
+published artifact and its DOI never carried this defect — it was latent in the
+library, not in the data.
+
 ## [1.5] — 2026-08-07
 
 Applies the principal's rulings A, B and C of 2026-08-07, and closes **D-14** and

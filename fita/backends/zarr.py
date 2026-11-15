@@ -313,16 +313,18 @@ def write(
                               dtype=np.uint8, overwrite=True)
 
         # -- flux -------------------------------------------------------------
+        # S6.4 / D-2: SPLIT16 is deleted and MUST NOT be emitted. io.write() has
+        # raised on it since D-2 -- but THIS backend went on encoding it, so the
+        # destructive mode stayed reachable through Zarr and the AI format card's
+        # claim that "no conformant path can produce or consume it" was false.
+        # Measured 2026-11-11: pack='SPLIT16' was accepted here and written.
         if pack == PACK_SPLIT16:
-            fmin = layer.flux_min or 0.0
-            fmax = layer.flux_max or 1.0
-            from ..flux import encode_split16
-            flux16, _, bscale, bzero = encode_split16(layer.flux_data, fmin, fmax)
-            lg.attrs["BSCALE"] = bscale
-            lg.attrs["BZERO"]  = bzero
-            _write_array(lg, "flux", flux16.astype(np.int16), compressor, cs)
-        else:
-            _write_array(lg, "flux", layer.flux_data, compressor, cs)
+            raise ValueError(
+                "FITAPACK='SPLIT16' is deprecated and removed in FITA v1.1 (standard "
+                "S6.4, decision D-2): it destroyed flux irrecoverably. "
+                "Use pack='FLOAT32' (bit-exact)."
+            )
+        _write_array(lg, "flux", layer.flux_data, compressor, cs)
 
         # -- alpha ------------------------------------------------------------
         alpha = layer.alpha_data if layer.alpha_data is not None else \
@@ -440,12 +442,19 @@ def read(
             warnings.warn(f"Layer {idx}: no 'flux' array — skipping")
             continue
         flux_raw = np.asarray(lg["flux"])
+        # S6.4 / D-2: a reader meeting SPLIT16 MUST raise rather than return numbers
+        # it cannot vouch for. The old branch rescaled by BSCALE/BZERO and handed the
+        # result back as flux -- but SPLIT16 is destructive, not lossy: the int16 wrap
+        # means the information needed to recover flux is not in the file at all, so
+        # those numbers were confident nonsense.
         if pack == PACK_SPLIT16:
-            bscale = float(lg.attrs.get("BSCALE", 1.0))
-            bzero  = float(lg.attrs.get("BZERO",  0.0))
-            flux = flux_raw.astype(np.float32) * bscale + bzero
-        else:
-            flux = flux_raw.astype(np.float32)
+            raise ValueError(
+                f"layer {idx}: FITAPACK='SPLIT16' is deprecated and unreadable in "
+                f"FITA v1.1 (standard S6.4, decision D-2). The flux cannot be "
+                f"recovered from this store -- it was destroyed on write, not merely "
+                f"compressed. Re-create it from the original data with pack='FLOAT32'."
+            )
+        flux = flux_raw.astype(np.float32)
 
         # -- alpha ------------------------------------------------------------
         alpha = np.asarray(lg["alpha"]).astype(np.uint16) if "alpha" in lg else None

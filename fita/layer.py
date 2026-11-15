@@ -10,8 +10,22 @@ Each layer holds:
 
 from __future__ import annotations
 import numpy as np
+import warnings
 from dataclasses import dataclass, field
 from typing import Optional, Tuple
+
+
+class FITAPrecisionWarning(UserWarning):
+    """
+    Raised when FITA casts a flux array down to float32 and precision is lost.
+
+    The format mandates float32 FLUX (standard S6.1), so the cast itself is
+    correct -- but it used to happen in silence, and a caller handing in a
+    float64 science array never learned that precision had gone. Filter it
+    deliberately if the cast is intended:
+
+        warnings.filterwarnings("ignore", category=FITAPrecisionWarning)
+    """
 
 from .spec import (
     BLEND_NORMAL, PACK_FLOAT32,
@@ -65,7 +79,20 @@ class FITALayer:
         **kw,
     ) -> "FITALayer":
         """Create a FITALayer from a raw numpy array, computing alpha from flux."""
-        flux = np.asarray(data, dtype=np.float32)
+        # S6.1: FLUX is float32, so this is the correct place for a float64 science
+        # array to land -- but it was landing silently. np.can_cast under the default
+        # 'safe' rule is exactly the question being asked: float64 -> float32 is False
+        # (lossy), while a big-endian '>f4' straight off a FITS read is True, so an
+        # honest byte-order change never raises a spurious warning.
+        _incoming = np.asarray(data)
+        if not np.can_cast(_incoming.dtype, np.float32):
+            warnings.warn(
+                f"FITA stores FLUX as float32 (standard S6.1): casting {_incoming.dtype} "
+                f"down to float32, losing precision. Cast deliberately to silence this:\n"
+                f"    FITALayer.from_array(data.astype('float32'), ...)",
+                FITAPrecisionWarning, stacklevel=2,
+            )
+        flux = _incoming.astype(np.float32, copy=False)
         if flux_min is None or flux_max is None:
             lo, hi = auto_range(flux)
             flux_min = flux_min if flux_min is not None else lo
