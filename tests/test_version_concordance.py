@@ -20,10 +20,18 @@ themselves across files.
 """
 import json
 import re
-import tomllib
 from pathlib import Path
 
 import pytest
+
+# NOT tomllib: it is Python 3.11+, and this project's matrix tests 3.9 (see
+# requires-python). On 3.9 the import raised at module scope, so all of this
+# file's tests silently FAILED TO COLLECT -- the suite still reported green and
+# only CI's collected-count floor caught it. That floor exists for exactly this,
+# and it earned its keep here. A regex keeps the file importable everywhere, and
+# the one line it reads is asserted to be unique so it cannot match the wrong
+# `version =` if the file grows another.
+_VERSION_RE = re.compile(r'^version\s*=\s*"([^"]+)"', re.M)
 
 ROOT = Path(__file__).resolve().parent.parent
 STANDARD = ROOT / "FITA_FORMAT_STANDARD.md"
@@ -42,8 +50,12 @@ def fmt_version() -> str:
 
 @pytest.fixture(scope="module")
 def pkg_version() -> str:
-    with open(ROOT / "pyproject.toml", "rb") as fh:
-        return tomllib.load(fh)["project"]["version"]
+    hits = _VERSION_RE.findall(_read(ROOT / "pyproject.toml"))
+    assert len(hits) == 1, (
+        f"expected exactly one top-level `version = \"...\"` in pyproject.toml, "
+        f"found {len(hits)}: {hits}"
+    )
+    return hits[0]
 
 
 # ── the two numbers are well formed, and related ─────────────────────────────

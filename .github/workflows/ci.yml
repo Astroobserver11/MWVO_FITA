@@ -42,9 +42,21 @@ jobs:
       # passed count moves and nothing says the denominator moved with it.
       # Asserting a floor makes the denominator visible. Raise KERNEL_FLOOR
       # deliberately when tests are added; never lower it to make CI pass.
+      # 2026-11-15: raised 258 -> 270 for the 15 tests in
+      # test_version_concordance.py. It is deliberately conservative, not tight.
+      # The 3.9 cell collects FEWER tests than 3.13 because `zarr` is not in
+      # [dev] and zarr 3.x requires Python >= 3.11, so the zarr-gated module
+      # does not collect there at all. Measured on 3.13: 293 collected. The
+      # 3.9 count is not measured on the development machine (no 3.9 present),
+      # and 258 was a passing floor for 3.9 before these 15 tests, so >= 273 is
+      # expected there; 270 leaves margin without being decorative.
+      #
+      # This step earned its keep on this very commit: a `tomllib` import
+      # (3.11+) in the new test file made all 15 tests FAIL TO COLLECT on 3.9
+      # while the suite still reported green. Nothing else noticed.
       - name: Collected-count floor (the denominator must be visible)
         env:
-          KERNEL_FLOOR: "258"
+          KERNEL_FLOOR: "270"
         run: |
           collected=$(python -m pytest tests/ -q --collect-only 2>/dev/null \
                       | grep -Eo '^[0-9]+ tests collected' | grep -Eo '^[0-9]+')
