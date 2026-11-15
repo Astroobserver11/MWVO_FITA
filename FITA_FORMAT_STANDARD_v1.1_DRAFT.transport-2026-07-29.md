@@ -1,3 +1,12 @@
+> # ⚠️ SUPERSEDED — HISTORICAL TRANSPORT COPY, NOT THE STANDARD
+> **This is the byte-exact v1.1 DRAFT as couriered on 2026-07-29**, the document every later
+> version is an amendment to. The current normative standard is
+> [`FITA_FORMAT_STANDARD.md`](FITA_FORMAT_STANDARD.md), at v1.5. Retained unedited as provenance —
+> its byte-exactness is the reason the ratification chain can be audited. Do not read requirements
+> from it. The ATOP path named below no longer governs anything, and that directory name (`~\fita`)
+> shadows the `fita` package — the documented cause of the IrenBLink import failures.
+> *(Banner added 2026-11-14 during the version-concordance pass.)*
+
 > **TRANSPORT COPY** — snapshot taken 2026-07-29 for the ATOP return capsule.
 > The canonical, editable original is `C:\Users\astro\fita\FITA_FORMAT_STANDARD.md` (on ATOP).
 > Do not edit this copy; if it and the original differ, the original governs.

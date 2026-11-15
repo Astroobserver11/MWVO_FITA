@@ -1,8 +1,9 @@
 {
   "$schema": "https://fits-alpha.org/schema/format-card-0.2.json",
-  "card_version": "0.7",
-  "generated": "2026-08-02",
-  "conformed_to": "FITA_FORMAT_STANDARD.md v1.1 RATIFIED + FITA_AMENDMENT__2026-08-02.md (proposed v1.2). Where this card and the standard disagree, the standard governs.",
+  "card_version": "0.8",
+  "generated": "2026-11-14",
+  "conformed_to": "FITA_FORMAT_STANDARD.md at FITAVER 1.5 (see its §13 table). Where this card and the standard disagree, the standard governs. This field read 'v1.1 RATIFIED + FITA_AMENDMENT (proposed v1.2)' until 2026-11-14, while the implementation was at 1.5 — a card that misstates which standard it conforms to is worse than no card, because an agent reads it instead of asking.",
+  "version_note": "FITAVER (the format, 'major.minor') is NOT the package version (the software, 'major.minor.patch'). This card describes FITAVER 1.5. Do not infer the package version from it, and do not write a three-component value into FITAVER — a conformant reader may reject it. See the standard §13.1.",
   "purpose": "Self-description of the FITA format for AI agents. Read this first: it tells you what a .fita file is, what is trustworthy inside it, WHICH KNOWN DEFECTS affect files you will encounter, and which operations are safe to perform unattended. Generated from the same Op/spec metadata that drives the CLI and MCP server, so it does not drift from the tools.",
   "format": {
     "name": "FITA",
@@ -399,12 +400,17 @@
     "service_planned": "fitad serve (HTTP/JSON) | fitad --mcp (agent tools)",
     "python": "from fita import FITACube, FITALayer; FITACube(layers=..., adjustments=AdjustmentStack([...])).save(path, provenance={...})",
     "docs": {
-      "normative": "FITA_FORMAT_STANDARD.RATIFIED-2026-08-02.md (v1.1 RATIFIED) — governs everything",
+      "normative": "FITA_FORMAT_STANDARD.md (FITAVER 1.5) — governs everything. The filename is version-neutral BY DESIGN; read §13 for the version, never the filename.",
+      "superseded_do_not_read_as_normative": [
+        "FITA_FORMAT_STANDARD.RATIFIED-v1.2.md — a POINTER STUB only; the former canonical path, retained so published citations resolve. No normative text.",
+        "FITA_FORMAT_STANDARD.RATIFIED-2026-08-02.md — the v1.1 ratification snapshot. This card named it 'normative — governs everything' until 2026-11-14, which was wrong.",
+        "FITA_FORMAT_STANDARD_TRANSPORT_2026-07-29.md and FITA_FORMAT_STANDARD_v1.1_DRAFT.transport-2026-07-29.md — 2026-07-29 courier copies of the v1.1 DRAFT, kept byte-exact so the ratification chain is auditable."
+      ],
       "design": "FITA_FOUNDRY_DESIGN.md (v0.3) — the Foundry is PARKed pending the FITA paper",
       "tutorial": "FITA_Format_Guide.ipynb — NON-NORMATIVE; still repeats the withdrawn SPLIT16 and ObsCore claims",
-      "readme": "README.md — NON-NORMATIVE; predates the standard",
+      "readme": "README.md — NON-NORMATIVE, but current as of 2026-11-14 and no longer predates the standard; its test counts are published with their preconditions",
       "ratification": "FITA_v1.1_RATIFICATION__2026-08-02.md — the D-1..D-7 rulings",
-      "amendment": "FITA_AMENDMENT__2026-08-02.md — the v1.1 -> v1.2 clause text awaiting application"
+      "amendment": "FITA_AMENDMENT__2026-08-02.md — the v1.1 -> v1.2 clause text, APPLIED to the standard; retained as the record of what changed and why"
     }
   },
   "adjustments": {

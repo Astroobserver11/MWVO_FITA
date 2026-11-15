@@ -1,3 +1,10 @@
+> # ⚠️ SUPERSEDED — HISTORICAL RECORD, NOT THE STANDARD
+> **This is the v1.1 ratification snapshot.** The current normative standard is
+> [`FITA_FORMAT_STANDARD.md`](FITA_FORMAT_STANDARD.md), at v1.5. Retained unedited as the
+> provenance record of what was ratified on 2026-08-02. Do not read requirements from it.
+> *(Banner added 2026-11-14 during the version-concordance pass: four files in this directory
+> each looked like "the standard" by filename alone.)*
+
 > **RATIFIED CANONICAL — v1.1.** Produced on BTOP 2026-08-02 by applying the validating author's
 > ratification rulings (§12) to the byte-exact 2026-07-29 v1.1 DRAFT. The normative body (§§1–11)
 > is unchanged from that DRAFT; only the status line, §12, and the §13 version table were edited.

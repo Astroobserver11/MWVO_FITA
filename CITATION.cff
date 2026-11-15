@@ -22,12 +22,26 @@ authors:
     family-names: "Cisneros"
     email: "astroobserver88@gmail.com"
     orcid: "https://orcid.org/0009-0001-0282-6098"
-version: "1.5.0"
+# This is the PACKAGE version (the software), not FITAVER (the format).
+# They are different numbers and are allowed to differ -- see
+# FITA_FORMAT_STANDARD.md section 13.1. The format described is FITAVER = 1.5;
+# the package implementing it is 1.5.3. Conflating the two is what produced six
+# mutually inconsistent version identities for this format, measured 2026-10-28.
+# tests/test_version_concordance.py now asserts this file agrees with
+# pyproject.toml and .zenodo.json, so the drift cannot recur silently.
+# No `date-released` is given: 1.5.3 is not yet tagged or deposited, and
+# asserting a release date for an unreleased version is the kind of claim this
+# project has had to retract before.
+version: "1.5.3"
 doi: "10.5281/zenodo.21763301"          # concept DOI: always the newest version
 identifiers:
   - type: doi
     value: "10.5281/zenodo.21763344"
-    description: "Version DOI for v1.2.0 specifically"
+    # The ONLY version DOI that exists. v1.2.0 is the sole release deposited to
+    # Zenodo; v1.2.1, v1.3.0 and the 1.5.x line have no version DOI, because
+    # Zenodo archives only releases created after its webhook was enabled and
+    # does not backfill. Cite the concept DOI above for "the current version".
+    description: "Version DOI for v1.2.0 specifically -- the only deposited release"
 license: MIT
 license-url: "https://github.com/Astroobserver11/MWVO_FITA/blob/main/LICENSE"
 repository-code: "https://github.com/Astroobserver11/MWVO_FITA"

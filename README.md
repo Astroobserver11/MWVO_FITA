@@ -9,10 +9,11 @@ that cannot touch the science.**
 | | |
 |---|---|
 | **File suffix** | `.fita` |
-| **Format version** | 1.5 |
+| **Format version** | `FITAVER = 1.5` — the **format** |
+| **Package version** | `mwvo-fita` 1.5.3 — the **software**; it may advance without `FITAVER` moving ([§13.1](https://github.com/Astroobserver11/MWVO_FITA/blob/main/FITA_FORMAT_STANDARD.md)) |
 | **MIME type** | `application/fits` |
 | **Based on** | FITS Standard v4.0 — every `.fita` file is a valid FITS MEF |
-| **Normative spec** | [`FITA_FORMAT_STANDARD`](https://github.com/Astroobserver11/MWVO_FITA/blob/main/FITA_FORMAT_STANDARD.RATIFIED-v1.2.md) |
+| **Normative spec** | [`FITA_FORMAT_STANDARD.md`](https://github.com/Astroobserver11/MWVO_FITA/blob/main/FITA_FORMAT_STANDARD.md) |
 | **Licence** | MIT (software) · CC0 (specification) |
 
 ---
@@ -119,7 +120,8 @@ trusted**.
 ## Quick start
 
 ```bash
-pip install mwvo-fita          # distribution name; the import name is `fita`
+# Not on PyPI yet -- install from the repository. See Installation below.
+pip install "mwvo-fita @ git+https://github.com/Astroobserver11/MWVO_FITA.git"
 ```
 
 ```python
@@ -155,7 +157,7 @@ waves, fluxes = cube.sed(px=512, py=512)
 | **Per-layer WCS** | multi-resolution layers without resampling to a common grid |
 | **Uncertainty & masks** | companion `UNCERT_*` / `MASK_*` planes |
 | **Provenance** | IVOA ObsCore DM v1.1, its column set, UCDs as `TUCDn` |
-| **Three backends** | FITS-MEF, HDF5, Zarr — one container-independent data model |
+| **Three backends** | FITS-MEF, HDF5, Zarr — one container-independent data model; all three round-trip `FLUX` bit-exact and all three refuse non-float32 through one shared gate |
 | **PSD import** | Adobe Photoshop layers, blend modes and masks |
 
 ### Blend modes worth knowing
@@ -205,35 +207,49 @@ A young convention with one reference implementation. What is established, and
 what is not:
 
 **Established.** The flux/alpha invariant holds bit-for-bit in the default
-`FLOAT32` mode — measured, zero pixels altered. Files are valid FITS with
-verifying checksums. The FITS ⇄ Zarr data model is verified equivalent.
+`FLOAT32` mode — measured, zero pixels altered. Since 1.5.2 it is also
+**enforced**: all three writers refuse a `FLUX` array that is not float32
+through one shared gate, rather than silently downcasting it. Files are valid
+FITS with verifying checksums. The FITS ⇄ Zarr data model is verified
+equivalent, and **the HDF5 round-trip is now verified too** — a three-layer
+stack returns bit-exact float32 with names and types intact. The "three
+backends" claim is confirmed for all three.
+
 **Test counts, with their preconditions.** A bare number is not a claim about
-coverage, so here is the whole table:
+coverage, so here is the whole table. All rows measured 2026-11-14 on CTOP,
+Python 3.13.15, astropy 8.0.2, package 1.5.2:
 
-| Configuration | collected | passed |
+| Configuration | passed | skipped |
 |---|---|---|
-| kernel only — `pip install -e ".[dev]"` | **221** | 221 |
-| \+ URANODYNE | **269** | 262, with **7 skipped** |
-| \+ URANODYNE \+ `openpyxl`, `photutils`, `reproject`, `matplotlib` | **269** | 269 |
+| kernel only — `pip install ".[dev]"` **← what CI runs** | 293 | 3 |
+| \+ `mwvo-fita[uranodyne]` and `uranodyne[pipeline]` | **341** | **0** |
 
-URANODYNE gates three modules (`test_calibration`, `test_pipeline`,
-`test_wideangle`) holding 48 tests between them; the four packages above gate 7
-tests inside those modules. `[dev]` already carries all four, so the middle row
-is the configuration in which URANODYNE is installed but the kernel's own dev
-extras are not — the one ATOP measured. **The CI matrix runs the first row**:
-it does not install URANODYNE, so "CI green" is evidence about the kernel, not
-about the science stack.
+The 3 skips in the CI row are the three URANODYNE-gated modules
+(`test_calibration`, `test_pipeline`, `test_wideangle`) — by design, so the
+kernel's own gate never depends on the science stack. Install everything and
+**nothing is skipped**: a configuration that exists and was run, not an
+aspiration.
 
-Rows 1 and 3 measured on BTOP, Python 3.12; row 2 measured by ATOP on Python
-3.14.5 against the v1.3.0 source. Three environments produced three different
-numbers and all three reported success — which is why the count is now
-published with its preconditions and why CI asserts a collected floor.
+⚠️ **What that first row used to hide.** Until 2026-11-14 `[dev]` did not
+include `h5py`, and the same row read **264 passed, 17 skipped** (before the 14
+concordance tests below were written) — the extra 14 skips being every test that
+exercises the HDF5 backend, *including both `SPLIT16` refusal tests*. So **"CI green" was never evidence about HDF5.** That
+is how a destructive packing mode stayed reachable through the HDF5 and Zarr
+writers for three months after D-2 deleted it, while the AI format card
+asserted that no conformant path could produce it. `h5py` is now in `[dev]`, so
+the matrix exercises all three backends and the 14 tests run. §10.1's "cannot be
+used **or verified**" was doing real work, and the dev extra was ignoring it.
 
-**Not established.** The HDF5 backend round-trip is **untested**, so the
-"all three backends" claim is confirmed for two of three. No `.fita` file has
-been registered with a VO service — ObsCore completeness is verified by column
-inspection, not by registration. Alpha encoding has been verified through
-astropy but **not yet in DS9, QFitsView or Aladin**.
+Earlier editions of this table reported 221 and 269 from BTOP (Python 3.12) and
+ATOP (Python 3.14.5, v1.3.0 source). Three environments produced three different
+numbers and all three reported success — which is why counts are published with
+their preconditions and why CI asserts a collected floor.
+
+**Not established.** No `.fita` file has been registered with a VO service —
+ObsCore completeness is verified by column inspection, not by registration.
+Alpha encoding has been verified through astropy but **not yet in DS9,
+QFitsView or Aladin**. The format is not on PyPI, and the 1.5.x line carries no
+release tag or version DOI: the only deposited release is v1.2.0.
 
 **Corrections that shipped.** Earlier versions of this document advertised a
 `SPLIT16` packing mode and an ObsCore v1.1 compliance claim. `SPLIT16` was
@@ -251,7 +267,7 @@ type `application/fits+alpha` is no longer emitted. See
 
 | File | Standing |
 |---|---|
-| [`FITA_FORMAT_STANDARD`](https://github.com/Astroobserver11/MWVO_FITA/blob/main/FITA_FORMAT_STANDARD.RATIFIED-v1.2.md) | **Normative.** Governs everything. |
+| [`FITA_FORMAT_STANDARD.md`](https://github.com/Astroobserver11/MWVO_FITA/blob/main/FITA_FORMAT_STANDARD.md) | **Normative.** Governs everything. Version-neutral filename: the version is stated in §13, never in the name. |
 | [`FITA_AMENDMENT__2026-08-02.md`](https://github.com/Astroobserver11/MWVO_FITA/blob/main/FITA_AMENDMENT__2026-08-02.md) | v1.1 → v1.2 clause text — **APPLIED** to the standard above; retained as the record of what changed and why |
 | [`FITA_v1.1_RATIFICATION__2026-08-02.md`](https://github.com/Astroobserver11/MWVO_FITA/blob/main/FITA_v1.1_RATIFICATION__2026-08-02.md) | decision log |
 | [`corpus/README.md`](https://github.com/Astroobserver11/MWVO_FITA/blob/main/corpus/README.md) | the conformance corpus |
@@ -283,25 +299,57 @@ The **distribution** is `mwvo-fita`; the **import name** is `fita`.
 > use the git commands below. Do **not** run `pip install fita` — that name on
 > PyPI belongs to an unrelated project and will install the wrong software.
 
+**Git must be installed**, because pip shells out to it to clone these URLs. If
+`git --version` fails in your shell, no command below will work.
+
 ```bash
-# Core (numpy + astropy) — from the repository
+# Core (numpy + astropy)
 pip install "mwvo-fita @ git+https://github.com/Astroobserver11/MWVO_FITA.git"
 
 # With Photoshop PSD import
 pip install "mwvo-fita[psd] @ git+https://github.com/Astroobserver11/MWVO_FITA.git"
 
-# A specific, citable version (tag)
+# With the URANODYNE science stack (see the note below -- install it this way)
+pip install "mwvo-fita[uranodyne] @ git+https://github.com/Astroobserver11/MWVO_FITA.git"
+
+# A specific, citable version. v1.3.0 is the newest TAG; the 1.5.x line is not
+# tagged, so `@main` is the only way to get it.
 pip install "mwvo-fita @ git+https://github.com/Astroobserver11/MWVO_FITA.git@v1.3.0"
 ```
 
 Once published, the same installs become `pip install mwvo-fita` and
-`pip install "mwvo-fita[psd]"`.
+`pip install "mwvo-fita[psd]"`. The `[uranodyne]` extra cannot go to PyPI as
+written, because PyPI rejects metadata carrying a direct URL — it will be
+switched to a plain `uranodyne>=1.0.0` once URANODYNE is itself published.
 
-The science pipeline, [URANODYNE](https://github.com/Astroobserver11/uranodyne),
-is a separate distribution and is not required by the format kernel:
+### Installing URANODYNE
+
+[URANODYNE](https://github.com/Astroobserver11/uranodyne) is a separate
+distribution and is **not** required by the format kernel — `fita` never imports
+it; the arrow only points the other way.
+
+> ⚠️ **Do not install it on its own.** `pip install git+…/uranodyne.git` **fails
+> resolution**, because URANODYNE requires `mwvo-fita>=1.5.0` and that is not on
+> PyPI. Earlier editions of this README advertised exactly that command; it
+> could not have worked.
+
+Install it as the extra above, or name both explicitly:
 
 ```bash
-pip install git+https://github.com/Astroobserver11/uranodyne.git
+pip install "mwvo-fita @ git+https://github.com/Astroobserver11/MWVO_FITA.git" \
+            "uranodyne @ git+https://github.com/Astroobserver11/uranodyne.git"
+```
+
+Either way the dependency cycle resolves, because installing from a direct URL
+pins the name `mwvo-fita` to that tree and satisfies URANODYNE's requirement
+without a PyPI lookup.
+
+Its own science dependencies are extras of URANODYNE. **Install `pipeline` if
+you use IrenBLink:** without SciPy, `blink.significance_map()` warns and returns
+a degraded result rather than refusing.
+
+```bash
+pip install "uranodyne[pipeline] @ git+https://github.com/Astroobserver11/uranodyne.git"
 ```
 
 ## Citing

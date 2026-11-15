@@ -5,6 +5,71 @@ implements. Per §13 of the standard, **any change to required or optional
 structure requires a version increment** — a rule this project has broken
 twice and now enforces in code.
 
+## [1.5.3] — 2026-11-14
+
+Version concordance. No code behaviour changed; `FITAVER` stays **1.5** throughout.
+
+### Fixed — the documentation half of the de-facto-spec failure
+- **The standard now describes the format the code implements.** `FITA_ZEP` and the
+  FITS WCS Paper III spectral block had been *enforced by the validator since
+  2026-08-07 while appearing in no normative document at all* — the checker emitted
+  clause tag `S8.5` against a clause that did not exist. §8.5 now specifies the
+  author's rulings A, B and C of 2026-08-07: the adopted FITS keywords (`SPECSYS`,
+  `VELOSYS`, `SSYSOBS`, `RESTFRQ`/`RESTWAV`), the closed four-term `FITA_ZEP`
+  vocabulary, and `FITA_VSE` with the channel-width test
+  $\sigma_{\texttt{VELOSYS}} \le |\texttt{CDELT3}|$. §8.4 is left deliberately
+  unassigned so document numbering matches the tag the checker reports.
+  §13 gains the 1.5 row; **§13.1 is new** and states that `FITAVER` is not the
+  package version.
+- **The standard has a version-neutral filename.** It was
+  `FITA_FORMAT_STANDARD.RATIFIED-v1.2.md` while its contents said v1.4 — the name
+  knowingly frozen because published records cite it, at the cost of a filename that
+  contradicted the document for three successive versions. It is now
+  **`FITA_FORMAT_STANDARD.md`**, which its own 2026-08-02 header had already said it
+  was "destined to" be. The old path is retained as a **pointer stub** so existing
+  citations keep resolving. *A version belongs inside a document, never in its name:
+  a name cannot be corrected without breaking every citation to it.*
+- **Four files in the repository root each looked like "the standard"** by filename
+  alone — the direct cause of the question "why are there inconsistencies in the repo
+  around the format documentation". The three superseded ones (the v1.1 ratification
+  snapshot and two 2026-07-29 transport copies) now carry SUPERSEDED banners pointing
+  at the canonical document. They are otherwise **unedited**: their byte-exactness is
+  what makes the ratification chain auditable.
+- **Citation metadata aligned.** `.zenodo.json` said `1.4.0` while the code said 1.5
+  and `CITATION.cff` said 1.5.0; its description advertised a **corpus of 18 files
+  when there are 24** — a published inaccuracy about evidence a reviewer can count.
+  `CITATION.cff` now records that only v1.2.0 has a version DOI, since Zenodo does
+  not backfill. The `Documentation` URL no longer points at a versioned filename.
+- **The README advertised a URANODYNE install command that could not work.**
+  `pip install git+…/uranodyne.git` fails resolution, because URANODYNE requires
+  `mwvo-fita>=1.5.0`, which is not on PyPI. Replaced with the `[uranodyne]` extra and
+  the explicit two-URL form, both measured.
+- **The README claimed the HDF5 round-trip was untested.** It is tested now, so the
+  claim was carried one release too long; the "all three backends" statement is
+  confirmed for all three. Test counts replaced with same-day measurements and their
+  preconditions.
+
+### Changed
+- **`h5py` added to `[dev]`.** CI installs `[dev]`, which did not include it, so the
+  14 tests exercising the HDF5 backend — **including both `SPLIT16` refusal tests** —
+  silently skipped. "CI green" was therefore never evidence about HDF5, which is how
+  a destructive packing mode stayed reachable through the HDF5 and Zarr writers for
+  three months after D-2 deleted it. §10.1's "cannot be used **or verified**" was
+  doing real work and the dev extra was ignoring it. The CI row moves from
+  264 passed / 17 skipped to **293 passed / 3 skipped**, the 3 being the
+  URANODYNE-gated modules by design.
+
+### Added
+- `tests/test_version_concordance.py` — **15 tests that assert the concordance holds**,
+  so it cannot drift again in silence: `FITAVER` is `major.minor` with no patch part,
+  the package version implements the stated format, the standard's status line, title,
+  version field and §13 table all agree with `fita.spec.FITA_VERSION`, every keyword
+  the validator enforces is findable in the standard, `.zenodo.json` and
+  `CITATION.cff` agree with `pyproject.toml` and still parse, the advertised corpus
+  size matches `MANIFEST.json`, the machine-readable AI format card names the
+  current standard rather than a superseded one, and no live document links the
+  retired filename. Full suite with everything installed: **341 passed, 0 skipped.**
+
 ## [1.5.2] — 2026-11-14
 
 ### Fixed — the FLOAT32 ruling only reached one of the three writers

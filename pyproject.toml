@@ -12,11 +12,14 @@ build-backend = "setuptools.build_meta"
 # (pillow/PIL, scikit-learn/sklearn), and renaming the module would break every
 # existing notebook for no gain.
 name = "mwvo-fita"
-# 1.5.2: extend the float32 gate to the HDF5 and Zarr writers. 1.5.1 enforced the
-# ruling in io.py (FITS) only, and both other backends went on accepting float64.
-# FITAVER stays 1.5 throughout -- this enforces an existing MUST (S6.1) and does
-# not change the format, so no FITAVER increment is due under S13.
-version = "1.5.2"
+# 1.5.3: version concordance. `h5py` added to [dev] so CI actually exercises the
+# HDF5 backend; the standard renamed to the version-neutral FITA_FORMAT_STANDARD.md
+# and brought up to v1.5 (S8.5 specified at last); citation metadata aligned.
+# Adding an extra's dependency is a packaging change, and this project's own rule
+# is that optional structure gets a version increment in the same change as the
+# structure itself -- so the package moves even though no code did.
+# FITAVER stays 1.5 throughout: none of this changes the format (S13.1).
+version = "1.5.3"
 description = "Flexible Image Transfer Alpha — multi-wavelength FITS cube with per-layer alpha, blend modes, and IrenBLink pipeline"
 readme = "README.md"
 license = { text = "MIT" }
@@ -61,7 +64,11 @@ dependencies = [
 [project.urls]
 Homepage      = "https://github.com/Astroobserver11/MWVO_FITA"
 Repository    = "https://github.com/Astroobserver11/MWVO_FITA"
-Documentation = "https://github.com/Astroobserver11/MWVO_FITA/blob/main/FITA_FORMAT_STANDARD.RATIFIED-v1.2.md"
+# Version-neutral by design: this URL previously carried `RATIFIED-v1.2` in the
+# filename while the document inside stood at v1.4, so the link advertised the
+# wrong version of the standard. A version belongs inside a document, never in a
+# name or a URL that others cite.
+Documentation = "https://github.com/Astroobserver11/MWVO_FITA/blob/main/FITA_FORMAT_STANDARD.md"
 Changelog     = "https://github.com/Astroobserver11/MWVO_FITA/blob/main/CHANGELOG.md"
 "Conformance corpus" = "https://github.com/Astroobserver11/MWVO_FITA/tree/main/corpus"
 Issues        = "https://github.com/Astroobserver11/MWVO_FITA/issues"
@@ -107,6 +114,15 @@ uranodyne = [
 dev = [
     "pytest>=7",
     "pytest-cov",
+    # h5py is here because CI installs `dev`, and without it the 14 tests that
+    # exercise the HDF5 backend SILENTLY SKIP -- including both SPLIT16 refusal
+    # tests. "CI green" was therefore never evidence about HDF5, which is how a
+    # destructive packing mode stayed reachable through the HDF5 and Zarr
+    # writers for three months after D-2 deleted it, while the AI format card
+    # asserted no conformant path could produce it. Standard S10.1 says the
+    # backend "cannot be used OR verified" without this; that clause was doing
+    # real work and the dev extra was quietly ignoring it.
+    "h5py>=3.0",
     "scipy>=1.8",
     "astroquery>=0.4.7",
     "reproject>=0.9",
