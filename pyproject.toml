@@ -68,12 +68,37 @@ psd = [
     "psd-tools>=1.9",
     "Pillow>=9.0",
 ]
-# NOTE: the URANODYNE science stack is a SEPARATE distribution and is not a
-# dependency of this one. The format kernel must be installable and testable on
-# its own -- fita never imports uranodyne, and an extra that reached for it made
-# `pip install fita[dev]` fail on every platform until uranodyne is published.
-# Install it alongside: pip install uranodyne
+# The URANODYNE science stack, as an OPT-IN extra:
+#     pip install "mwvo-fita[uranodyne] @ git+https://github.com/Astroobserver11/MWVO_FITA.git"
 #
+# It stays a SEPARATE distribution and is NOT a core dependency: the format
+# kernel must remain installable and testable on its own, and `fita` never
+# imports `uranodyne` (the arrow only ever points the other way).
+#
+# Three things to know before editing this block:
+#
+#  1. CYCLE. uranodyne's own pyproject declares `mwvo-fita>=1.5.0`, so this
+#     extra closes a dependency cycle. pip resolves it because installing from
+#     a direct URL pins the name `mwvo-fita` to THIS tree (version 1.5.0),
+#     which satisfies uranodyne's requirement from the resolution set without
+#     ever querying PyPI. Drop the version below 1.5.0 and the cycle stops
+#     resolving.
+#
+#  2. THE URL IS PyPI-ILLEGAL. PyPI refuses any upload whose metadata carries a
+#     direct reference ("Can't have direct dependency"). So this line is what
+#     makes the GitHub install work *and* what would make `twine upload` to
+#     PyPI fail. Before publishing, either publish uranodyne first and change
+#     this to a plain `uranodyne>=1.0.0`, or drop the extra. This is a gate on
+#     publication, not a defect.
+#
+#  3. NOT IN `dev`, on purpose. CI installs `dev`; an extra that reached for an
+#     unpublished uranodyne previously failed the build on every platform. The
+#     test suite keeps its `pytest.importorskip("uranodyne")` guards so the
+#     kernel's own gate never depends on this extra being present.
+uranodyne = [
+    "uranodyne @ git+https://github.com/Astroobserver11/uranodyne.git@main",
+]
+
 # Development / testing of the format kernel only.
 dev = [
     "pytest>=7",
