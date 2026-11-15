@@ -22,6 +22,22 @@ name: publish
 # NOTE: it does NOT reserve the name -- the name is only claimed by the first
 # successful upload, so do not leave a long gap once the form is filled.
 
+# ── WHY THERE IS NO `release:` TRIGGER (removed 2026-11-15) ──────────────────
+# This workflow used to carry `release: types: [published]`, so publishing a
+# GitHub Release uploaded straight to PyPI proper with no further confirmation.
+# Two things make that unsafe here:
+#
+#   1. A PyPI version number is IMMUTABLE. Coupling "write release notes" to
+#      "burn a version number forever" puts an irreversible act behind a button
+#      whose obvious purpose is documentation.
+#   2. A Zenodo DOI requires a GitHub Release -- Zenodo archives Releases, not
+#      tags, and does not backfill. So the only way to mint the DOI was to fire
+#      a PyPI upload at the same time. Archiving and publishing are different
+#      decisions and must not share one trigger.
+#
+# A Release is now purely an archival act (tag + notes + Zenodo deposit).
+# Publishing to an index is deliberate, via workflow_dispatch below, with the
+# target chosen explicitly and TestPyPI as the default.
 on:
   workflow_dispatch:
     inputs:
@@ -30,8 +46,6 @@ on:
         type: choice
         options: [testpypi, pypi]
         default: testpypi
-  release:
-    types: [published]        # a GitHub release publishes to PyPI proper
 
 jobs:
   build:
@@ -94,7 +108,10 @@ jobs:
 
   pypi:
     needs: build
-    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.target == 'pypi')
+    # Deliberate dispatch only. This read `github.event_name == 'release' || ...`
+    # until 2026-11-15, which meant publishing a GitHub Release uploaded to PyPI
+    # proper -- permanently, and without anyone choosing to.
+    if: github.event_name == 'workflow_dispatch' && inputs.target == 'pypi'
     runs-on: ubuntu-latest
     environment: pypi
     permissions:

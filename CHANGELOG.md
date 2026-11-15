@@ -59,6 +59,17 @@ Version concordance. No code behaviour changed; `FITAVER` stays **1.5** througho
   264 passed / 17 skipped to **293 passed / 3 skipped**, the 3 being the
   URANODYNE-gated modules by design.
 
+- **Publishing a GitHub Release no longer uploads to PyPI.** `publish.yml` carried
+  `release: types: [published]`, and the `pypi` job ran on `github.event_name ==
+  'release'`, so writing release notes uploaded to PyPI proper with no further
+  confirmation — and a PyPI version number is **immutable**. Worse, a Zenodo DOI
+  *requires* a GitHub Release (Zenodo archives Releases, not tags, and does not
+  backfill), so the only way to mint the DOI was to fire a permanent index upload
+  at the same moment. Archiving and publishing are different decisions and no
+  longer share a trigger. A Release is now purely archival; publication is a
+  deliberate `workflow_dispatch` with the target chosen explicitly and TestPyPI
+  as the default.
+
 ### Added
 - `tests/test_version_concordance.py` — **15 tests that assert the concordance holds**,
   so it cannot drift again in silence: `FITAVER` is `major.minor` with no patch part,
