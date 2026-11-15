@@ -87,6 +87,7 @@ from ..spec import (
     LAYER_TABLE_COLS,
 )
 from ..layer import FITALayer
+from ..flux import require_float32_flux
 
 # ── Internal helpers ──────────────────────────────────────────────────────────
 
@@ -283,6 +284,13 @@ def write(
                     "(standard S6.4, decision D-2): it destroyed flux irrecoverably. "
                     "Use pack='FLOAT32' (bit-exact)."
                 )
+            # S6.1 + the FLOAT32 ruling. Measured 2026-11-14: this backend accepted
+            # a float64 flux array, wrote it as float64, and truncated it back to
+            # float32 on read -- relative error 3.3e-08, two distinct pixels
+            # collapsing into one. The FITS writer had been gated; this had not.
+            require_float32_flux(
+                layer.flux_data,
+                where=f"layer {layer.layer_id} ({layer.name!r}) [HDF5]: ")
             _write_dataset(lg, "flux", layer.flux_data,
                            compress=compress, compress_opts=compress_opts,
                            chunk_shape=cs)

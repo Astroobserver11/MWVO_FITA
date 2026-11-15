@@ -13,6 +13,39 @@ from typing import Literal, Tuple
 StretchType = Literal["linear", "log", "sqrt", "asinh", "power"]
 
 
+# ── The FLOAT32 ruling (P.I., 2026-11-14) ────────────────────────────────────
+
+def require_float32_flux(flux, where: str = "") -> np.ndarray:
+    """
+    Enforce S6.1 -- FLUX is float32 under FLOAT32 packing -- by raising, not casting.
+
+    ONE source of truth for all three writers. The first pass at this ruling put the
+    check inline in `io.py` only, and the HDF5 and Zarr backends went on accepting
+    float64: measured, both wrote it and both truncated it back to float32 on read,
+    at a relative error of 3.3e-08, with two pixels held distinct on disk collapsing
+    into one. Exactly the defect the ruling exists to close, surviving on the paths
+    the fix had not reached. Hence a single shared gate rather than three copies.
+
+    Raise rather than cast: losing calibrated precision must always be the caller's
+    explicit decision, never a side effect of saving. Flag, don't mask.
+
+    Byte order is not precision -- a big-endian '>f4' straight off a FITS read is
+    float32 and passes, which is why this tests kind and itemsize rather than
+    comparing against np.float32 directly.
+    """
+    arr = np.asarray(flux)
+    if arr.dtype.kind != "f" or arr.dtype.itemsize != 4:
+        raise ValueError(
+            f"{where}FLUX must be float32 -- standard S6.1 requires BITPIX=-32 under "
+            f"FITAPACK='FLOAT32' -- but got dtype {arr.dtype}. FITA will not downcast "
+            f"the calibrated science datum silently. If the precision is expendable, "
+            f"say so explicitly:\n"
+            f"    layer.flux_data = layer.flux_data.astype('float32')\n"
+            f"(FITALayer.from_array() does this for you, with a FITAPrecisionWarning.)"
+        )
+    return arr
+
+
 # ── Flux-range extraction ────────────────────────────────────────────────────
 
 def clip_flux(

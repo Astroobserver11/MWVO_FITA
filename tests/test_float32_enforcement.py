@@ -177,3 +177,57 @@ def test_hdf5_backend_refuses_split16(tmp_path):
     layer = _layer_with_dtype(np.float32)
     with pytest.raises(ValueError, match="SPLIT16"):
         hb.write(str(tmp_path / "s.h5"), [layer], pack="SPLIT16", overwrite=True)
+
+
+# ── the ruling must hold on EVERY writer, not just the FITS one ──────────────
+#
+# The first pass at the ruling gated io.py alone. Measured 2026-11-14: HDF5 and
+# Zarr both still accepted a float64 flux array, wrote it, and truncated it back
+# to float32 on read -- relative error 3.3e-08, two pixels held distinct on disk
+# collapsing into one. The same defect, surviving on the paths the fix had missed.
+
+_BACKENDS = [
+    pytest.param("fita.backends.hdf5", "h5py", ".h5",  id="hdf5"),
+    pytest.param("fita.backends.zarr", "zarr", ".zarr", id="zarr"),
+]
+
+
+@pytest.mark.parametrize("modname,lib,ext", _BACKENDS)
+def test_backend_refuses_non_float32_flux(tmp_path, modname, lib, ext):
+    mod = pytest.importorskip(modname)
+    pytest.importorskip(lib)
+    layer = _layer_with_dtype(np.float64)
+    with pytest.raises(ValueError, match="FLUX must be float32"):
+        mod.write(str(tmp_path / ("bad" + ext)), [layer], overwrite=True)
+
+
+@pytest.mark.parametrize("modname,lib,ext", _BACKENDS)
+def test_backend_float32_round_trip_is_bit_exact(tmp_path, modname, lib, ext):
+    """Enforcement must not cost the legitimate path anything."""
+    mod = pytest.importorskip(modname)
+    pytest.importorskip(lib)
+    layer = _layer_with_dtype(np.float32)
+    path = str(tmp_path / ("ok" + ext))
+    mod.write(path, [layer], overwrite=True)
+    back = mod.read(path)
+    assert back[0].flux_data.dtype == np.float32
+    assert np.array_equal(back[0].flux_data, layer.flux_data)
+
+
+def test_every_writer_shares_one_float32_gate():
+    """Guards against the gap itself: three writers, one check.
+
+    This defect existed because the rule was implemented in one writer inline.
+    If a new writer appears without calling the shared gate, this is the test
+    that should fail.
+    """
+    import inspect
+    from fita.flux import require_float32_flux
+    import fita.io, fita.backends.hdf5, fita.backends.zarr
+
+    for mod in (fita.io, fita.backends.hdf5, fita.backends.zarr):
+        src = inspect.getsource(mod.write)
+        assert "require_float32_flux(" in src, (
+            f"{mod.__name__}.write() does not call the shared float32 gate -- "
+            f"the FLOAT32 ruling has to hold on every writer, not just FITS"
+        )

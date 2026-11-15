@@ -88,6 +88,7 @@ from ..spec import (
     KW_UNCERT_EXT, KW_MASK_EXT,
 )
 from ..layer import FITALayer
+from ..flux import require_float32_flux
 
 # ── Internal helpers ──────────────────────────────────────────────────────────
 
@@ -324,6 +325,13 @@ def write(
                 "S6.4, decision D-2): it destroyed flux irrecoverably. "
                 "Use pack='FLOAT32' (bit-exact)."
             )
+        # S6.1 + the FLOAT32 ruling. Measured 2026-11-14: this backend accepted a
+        # float64 flux array, wrote it as float64, and truncated it back to float32
+        # on read -- relative error 3.3e-08, two distinct pixels collapsing into
+        # one. The FITS writer had been gated; this had not.
+        require_float32_flux(
+            layer.flux_data,
+            where=f"layer {layer.layer_id} ({layer.name!r}) [Zarr]: ")
         _write_array(lg, "flux", layer.flux_data, compressor, cs)
 
         # -- alpha ------------------------------------------------------------

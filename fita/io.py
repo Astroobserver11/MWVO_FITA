@@ -35,7 +35,7 @@ from .spec import (
     LAYER_TABLE_COLS, flux_extname, alpha_extname,
 )
 from .layer import FITALayer
-from .flux import encode_split16
+from .flux import encode_split16, require_float32_flux
 
 
 def _require_astropy():
@@ -533,16 +533,10 @@ def write(
         #
         # Raise rather than cast: losing calibrated precision must be the caller's
         # explicit decision, never a side effect of saving. Flag, don't mask.
-        _fdt = np.asarray(layer.flux_data).dtype
-        if _fdt.kind != "f" or _fdt.itemsize != 4:
-            raise ValueError(
-                f"layer {i} ({layer.name!r}): FLUX must be float32 under "
-                f"FITAPACK='{PACK_FLOAT32}' -- standard S6.1 requires BITPIX=-32 -- "
-                f"but got dtype {_fdt}. FITA will not downcast the calibrated science "
-                f"datum silently. If the precision is expendable, say so explicitly:\n"
-                f"    layer.flux_data = layer.flux_data.astype('float32')\n"
-                f"(FITALayer.from_array() does this for you, with a warning.)"
-            )
+        # Shared gate in fita.flux -- the first pass had this inline here, and the
+        # HDF5 and Zarr backends kept accepting float64 because the fix never
+        # reached them.
+        require_float32_flux(layer.flux_data, where=f"layer {i} ({layer.name!r}): ")
         flux_hdu = fits.ImageHDU(data=layer.flux_data, header=lhdr)
 
         flux_hdu.name = flux_extname(i)

@@ -5,6 +5,36 @@ implements. Per §13 of the standard, **any change to required or optional
 structure requires a version increment** — a rule this project has broken
 twice and now enforces in code.
 
+## [1.5.2] — 2026-11-14
+
+### Fixed — the FLOAT32 ruling only reached one of the three writers
+- **1.5.1 gated `io.py` (FITS). The HDF5 and Zarr writers went on accepting
+  float64.** Found by actually exercising HDF5 rather than trusting the previous
+  fix: both backends wrote a float64 FLUX array without complaint and truncated it
+  back to float32 on read — relative error $3.3\times10^{-8}$, two pixels held
+  distinct on disk collapsing into one. The identical defect the ruling exists to
+  close, surviving untouched on the paths the fix had not reached.
+  **The check now lives in one place**, `fita.flux.require_float32_flux()`, called
+  by all three writers. A test asserts each `write()` calls it, so a future writer
+  cannot quietly skip the gate — the inline-in-one-place mistake is what caused this.
+  The legitimate float32 path stays bit-exact on both backends (verified with
+  `h5py` 3.16.0 and `zarr` 3.4.2 actually installed, not skipped).
+
+### Verified
+- **HDF5 is now exercised, not merely claimed.** §10.1 left the backend
+  "unconfirmed" while `h5py` was absent. With it present: a 3-layer stack
+  round-trips bit-exact as float32, layer names and object types survive, and the
+  SPLIT16 refusals on write *and* read execute for real (those two tests had only
+  ever skipped).
+- **FITA ↔ uranodyne over HDF5.** uranodyne contains no HDF5 code — `IrenBLink.save()`
+  goes through `fita.io.write`, i.e. FITS — but it consumes the `FITALayer` objects
+  FITA's HDF5 reader returns: `difference_image()` and `significance_map()` run on
+  HDF5-sourced layers and recover an injected source at 7.81σ.
+- Gate with every optional component installed (HDF5, Zarr, PSD, and uranodyne's
+  pipeline set): **325 passed, 1 skipped, 0 failed**, up from 288/18 at the start of
+  the day. SciPy now does the significance-map work; that path previously warned and
+  degraded.
+
 ## [1.5.1] — 2026-11-14
 
 Applies the principal's ruling of 2026-11-14: **FITA enforces float32 FLUX.**
